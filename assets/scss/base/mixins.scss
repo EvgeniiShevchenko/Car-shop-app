@@ -1,0 +1,40 @@
+@mixin init-font {
+  font-family: Rubik;
+  font-weight: normal;
+  font-size: 15px;
+  color: #4A4D5C;
+}
+
+@mixin init-font-raleway {
+  font-family: Raleway;
+}
+
+@mixin tablet {
+  @media only screen and (max-width: $tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media only screen and (max-width: $desktop) {
+    @content;
+  }
+}
+
+@mixin widescreen {
+  @media only screen and (max-width: $widescreen) {
+    @content;
+  }
+}
+
+@mixin sm {
+  @media only screen and (max-width: $sm) {
+    @content;
+  }
+}
+
+@mixin xs {
+  @media only screen and (max-width: $xs) {
+    @content;
+  }
+}
