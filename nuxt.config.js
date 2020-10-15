@@ -13,6 +13,15 @@ module.exports = {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+  modules: [
+    '@nuxtjs/style-resources',
+    'bootstrap-vue/nuxt'
+  ],
+  styleResources: {
+    scss: [
+        '~/assets/scss/app.scss',
+    ]
+  },
   /*
   ** Customize the progress bar color
   */
@@ -21,6 +30,7 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    extractCSS: true,
     /*
     ** Run ESLint on save
     */
