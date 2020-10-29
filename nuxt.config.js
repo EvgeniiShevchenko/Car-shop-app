@@ -10,7 +10,6 @@ module.exports = {
   /*
    ** Customize the progress bar color
    */
-  // css: ['~/assets/scss/app.scss'],
   loading: { color: '#3B8070' },
   // purgeCSS: { whitelistPatterns: [/(^slick-)\w+/] },
   /*
@@ -25,6 +24,7 @@ module.exports = {
     scss: ['~/assets/scss/app.scss'],
   },
   build: {
+    extractCSS: true,
     /*
      ** Run ESLint on save
      */
