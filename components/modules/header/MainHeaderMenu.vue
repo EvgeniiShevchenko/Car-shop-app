@@ -3,15 +3,7 @@
     <button class="menu-btn" type="button" @click="pressMenu" v-click-outside="onClickOutside"><span class="menu-btn-content"></span></button>
     <nav :class="`menu-nav ${isMenu ? 'is-show' : 'is-hide'}`">
       <ul class="menu-nav-list">
-        <li class="menu-item-item">
-          <n-link class="menu-item-link" to="login/">
-            <svg class="menu-link-icon">
-              <use xlink:href="~assets/images/sprites/main.svg#icon-bell" />
-            </svg>
-            Авторизация
-          </n-link>
-        </li>
-        <li class="menu-item-item" :key="index" v-for="(item, index) in navItemsList">
+        <li :class="`menu-item ${index === navItemsList.length - 1 ? 'is-radius-4' : ''}`" :key="index" v-for="(item, index) in navItemsList">
           <n-link class="menu-item-link" :to="`${item.link}`">
             {{ item.name }}
           </n-link>
@@ -54,71 +46,83 @@ export default {
     justify-content: center;
     align-items: center;
 
-    padding: 6px;
+    padding: 3px;
 
-    width: 30px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
 
-    border-radius: 3px;
-    background: #d3d3d3;
+    background: #1768ac;
 
     .menu-btn-content {
       position: relative;
 
       width: 100%;
-      height: 100%;
+      height: 2px;
 
-      border-top: 2px solid #808080;
-      border-bottom: 2px solid #808080;
+      background: #dadada;
+      border-radius: 1px;
 
       &::before {
         position: absolute;
         content: '';
 
         left: 0;
-        top: 50%;
+        top: -5px;
 
         width: 100%;
-        height: 2px;
+        height: 100%;
 
-        background: #808080;
-        transform: translateY(-50%);
+        border-radius: 1px;
+        background: #dadada;
+      }
+
+      &::after {
+        position: absolute;
+        content: '';
+
+        left: 0;
+        bottom: -5px;
+
+        width: 100%;
+        height: 100%;
+
+        border-radius: 1px;
+        background: #dadada;
       }
     }
   }
 
   .menu-nav {
     position: absolute;
-
-    padding: 10px;
-    margin-top: 5px;
+    margin-top: 14px;
 
     width: max-content;
 
     transform-origin: top;
 
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 4px 4px;
     background: #f2f7fa;
     transform: translateX(calc(-100% + 24px));
     transition: all 1s ease;
     z-index: 3;
 
     .menu-nav-list {
-      .menu-item-item {
+      .menu-item {
         &:hover {
           background: #d5ebfd;
-          border-radius: 4px;
         }
 
         .menu-item-link {
           display: flex;
           align-items: center;
-          padding: 6px 8px;
+          padding: 16px 24px;
+        }
+      }
 
-          .menu-link-icon {
-            width: 24px;
-            height: 24px;
-          }
+      .is-radius-4 {
+        &:hover {
+          border-radius: 0 0 4px 4px;
+          background: #d5ebfd;
         }
       }
     }

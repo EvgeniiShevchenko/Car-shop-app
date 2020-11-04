@@ -1,14 +1,14 @@
 const getDefaultState = () => {
   return {
     filter: {
-      type: 0,
-      category: '',
-      producer: '',
+      states: 0,
+      type: '',
+      brand: '',
       model: '',
       location: '',
       productionYearFrom: '',
       productionYearTo: '',
-      valuta: 'UAN',
+      valuta: '',
       priceRange: {
         min: 0,
         max: 0,
@@ -27,29 +27,47 @@ export default {
   getters: {},
 
   mutations: {
-    setFilterType(state, payload) {
-      state.filter.type = payload;
+    setFilterStates(state, payload) {
+      state.filter.states = payload;
     },
     setFilterValuta(state, payload) {
       state.filter.valuta = payload;
     },
-    setFilterCategory(state, payload) {
-      state.filter.category = payload;
+    setFilterType(state, payload) {
+      state.filter.type = payload;
     },
-    setFilterProducer(state, payload) {
-      state.filter.producer = payload;
+    resetFilterType(state) {
+      state.filter.type = '';
+    },
+    setFilterBrand(state, payload) {
+      state.filter.brand = payload;
+    },
+    resetFilterBrand(state) {
+      state.filter.brand = '';
     },
     setFilterModel(state, payload) {
       state.filter.model = payload;
     },
+    resetFilterModel(state) {
+      state.filter.model = '';
+    },
     setFilterLocation(state, payload) {
       state.filter.location = payload;
+    },
+    resetFilterLocation(state) {
+      state.filter.location = '';
     },
     setFilterProductionYearFrom(state, payload) {
       state.filter.productionYearFrom = payload;
     },
+    resetFilterProductionYearFrom(state) {
+      state.filter.productionYearFrom = '';
+    },
     setFilterProductionYearTo(state, payload) {
       state.filter.productionYearTo = payload;
+    },
+    resetFilterProductionYearTo(state) {
+      state.filter.productionYearTo = '';
     },
     setFilterPriceRangeMax(state, payload) {
       state.filter.priceRange.max = payload;
@@ -66,29 +84,47 @@ export default {
   },
 
   actions: {
+    setFilterStates({ commit }, payload) {
+      commit('setFilterStates', payload);
+    },
     setFilterType({ commit }, payload) {
       commit('setFilterType', payload);
     },
-    setFilterCategory({ commit }, payload) {
-      commit('setFilterCategory', payload);
+    resetFilterType({ commit }) {
+      commit('resetFilterType');
     },
     setFilterValuta({ commit }, payload) {
       commit('setFilterValuta', payload);
     },
-    setFilterProducer({ commit }, payload) {
-      commit('setFilterProducer', payload);
+    setFilterBrand({ commit }, payload) {
+      commit('setFilterBrand', payload);
+    },
+    resetFilterBrand({ commit }) {
+      commit('resetFilterBrand');
     },
     setFilterModel({ commit }, payload) {
       commit('setFilterModel', payload);
     },
+    resetFilterModel({ commit }) {
+      commit('resetFilterModel');
+    },
     setFilterLocation({ commit }, payload) {
       commit('setFilterLocation', payload);
+    },
+    resetFilterLocation({ commit }) {
+      commit('resetFilterLocation');
     },
     setFilterProductionYearFrom({ commit }, payload) {
       commit('setFilterProductionYearFrom', payload);
     },
+    resetFilterProductionYearFrom({ commit }) {
+      commit('resetFilterProductionYearFrom');
+    },
     setFilterProductionYearTo({ commit }, payload) {
       commit('setFilterProductionYearTo', payload);
+    },
+    resetFilterProductionYearTo({ commit }) {
+      commit('resetFilterProductionYearTo');
     },
     setFilterPriceRangeMax({ commit }, payload) {
       commit('setFilterPriceRangeMax', payload);

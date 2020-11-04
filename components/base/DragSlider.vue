@@ -94,8 +94,6 @@ export default {
 }
 
 .slider {
-  margin-top: 5px;
-
   ::v-deep .vue-slider-rail {
     height: 6px !important;
     background-color: #8fa5b0;
@@ -103,6 +101,13 @@ export default {
     .vue-slider-process {
       background-color: #1768ac;
     }
+  }
+}
+
+@include md {
+  .slider {
+    height: 100%;
+    margin-top: 5px;
   }
 }
 </style>

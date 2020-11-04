@@ -55,9 +55,10 @@ export default {
   }
 }
 
-@include sm {
+@include xs {
   .banner .banner-title {
-    // font-size: 28px;
+    font-size: 38px;
+    line-height: 42px;
   }
 }
 </style>

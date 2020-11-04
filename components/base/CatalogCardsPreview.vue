@@ -1,29 +1,27 @@
 <template>
-  <n-link class="catalog-card" to="/catalog">
-    <div class="preview-wrapper">
-      <img class="preview" src="~assets/images/image-empty-cap.png" alt="" />
-    </div>
+  <n-link class="catalog-card" :to="`auto/${collection.alias}`">
+    <div class="preview-wrapper"></div>
     <div class="general">
-      <p class="id">ID 12565862</p>
-      <h3 class="item-title">2007 Toyota FJ Cruiser (авто из США)</h3>
+      <p class="id">ID {{ collection.unique_id }}</p>
+      <h3 class="item-title">{{ collection.format_name }}</h3>
       <div class="stats">
         <div class="speed">
           <svg class="speed-icon">
             <use xlink:href="~assets/images/sprites/main.svg#icon-speedometer" />
           </svg>
-          <p class="speed-title">104 000 км</p>
+          <p class="speed-title">{{ collection.mileage }} км</p>
         </div>
         <div class="location">
           <svg class="location-icon">
             <use xlink:href="~assets/images/sprites/main.svg#icon-location-mark" />
           </svg>
-          <p class="location-title">Винница</p>
+          <p class="location-title">{{ collection.city }}</p>
         </div>
       </div>
       <div class="price">
-        <p class="price-title">$ 21 000</p>
+        <p class="price-title">{{ collection.currency_default }} {{ collection.price }}</p>
       </div>
-      <div class="vin">
+      <div class="vin" v-if="collection.vin_code_verified">
         <svg class="vin-icon">
           <use xlink:href="~assets/images/sprites/main.svg#icon-vin-approved" />
         </svg>
@@ -50,15 +48,31 @@ export default {
     max-width: 154px;
     width: 100%;
 
+    border-radius: 4px 0 0 4px;
+    background: url('~assets/images/main-card-frame.png') no-repeat;
+    background-size: cover;
+    background-position: 50% 50%;
+
     .preview {
       width: 100%;
       height: 100%;
     }
   }
 
+  &:hover .general .item-title {
+    color: #1768ac;
+  }
+
   .general {
     position: relative;
+
     padding: 20px 16px;
+
+    width: 100%;
+
+    border: 1px solid #b1c4cd;
+    border-radius: 0px 4px 4px 0px;
+    border-left: 0;
 
     .id {
       margin-bottom: 8px;
@@ -74,6 +88,7 @@ export default {
       font-weight: 500;
       font-size: 18px;
       line-height: 20px;
+      color: #4a4d5c;
     }
 
     .stats {
@@ -97,7 +112,8 @@ export default {
           margin-left: 8px;
 
           font-size: 14px;
-          line-height: 0;
+          line-height: 18px;
+          color: #4a4d5c;
         }
       }
 

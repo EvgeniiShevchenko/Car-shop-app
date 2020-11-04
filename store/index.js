@@ -6,7 +6,9 @@ import main from './modules/main';
 Vue.use(Vuex);
 
 const getDefaultState = () => {
-  return {};
+  return {
+    locales: 'ru',
+  };
 };
 
 const store = () =>

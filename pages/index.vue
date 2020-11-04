@@ -10,7 +10,7 @@
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
       <MainLatestAds class="latest-ads" />
       <MainCarCatalog />
-      <MainNews />
+      <MainNews class="news-wrapper" />
       <MainComunity />
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
       <MainAbout />
@@ -71,6 +71,7 @@ export default {
 
   .latest-ads {
     margin-bottom: 72px;
+    width: 100%;
   }
 
   .banner-block {
@@ -90,6 +91,30 @@ export default {
 
     .banner-wrapper {
       margin-bottom: 50px;
+    }
+  }
+}
+
+@include xs {
+  .main {
+    .filter-wrapper {
+      margin-bottom: 35px;
+
+      .banner-wrapper {
+        margin-bottom: 25px;
+      }
+    }
+
+    .banner-block {
+      margin-bottom: 25px;
+    }
+
+    .latest-ads {
+      margin-bottom: 25px;
+    }
+
+    .news-wrapper {
+      margin-bottom: 25px;
     }
   }
 }

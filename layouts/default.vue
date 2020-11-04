@@ -29,7 +29,7 @@
                 </ul>
               </div>
             </div>
-            <div class="authorization-alerts">
+            <div class="authorization-alerts" v-if="$vuetify.breakpoint.smAndDown">
               <svg class="alerts-letter-icons">
                 <use xlink:href="~assets/images/sprites/main.svg#icon-later" />
               </svg>
@@ -46,7 +46,7 @@
     <footer class="footer">
       <div class="container footer-inner-wrapper" :style="`max-width: ${width}`">
         <div class="row no-gutters footer-general">
-          <div class="social cols mb-6 col-xs-12 col-sm-6 col-md-8 mb-md-4 col-xl-3">
+          <div class="social cols mb-6 mb-sm-0 col-xs-12 col-sm-6 col-md-8 mb-md-4">
             <nuxt-link class="footer-logo" to="#">
               <img class="footer-logo-icon" src="~assets/images/logo-footer.png" alt="Logo" />
             </nuxt-link>
@@ -69,7 +69,7 @@
               </li>
             </ul>
           </div>
-          <section class="about cols col-xs-12 col-sm-6 col-md-4 mb-md-4 col-xl-3 pl-xl-5 pl-xl-0">
+          <section class="about cols mb-6 mb-sm-0 col-xs-12 col-sm-6 col-md-4 mb-md-4">
             <h3 class="about-title">О сервисе</h3>
             <ul class="about-list">
               <li class="about-list-item">
@@ -83,7 +83,7 @@
               </li>
             </ul>
           </section>
-          <section class="seller cols col-xs-12 col-sm-6 col-md-8 col-xl-3">
+          <section class="seller cols col-xs-12 mb-6 mb-sm-0 col-sm-6 col-md-8">
             <h3 class="seller-title">Продавцу</h3>
             <ul class="seller-list">
               <li class="seller-list-item">
@@ -97,7 +97,7 @@
               </li>
             </ul>
           </section>
-          <section class="services cols col-xs-12 col-sm-6 col-md-4 col-xl-3">
+          <section class="services cols col-xs-12 col-sm-6 col-md-4">
             <h3 class="services-title">Отдел по работе с клиентами</h3>
             <a class="services-contacts-email" href="tel: 093 333 33 33">093 333 33 33</a>
             <a class="services-contacts-phone" href="mailto: mail@gmail.com">mail@gmail.com</a>
@@ -204,9 +204,12 @@ export default {
           }
 
           .authorization-alerts {
-            display: none;
+            display: flex;
+            align-items: center;
 
             .alerts-letter-icons {
+              margin-right: 10px;
+
               width: 20px;
               height: 16px;
             }
@@ -251,6 +254,7 @@ export default {
 
           .social-list {
             display: flex;
+            padding-left: 0;
 
             & li:first-child {
               margin-left: 0;
@@ -263,6 +267,10 @@ export default {
                 display: inline-block;
 
                 background-image: url('~assets/images/sprites/social-footer-icons.png');
+
+                &:hover {
+                  background-image: url('~assets/images/sprites/social-footer-icons-hover.png');
+                }
               }
 
               .is-facebook {
@@ -305,10 +313,12 @@ export default {
 
           .about-title {
             margin-bottom: 20px;
+            height: 44px;
 
             font-size: 20px;
+            font-weight: 500;
             line-height: 22px;
-            height: 44px;
+            color: #4a4d5c;
           }
 
           .about-list {
@@ -424,10 +434,15 @@ export default {
 
     .footer .container {
       padding: 0 32px;
+      padding-top: 15px;
     }
 
     .header .header-inner-wrapper .personality {
       margin-right: 10px;
+
+      .user-icon {
+        margin-right: 10px;
+      }
     }
   }
 }
@@ -436,21 +451,20 @@ export default {
   .layout {
     .content {
       padding: 0 16px;
+      margin-top: 15px !important;
     }
 
     .header .container {
-      padding: 0 16px;
+      padding: 14px 16px;
+
+      .general-wrapper .personality {
+        margin-right: 10px;
+      }
     }
 
     .footer .container {
       padding: 0 16px;
-      text-align: center;
-
-      .social {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-      }
+      padding-top: 15px;
     }
   }
 }

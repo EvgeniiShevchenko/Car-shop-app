@@ -1,7 +1,9 @@
 ul,
-li {
+li,
+ol {
   margin: 0;
   padding: 0;
+  padding-left: 0;
   list-style-type: none;
 }
 

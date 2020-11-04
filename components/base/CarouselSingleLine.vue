@@ -1,7 +1,7 @@
 <template>
   <VueSlickCarousel
     :id="originId"
-    class="carousel"
+    :class="`carousel ${originId}`"
     ref="carousel"
     :arrows="arrow"
     :swipeToSlide="true"
@@ -81,27 +81,7 @@ export default {
 
   .carousel-item {
     height: 100%;
+    outline: none;
   }
-
-  //   .carousel-list {
-  //     &-item {
-  //     }
-  //   }
-
-  //   .custom-left-arrow {
-  //     .left-arrow-icon {
-  //       width: 24px;
-  //       height: 16px;
-  //     }
-  //   }
-
-  //   .custom-right-arrow {
-  //     .right-arrow-icon {
-  //       width: 24px;
-  //       height: 16px;
-
-  //       transform: rotate(180deg);
-  //     }
-  //   }
 }
 </style>

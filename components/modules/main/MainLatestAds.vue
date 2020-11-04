@@ -4,7 +4,7 @@
       <h2 class="latest-title">Свежие объявления</h2>
       <ul class="latest-ads-list col-md-12 col-lg-10 pr-lg-3">
         <li :key="index" v-for="(item, index) in latestAds">
-          <CatalogCardsPreview class="latest-ads-item" />
+          <CatalogCardsPreview class="latest-ads-item" :collection="item" />
         </li>
       </ul>
       <div class="advertising col-md-12 col-lg-2 pl-lg-3"></div>
@@ -21,12 +21,14 @@ export default {
   name: 'MainLatestAds',
   data() {
     return {
-      latestAds: [...Array(8).keys()],
+      latestAds: [],
     };
   },
   async mounted() {
     try {
-      // const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
+      const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
+
+      this.latestAds = data.data.products;
     } catch (error) {
       console.error(error);
     }
@@ -82,28 +84,51 @@ export default {
 }
 
 @include xs {
-  .latest-ads-list {
-    .latest-ads-item {
-      flex-direction: column;
-      max-height: max-content;
+  .latest-ads {
+    .latest-title {
+      font-size: 30px;
+      line-height: 33px;
+    }
 
-      ::v-deep .preview-wrapper {
+    .latest-ads-list {
+      margin-bottom: 35px;
+
+      .latest-ads-item {
         position: relative;
-        max-width: 100%;
+        flex-direction: column;
+        max-height: max-content;
+        height: 100%;
 
-        &::before {
-          display: block;
-          content: '';
+        ::v-deep .preview-wrapper {
+          position: relative;
+          max-width: 100%;
 
-          /*Aspect ratio 16:9 */
-          padding-top: 77%;
-          width: 100%;
+          border-radius: 4px 4px 0 0;
+
+          &::before {
+            display: block;
+            content: '';
+
+            /*Aspect ratio 16:9 */
+            padding-top: 77%;
+            width: 100%;
+          }
         }
 
-        .preview {
-          position: absolute;
-          top: 0;
-          left: 0;
+        ::v-deep .general {
+          position: initial;
+          display: flex;
+          flex-direction: column;
+          flex-wrap: wrap;
+
+          border-radius: 0 4px 4px 4px;
+          border-left: 1px solid #b1c4cd;
+          border-top: 0;
+
+          .vin {
+            left: 8px;
+            right: auto;
+          }
         }
       }
     }

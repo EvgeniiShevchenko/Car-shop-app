@@ -56,10 +56,15 @@ export default {
 @include sm {
   .about {
     margin-bottom: 32px;
-  }
 
-  .description-wrapper {
-    margin-bottom: 16px;
+    .description-wrapper {
+      .about-title {
+        font-size: 30px;
+        line-height: 33px;
+      }
+
+      margin-bottom: 16px;
+    }
   }
 }
 </style>

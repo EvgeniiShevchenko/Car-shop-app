@@ -98,9 +98,6 @@ export default {
             position: absolute;
             left: 0;
           }
-
-          .social-item-mark {
-          }
         }
       }
 
@@ -110,7 +107,6 @@ export default {
 
         font-size: 15px;
         font-weight: 500;
-        line-height: 15px;
         color: #ffffff;
 
         .social-item-icon {
@@ -173,9 +169,12 @@ export default {
           .social-item-mark {
             position: absolute;
             right: 0;
+
             width: 12px;
             height: 8px;
+
             transform: rotate(-90deg);
+            fill: #4a4d5c;
           }
         }
       }
@@ -212,6 +211,13 @@ export default {
 
 @include xs {
   .comunity {
+    .comunity-title {
+      font-size: 30px;
+      line-height: 33px;
+    }
+
+    margin-bottom: 25px;
+
     .social-list {
       grid-template-columns: 1fr;
     }

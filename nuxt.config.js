@@ -11,20 +11,34 @@ module.exports = {
    ** Customize the progress bar color
    */
   loading: { color: '#3B8070' },
-  // purgeCSS: { whitelistPatterns: [/(^slick-)\w+/] },
-  /*
-   ** Plugins to load before mounting the App
-   */
-  // plugins: [{ src: '~/plugins/vue-slick-carousel', mode: 'client' }],
   /*
    ** Build configuration
    */
-  modules: ['@nuxtjs/style-resources'],
+  modules: [
+    '@nuxtjs/style-resources',
+    [
+      'nuxt-i18n',
+      {
+        locales: [
+          {
+            code: 'ru',
+            file: 'ru.json',
+          },
+          {
+            code: 'ua',
+            file: 'ua.json',
+          },
+        ],
+        lazy: true,
+        langDir: 'locales/',
+        defaultLocale: 'ru',
+      },
+    ],
+  ],
   styleResources: {
     scss: ['~/assets/scss/app.scss'],
   },
   build: {
-    extractCSS: true,
     /*
      ** Run ESLint on save
      */
@@ -39,10 +53,5 @@ module.exports = {
       // }
     },
   },
-  // extractCSS: true,
   buildModules: ['@nuxtjs/vuetify'],
-  // vuetify: {
-  //   optionsPath: './vuetify.options.js',
-  //   treeShake: true,
-  // },
 };

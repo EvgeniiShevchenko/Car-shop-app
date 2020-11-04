@@ -1,7 +1,7 @@
 <template>
   <div class="select">
     <div class="select-inner-wrapper">
-      <v-select
+      <v-autocomplete
         ref="mySelect"
         height="36"
         :items="options"
@@ -15,6 +15,7 @@
         v-on="$listeners"
         background-color="#ffffff"
         outlined
+        autocomplete
       >
         <template slot="append">
           <svg class="select-mark">
@@ -27,7 +28,7 @@
         <template slot="no-data">
           <span></span>
         </template>
-      </v-select>
+      </v-autocomplete>
       <slot name="reset" v-if="isReset">
         <button class="reset-btn" type="button" @click="$emit('reset')">
           <svg class="reset-icon">
@@ -41,7 +42,7 @@
 
 <script>
 export default {
-  name: 'SelectBtn',
+  name: 'AutocompleteBtn',
   data() {
     return {
       prependStyle: {
@@ -147,6 +148,13 @@ export default {
         min-height: initial;
 
         .v-select__selection {
+          font-size: 15px;
+          font-weight: 500;
+          line-height: 17px;
+          color: #4a4d5c;
+        }
+
+        .v-select__slot > input {
           font-size: 15px;
           font-weight: 500;
           line-height: 17px;

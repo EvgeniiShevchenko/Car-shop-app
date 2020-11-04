@@ -3,17 +3,19 @@
     <h2 class="news-title">Новости</h2>
     <ul class="news-category-list">
       <li class="category-list-item" :key="index" v-for="(item, index) in category">
-        <button :class="`category-btn ${selectCategory === item ? 'is-selected' : ''}`" @click="selectNewsCategory(item)">{{ item }}</button>
+        <button :class="`category-btn ${selectCategory === item.id ? 'is-selected' : ''} ${category.length - 1 === index ? 'is-border-radius-right' : ''}`" @click="selectNewsCategory(item)">
+          {{ item.value }}
+        </button>
       </li>
       <li class="category-list-item empty"></li>
       <li class="category-list-item empty"></li>
     </ul>
     <CarouselSingleLine class="carousel-wrapper" :config="carouselConfig" :collection="newsCollection">
       <template slot="default" slot-scope="{ slotScope: item }">
-        <n-link class="news-list-item" :to="`/news/${item}`">
-          <img class="item-preview" src="~/assets/images/news-item-img.png" alt="" />
-          <time class="date-publication">24.08.2020</time>
-          Бизнес-пауза? Новый коммерческий транспорт стали реже покупать
+        <n-link class="news-list-item" :to="`/news/${item.slug}`">
+          <img class="item-preview" :src="item.image" alt="" />
+          <time class="date-publication">{{ item.created_at }}</time>
+          {{ item.name }}
         </n-link>
       </template>
     </CarouselSingleLine>
@@ -40,6 +42,7 @@
 
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import CarouselPaginationBar from '~/components/base/CarouselPaginationBar.vue';
@@ -48,11 +51,12 @@ export default {
   name: 'MainNews',
   data() {
     return {
-      category: ['Авомобильные новости', 'Тест-драйвы', 'Журнал', 'Как подготовить авто к зиме', 'Акции', 'Обзоры'],
-      newsCollection: ['1', '2', '3', '4', '5', '6'],
+      category: [],
+      newsCollection: [],
       selectCategory: '',
       page: 1,
-      range: 0,
+      range: 4,
+      newsByDefault: 1,
       carouselConfig: [
         {
           breakpoint: 960,
@@ -75,6 +79,8 @@ export default {
     amountShownNews() {
       return this.newsCollection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.newsCollection.length ? this.newsCollection.length : this.range;
     },
+
+    ...mapState({ locales: (state) => state.locales }),
   },
   methods: {
     goToTheNext() {
@@ -89,31 +95,46 @@ export default {
       this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
     },
 
-    async selectNewsCategory(category) {
+    async selectNewsCategory({ id }) {
+      console.log('selectNewsCategory -> selectNewsCategory', id);
       try {
-        // const getNews = await axios.get('api/news', {method: 'GET'});
+        const { data } = await axios.get(`http://localhost:8000/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
 
-        this.selectCategory = category;
+        this.newsCollection = data.data.data;
+        this.selectCategory = id;
       } catch (error) {
         console.error(error);
       }
     },
 
     defineCarouselRange() {
-      console.log(this.$vuetify.breakpoint.xs);
       this.range = this.$vuetify.breakpoint.xs ? 1 : this.$vuetify.breakpoint.smAndDown ? 2 : 4;
     },
   },
   async mounted() {
-    try {
-      // const getCategoryList = await axios.get('api/news/categories', {method: 'GET'});
-      // const getNews = await axios.get('api/news', {method: 'GET'});
-      // this.range = 4;
-      this.$nextTick(() => {
-        this.defineCarouselRange();
-      });
+    this.$nextTick(() => {
+      this.defineCarouselRange();
+    });
 
-      this.selectCategory = 'Авомобильные новости';
+    this.selectCategory = this.newsByDefault;
+
+    try {
+      (async () => {
+        const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
+
+        this.category = data.data.news_tags.tags[0].map((item, index) => {
+          return {
+            id: index,
+            value: item.name[this.locales],
+          };
+        });
+      })();
+
+      (async () => {
+        const { data } = await axios.get(`http://localhost:8000/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
+
+        this.newsCollection = data.data.data;
+      })();
     } catch (error) {
       console.error(error);
     }
@@ -145,13 +166,29 @@ export default {
     flex-wrap: wrap;
     margin-bottom: 32px;
 
+    background: #f2f7fa;
+
+    & li:first-child {
+      .category-btn {
+        border-bottom-left-radius: 4px;
+        border-top-left-radius: 4px;
+      }
+    }
+
     .category-list-item {
       .category-btn {
-        padding: 10px 30px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        padding: 0 30px;
+
+        height: 38px;
 
         font-size: 16px;
         font-weight: 500;
         line-height: 18px;
+        color: #4a4d5c;
 
         &:hover {
           background: #1768ac;
@@ -167,6 +204,11 @@ export default {
           background: #0e4c80;
         }
       }
+    }
+
+    .is-border-radius-right {
+      border-bottom-right-radius: 4px;
+      border-top-right-radius: 4px;
     }
   }
 
@@ -212,7 +254,12 @@ export default {
 
   .news-btn {
     display: flex;
+    justify-content: space-between;
     align-items: center;
+
+    max-width: 281px;
+    width: 100%;
+    height: 44px;
 
     padding: 14.5px 20px;
 
@@ -222,6 +269,7 @@ export default {
     font-size: 15px;
     font-weight: 500;
     line-height: 15px;
+    color: #4a4d5c;
 
     &:hover {
       background: #f2f7fa;
@@ -232,6 +280,7 @@ export default {
       width: 12px;
       height: 8px;
       transform: rotate(-90deg);
+      fill: #4a4d5c;
     }
   }
 
@@ -253,8 +302,19 @@ export default {
   }
 }
 
+@include desktop {
+  .news .news-category-list .category-list-item {
+    margin-bottom: 10px;
+  }
+}
+
 @include xs {
   .news {
+    .news-title {
+      font-size: 30px;
+      line-height: 33px;
+    }
+
     .news-category-list {
       background: #f2f7fa;
 
@@ -263,7 +323,7 @@ export default {
         min-width: max-content;
 
         .category-btn {
-          width: 100%;
+          padding: 0 10px;
         }
       }
     }
