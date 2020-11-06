@@ -8,9 +8,9 @@
         </div>
       </div>
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
-      <MainLatestAds class="latest-ads" />
-      <MainCarCatalog />
-      <MainNews class="news-wrapper" />
+      <MainLatestAds class="latest-ads" :mainData="mainData" />
+      <MainCarCatalog :mainData="mainData" />
+      <MainNews class="news-wrapper" :mainData="mainData" />
       <MainComunity />
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
       <MainAbout />
@@ -19,6 +19,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 // components
 import MainFilter from '~/components/modules/main/MainFilter.vue';
 import MainLatestAds from '~/components/modules/main/MainLatestAds.vue';
@@ -30,6 +31,11 @@ import MainBaner from '~/components/modules/main/MainBaner.vue';
 
 export default {
   name: 'Index',
+  async asyncData({ $axios }) {
+    const { data } = await $axios.$get(`${process.env.API_URL}/api/main`);
+
+    return { mainData: data };
+  },
   components: {
     MainFilter,
     MainLatestAds,

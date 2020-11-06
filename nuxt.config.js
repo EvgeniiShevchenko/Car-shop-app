@@ -16,6 +16,8 @@ module.exports = {
    */
   modules: [
     '@nuxtjs/style-resources',
+    '@nuxtjs/dotenv',
+    '@nuxtjs/axios',
     [
       'nuxt-i18n',
       {

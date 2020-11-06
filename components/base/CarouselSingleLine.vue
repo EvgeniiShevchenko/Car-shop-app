@@ -9,6 +9,7 @@
     cssEase="linear"
     :autoplay="false"
     :infinite="false"
+    :lazyLoad="lazyLoad"
     :slidesToShow="showNumber"
     :slidesToScroll="scrollNumber"
     :responsive="config"
@@ -51,6 +52,10 @@ export default {
     originId: {
       type: String,
       default: 'carouselSingleLine',
+    },
+    lazyLoad: {
+      type: String,
+      default: undefined,
     },
     config: {
       type: Array,

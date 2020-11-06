@@ -45,7 +45,7 @@
             <template slot="default" slot-scope="{ slotScope }">
               <div class="carousel-item-wrapper">
                 <div class="sort-preview-link" @click="selectBrend(slotScope)">
-                  <img class="preview-item-icon" :src="`${!!slotScope.meta.icon ? slotScope.meta.icon : require('~/assets/images/car-logo.png')}`" alt="Car logotype" />
+                  <img class="preview-item-icon" :src="`${!!slotScope.icon ? slotScope.icon : require('~/assets/images/car-logo.png')}`" alt="Car logotype" />
                   <p class="preview-item-text" :alt="slotScope.name">{{ slotScope.name }}</p>
                 </div>
               </div>
@@ -110,17 +110,18 @@ export default {
         : this.page * this.shownQuantity;
     },
 
-    ...mapState({ locales: (state) => state.locales }),
+    ...mapState({ locales: (state) => state.locales, type: (state) => state.main.filter.type, brand: (state) => state.main.filter.brand }),
   },
   methods: {
     selectBrend(brand) {
-      this.setBrand(brand.name);
-      this.$router.push({ path: `catalog/` });
+      this.setBrand(String(brand.id));
+
+      this.$router.push({ path: `catalog$car_mark_id=${brand.id}` });
     },
 
     selectOptions(type) {
-      this.setType(type.value);
-      this.$router.push({ path: `catalog/` });
+      this.setType(String(type.value));
+      this.$router.push({ path: `catalog?car_type_id=${this.type}` });
     },
 
     defineCarouselRange() {
@@ -157,7 +158,7 @@ export default {
 
     async handlerSortSelect(sortKey) {
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/main/searchMark?search=${sortKey}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/main/searchMark?search=${sortKey}`, { method: 'GET' });
 
         this.carBrandList = data.data.marks;
         this.activeSortTab = sortKey;
@@ -170,48 +171,25 @@ export default {
     ...mapActions({ setType: 'main/setFilterType', setBrand: 'main/setFilterBrand' }),
   },
   async mounted() {
-    window.addEventListener('resize', () => {
-      this.setAmountSortColumns();
-      this.findCarouselWidth();
+    const { types, liters_EN, liters_RU } = this.mainData;
+
+    this.latinlList = Object.keys(liters_EN);
+    this.activeSortTab = Object.keys(liters_EN)[0];
+    this.searchValue = Object.keys(liters_EN)[0];
+    this.cyrillicList = Object.keys(liters_RU);
+    this.transportType = types.map((item) => {
+      return {
+        text: item.name,
+        value: item.id,
+        meta: item,
+      };
     });
 
     try {
       await (async () => {
-        const { data } = await axios.get(`http://localhost:8000/api/main`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
 
-        this.transportType = data.data.types.map((item) => {
-          const getTranslationsType = item.translations.find((item) => item.locale === this.locales);
-
-          return {
-            text: getTranslationsType.name,
-            value: getTranslationsType.id,
-            meta: item,
-          };
-        });
-      })();
-
-      await (async () => {
-        const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
-
-        this.latinlList = data.data.liters;
-        this.activeSortTab = this.latinlList[0];
-        this.searchValue = this.latinlList[0];
-
-        this.cyrillicList = ['А', 'В', 'С', 'Д', 'Е', 'Ф', 'Г', 'Н', 'И', 'З', 'К'];
-      })();
-
-      await (async () => {
-        const { data } = await axios.get(`http://localhost:8000/api/main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
-
-        this.carBrandList = data.data.marks.map((item) => {
-          const getTranslationsType = item.translations.find((item) => item.locale === this.locales);
-
-          return {
-            id: getTranslationsType.id,
-            name: getTranslationsType.name,
-            meta: item,
-          };
-        });
+        this.carBrandList = data.data.marks;
       })();
 
       this.$nextTick(() => {
@@ -220,6 +198,11 @@ export default {
         this.findCarouselWidth();
         this.defineCarouselRange();
         this.setAmountSortColumns();
+      });
+
+      window.addEventListener('resize', () => {
+        this.setAmountSortColumns();
+        this.findCarouselWidth();
       });
     } catch (error) {
       console.error(error);
@@ -230,6 +213,12 @@ export default {
       this.setAmountSortColumns();
       this.findCarouselWidth();
     });
+  },
+  props: {
+    mainData: {
+      type: Object,
+      required: true,
+    },
   },
   components: {
     CarouselSingleLine,
