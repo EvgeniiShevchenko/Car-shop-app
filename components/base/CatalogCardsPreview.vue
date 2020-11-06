@@ -1,6 +1,6 @@
 <template>
   <n-link class="catalog-card" :to="`auto/${collection.alias}`">
-    <div class="preview-wrapper"></div>
+    <div class="preview-wrapper" :style="`background:  ${!!collection.mainImage ? 'url(' + collection.mainImage + ') no-repeat center / cover' : ''}`"></div>
     <div class="general">
       <p class="id">ID {{ collection.unique_id }}</p>
       <h3 class="item-title">{{ collection.format_name }}</h3>
@@ -49,7 +49,7 @@ export default {
     width: 100%;
 
     border-radius: 4px 0 0 4px;
-    background: url('~assets/images/main-card-frame.png') no-repeat;
+    background: url('~assets/images/image-empty-car.png') no-repeat;
     background-size: cover;
     background-position: 50% 50%;
 

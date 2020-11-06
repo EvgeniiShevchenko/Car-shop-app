@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 // components
 import CatalogCardsPreview from '~/components/base/CatalogCardsPreview.vue';
 
@@ -25,13 +24,15 @@ export default {
     };
   },
   async mounted() {
-    try {
-      const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
+    const { products } = this.mainData;
 
-      this.latestAds = data.data.products;
-    } catch (error) {
-      console.error(error);
-    }
+    this.latestAds = products;
+  },
+  props: {
+    mainData: {
+      type: Object,
+      required: true,
+    },
   },
   components: {
     CatalogCardsPreview,

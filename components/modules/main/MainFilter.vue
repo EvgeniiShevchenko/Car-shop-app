@@ -3,7 +3,7 @@
     <form class="filter-form row no-gutters" method="POST">
       <ul class="filter-tabs-bar row no-gutters">
         <li class="tabs-bar-item col col-sm-3" :key="index" v-for="(item, index) in statesList">
-          <button :class="`tabs-item-btn ${defineStyleTabs(index)}`" type="button" @click="selectFilterStates(index)">{{ item }}</button>
+          <button :class="`tabs-item-btn ${defineStyleTabs(index)}`" type="button" @click="selectFilterStates(index + 1)">{{ item }}</button>
         </li>
       </ul>
       <div class="category-car col-12 mb-3">
@@ -117,12 +117,12 @@
       </div>
       <div class="search-btn-wrapper">
         <n-link class="extend-search-link" to="/search">Расширенный поиск</n-link>
-        <n-link class="search-link" to="/catalog" @click="startSearch">
+        <button class="search-link" type="button" @click="startSearch">
           Начать поиск
           <svg class="search-link-icon">
             <use xlink:href="~assets/images/sprites/main.svg#icon-search-btn" />
           </svg>
-        </n-link>
+        </button>
       </div>
     </form>
   </div>
@@ -232,23 +232,15 @@ export default {
     },
 
     startSearch() {
-      const sendData = {
-        states: this.states,
-        type: this.type,
-        brand: this.brand,
-        model: this.model,
-        location: this.location,
-        fromYear: this.fromYear,
-        toYear: this.toYear,
-        maxPrice: maxPrice,
-        minPrice: minPrice,
-      };
+      this.$router.push(
+        `catalog?status=${this.states}&car_type_id=${this.type}&car_mark_id=${this.brand}&car_model_id=${this.model}&location=${this.location}&fromYear=${this.fromYear}&toYear=${this.toYear}&price_max=${this.maxPrice}&price_min=${this.minPrice}`
+      );
     },
 
     defineStyleTabs(index) {
       let className = '';
 
-      if (index === this.states) className = 'is-select ';
+      if (index + 1 === this.states) className = 'is-select ';
       return index === 0 ? className + ' is-border-left' : index === 3 ? className + ' is-border-right' : className;
     },
 
@@ -266,7 +258,7 @@ export default {
       this.setType(param);
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/filters/marks?type=${param}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/marks?type=${param}`, { method: 'GET' });
         this.brandList = Object.values(data.data.marks).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
@@ -285,7 +277,7 @@ export default {
       this.setBrand(typeName);
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/filters/models?type=${this.type}&mark=${typeName}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/models?type=${this.type}&mark=${typeName}`, { method: 'GET' });
         this.modelsList = Object.values(data.data.models).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
@@ -316,7 +308,7 @@ export default {
       this.setModel(modelName);
 
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/filters/years?type=${this.type}&model=${modelName}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/years?type=${this.type}&model=${modelName}`, { method: 'GET' });
         const productionYear = Object.values(data.data.years).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
@@ -354,7 +346,7 @@ export default {
       try {
         this.isLocationsLoading = true;
 
-        const { data } = await axios.get(`http://localhost:8000/api/filters/regions`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/regions`, { method: 'GET' });
 
         this.locationsList = Object.values(data.data.regions).map((item, index) => ({
           text: item,
@@ -393,14 +385,15 @@ export default {
 
     async selectValuta(valuta) {
       this.updateSlaider = !this.updateSlaider;
+
       try {
-        // const getPriceRange = await axios.get(`api/price-range/${valuta}`, { method: 'GET' });
-        if (valuta.value === 'USD') {
-          this.setFixedMaxPrice(10000);
-          this.setFixedMinPrice(120);
-          this.setPriceMax(10000);
-          this.setPriceMin(120);
-        }
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/prices?currencies=${valuta.toLowerCase}`, { method: 'GET' });
+        const { min, max } = data.data;
+
+        this.setFixedMinPrice(min);
+        this.setFixedMaxPrice(max);
+        this.setPriceMin(min);
+        this.setPriceMax(max);
       } catch (error) {
         console.error(error);
       }
@@ -415,7 +408,9 @@ export default {
         this.setPriceMax(value[1]);
       }
     },
+
     ...mapActions({
+      setFilterStates: 'main/setFilterStates',
       setType: 'main/setFilterType',
       resetType: 'main/resetFilterType',
       setBrand: 'main/setFilterBrand',
@@ -436,10 +431,9 @@ export default {
     }),
   },
   mounted() {
-    console.log(this);
     try {
       (async () => {
-        const { data } = await axios.get(`${'http://localhost:8000/api/filters/types'}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/types`, { method: 'GET' });
 
         this.categoryList = Object.values(data.data.types).map((item, index) => ({
           text: item,
@@ -448,7 +442,7 @@ export default {
       })();
 
       (async () => {
-        const { data } = await axios.get(`${'http://localhost:8000/api/filters/currencies'}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/currencies`, { method: 'GET' });
 
         this.valutaList = Object.values(data.data.currencies).map((item) => ({
           text: item.name,
@@ -460,17 +454,13 @@ export default {
       })();
 
       (async () => {
-        // const { data } = await axios.get(`${'http://localhost:8000/api/filters/prices'}`, { method: 'GET' });
-        // console.log('mounted -> data', '422 Unprocessable Entity');
+        const { data } = await axios.get(`${process.env.API_URL}/api/filters/prices`, { method: 'GET' });
+        const { min, max } = data.data;
 
-        // this.setPriceMax(data.data.max);
-        // this.setPriceMin(data.data.min);
-        // this.setFixedMaxPrice(data.data.max);
-        // this.setFixedMinPrice(data.data.min);
-        this.setPriceMin(200);
-        this.setPriceMax(796);
-        this.setFixedMinPrice(200);
-        this.setFixedMaxPrice(796);
+        this.setPriceMin(min);
+        this.setPriceMax(max);
+        this.setFixedMinPrice(min);
+        this.setFixedMaxPrice(max);
       })();
     } catch (error) {
       console.log(error);

@@ -1,7 +1,7 @@
 const getDefaultState = () => {
   return {
     filter: {
-      states: 0,
+      states: 1,
       type: '',
       brand: '',
       model: '',

@@ -10,12 +10,14 @@
       <li class="category-list-item empty"></li>
       <li class="category-list-item empty"></li>
     </ul>
-    <CarouselSingleLine class="carousel-wrapper" :config="carouselConfig" :collection="newsCollection">
+    <CarouselSingleLine class="carousel-wrapper" :config="carouselConfig" :collection="newsCollection" lazyLoad="ondemand">
       <template slot="default" slot-scope="{ slotScope: item }">
         <n-link class="news-list-item" :to="`/news/${item.slug}`">
           <img class="item-preview" :src="item.image" alt="" />
           <time class="date-publication">{{ item.created_at }}</time>
-          {{ item.name }}
+          <VClamp autoresize :max-lines="2" tag="span">
+            {{ item.name }}
+          </VClamp>
         </n-link>
       </template>
     </CarouselSingleLine>
@@ -42,6 +44,7 @@
 
 <script>
 import axios from 'axios';
+import VClamp from 'vue-clamp';
 import { mapState } from 'vuex';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
@@ -96,9 +99,8 @@ export default {
     },
 
     async selectNewsCategory({ id }) {
-      console.log('selectNewsCategory -> selectNewsCategory', id);
       try {
-        const { data } = await axios.get(`http://localhost:8000/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
 
         this.newsCollection = data.data.data;
         this.selectCategory = id;
@@ -112,26 +114,23 @@ export default {
     },
   },
   async mounted() {
+    const { news_tags } = this.mainData;
+
     this.$nextTick(() => {
       this.defineCarouselRange();
     });
 
     this.selectCategory = this.newsByDefault;
+    this.category = news_tags.tags[0].map((item) => {
+      return {
+        id: item.id,
+        value: item.name[this.locales],
+      };
+    });
 
     try {
       (async () => {
-        const { data } = await axios.get('http://localhost:8000/api/main', { method: 'GET' });
-
-        this.category = data.data.news_tags.tags[0].map((item, index) => {
-          return {
-            id: index,
-            value: item.name[this.locales],
-          };
-        });
-      })();
-
-      (async () => {
-        const { data } = await axios.get(`http://localhost:8000/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
+        const { data } = await axios.get(`${process.env.API_URL}/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
 
         this.newsCollection = data.data.data;
       })();
@@ -139,9 +138,16 @@ export default {
       console.error(error);
     }
   },
+  props: {
+    mainData: {
+      type: Object,
+      required: true,
+    },
+  },
   components: {
     CarouselSingleLine,
     CarouselPaginationBar,
+    VClamp,
   },
 };
 </script>

@@ -50,7 +50,7 @@
             <nuxt-link class="footer-logo" to="#">
               <img class="footer-logo-icon" src="~assets/images/logo-footer.png" alt="Logo" />
             </nuxt-link>
-            <p class="social-title">Седить за новостями AutoSill в соцсетях:</p>
+            <p class="social-title">Следить за новостями AutoSill в соцсетях:</p>
             <ul class="social-list mb-0">
               <li class="social-list-item">
                 <a class="social-item-ref is-facebook" href="#"></a>
@@ -105,7 +105,7 @@
           </section>
         </div>
         <div class="rights">
-          <p class="rights-description">© 2016—2020, autosill.ua</p>
+          <p class="rights-description">© 2016—{{ getCurentYear }}, autosill.ua</p>
         </div>
       </div>
     </footer>
@@ -113,11 +113,16 @@
 </template>
 
 <script>
+import moment from 'moment';
+// components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 
 export default {
   name: 'Default',
   computed: {
+    getCurentYear() {
+      return moment().format('YYYY');
+    },
     width() {
       switch (this.$vuetify.breakpoint.name) {
         case 'xs':
