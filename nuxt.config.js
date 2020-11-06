@@ -37,6 +37,9 @@ module.exports = {
       },
     ],
   ],
+  axios: {
+    baseURL: process.env.API_URL, // Used as fallback if no runtime config is provided
+  },
   styleResources: {
     scss: ['~/assets/scss/app.scss'],
   },

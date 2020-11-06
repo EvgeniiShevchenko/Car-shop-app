@@ -41,7 +41,7 @@
           <input class="sort-field" :value="searchValue" type="text" disabled />
         </div>
         <div class="carousel-wrapper" ref="slider">
-          <CarouselSingleLine originId="main-catalog" :collection="carBrandList" :showNumber="range" :scrollNumber="range" :rows="2" :config="carouselConfig" :arrow="false">
+          <CarouselSingleLine originId="main-catalog" :key="reloadSlide" :collection="carBrandList" :showNumber="range" :scrollNumber="range" :rows="2" :config="carouselConfig" :arrow="false">
             <template slot="default" slot-scope="{ slotScope }">
               <div class="carousel-item-wrapper">
                 <div class="sort-preview-link" @click="selectBrend(slotScope)">
@@ -59,7 +59,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { mapState, mapActions } from 'vuex';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
@@ -79,6 +78,7 @@ export default {
       columnWidth: 36,
       gap: 12,
       isSidebar: false,
+      reloadSlide: false,
       page: 1,
       range: 5,
       shownQuantity: 10,
@@ -158,11 +158,14 @@ export default {
 
     async handlerSortSelect(sortKey) {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/main/searchMark?search=${sortKey}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/main/searchMark?search=${sortKey}`, { method: 'GET' });
 
-        this.carBrandList = data.data.marks;
+        this.carBrandList = data.marks;
         this.activeSortTab = sortKey;
         this.searchValue = sortKey;
+
+        this.page = 1;
+        this.reloadSlide = !this.reloadSlide;
       } catch (error) {
         console.error(error);
       }
@@ -187,9 +190,9 @@ export default {
 
     try {
       await (async () => {
-        const { data } = await axios.get(`${process.env.API_URL}/api/main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
 
-        this.carBrandList = data.data.marks;
+        this.carBrandList = data.marks;
       })();
 
       this.$nextTick(() => {

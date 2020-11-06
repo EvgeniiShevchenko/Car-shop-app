@@ -32,7 +32,7 @@ import MainBaner from '~/components/modules/main/MainBaner.vue';
 export default {
   name: 'Index',
   async asyncData({ $axios }) {
-    const { data } = await $axios.$get(`${process.env.API_URL}/api/main`);
+    const { data } = await $axios.$get(`/api/main`);
 
     return { mainData: data };
   },

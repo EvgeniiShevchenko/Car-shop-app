@@ -97,7 +97,7 @@
                 </span>
               </div>
             </div>
-            <SelectBtn class="col-5 pl-4 col-sm-3 pl-sm-4 pl-md-4 col-lg-4 pl-lg-2" :value="valuta" :payload="true" :options="valutaList" @change="selectValuta($event)" />
+            <SelectBtn class="col-5 pl-4 col-sm-3 pl-sm-4 pl-md-4 col-lg-4 pl-lg-2" :value="currency" :payload="true" :options="currencyList" @change="selectCurrency($event)" />
           </div>
           <div class="col-sm-12 col-lg-6 pl-lg-4">
             <DragSlider
@@ -130,7 +130,6 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import axios from 'axios';
 // components
 import SelectBtn from '~/components/base/SelectBtn.vue';
 import AutocompleteBtn from '~/components/base/AutocompleteBtn.vue';
@@ -147,11 +146,12 @@ export default {
       locationsList: [],
       yearsFromList: [],
       yearsToList: [],
-      valutaList: [],
+      currencyList: [],
       dragSliderConfig: {
         single: false,
         title: '',
         dotSize: 28,
+        resetBtn: false,
       },
       updateSlaider: false,
       hasType: false,
@@ -166,7 +166,7 @@ export default {
       type: (state) => state.main.filter.type,
       brand: (state) => state.main.filter.brand,
       model: (state) => state.main.filter.model,
-      valuta: (state) => state.main.filter.valuta,
+      currency: (state) => state.main.filter.currency,
       fromYear: (state) => state.main.filter.productionYearFrom,
       toYear: (state) => state.main.filter.productionYearTo,
       location: (state) => state.main.filter.location,
@@ -258,8 +258,8 @@ export default {
       this.setType(param);
 
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/marks?type=${param}`, { method: 'GET' });
-        this.brandList = Object.values(data.data.marks).map((item, index) => ({
+        const { data } = await this.$axios.$get(`/api/filters/marks?type=${param}`, { method: 'GET' });
+        this.brandList = Object.values(data.marks).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
         }));
@@ -277,8 +277,8 @@ export default {
       this.setBrand(typeName);
 
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/models?type=${this.type}&mark=${typeName}`, { method: 'GET' });
-        this.modelsList = Object.values(data.data.models).map((item, index) => ({
+        const { data } = await this.$axios.$get(`/api/filters/models?type=${this.type}&mark=${typeName}`, { method: 'GET' });
+        this.modelsList = Object.values(data.models).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
         }));
@@ -308,8 +308,8 @@ export default {
       this.setModel(modelName);
 
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/years?type=${this.type}&model=${modelName}`, { method: 'GET' });
-        const productionYear = Object.values(data.data.years).map((item, index) => ({
+        const { data } = await this.$axios.$get(`/api/filters/years?type=${this.type}&model=${modelName}`, { method: 'GET' });
+        const productionYear = Object.values(data.years).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
         }));
@@ -346,9 +346,9 @@ export default {
       try {
         this.isLocationsLoading = true;
 
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/regions`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/filters/regions`, { method: 'GET' });
 
-        this.locationsList = Object.values(data.data.regions).map((item, index) => ({
+        this.locationsList = Object.values(data.regions).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
         }));
@@ -383,22 +383,22 @@ export default {
       this.yearsToList = [];
     },
 
-    async selectValuta(valuta) {
-      this.updateSlaider = !this.updateSlaider;
-
+    async selectCurrency(currency) {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/prices?currencies=${valuta.toLowerCase}`, { method: 'GET' });
-        const { min, max } = data.data;
+        const { data } = await this.$axios.$get(`/api/filters/prices?currency=${currency.meta.id}`, { method: 'GET' });
+        const { min, max } = data;
 
         this.setFixedMinPrice(min);
         this.setFixedMaxPrice(max);
         this.setPriceMin(min);
         this.setPriceMax(max);
+
+        this.updateSlaider = !this.updateSlaider;
       } catch (error) {
         console.error(error);
       }
 
-      this.setValuta(valuta.value);
+      this.setCurrency(currency.value);
     },
 
     handlerDragSlider(value) {
@@ -423,7 +423,7 @@ export default {
       resetFilterProductionYearFrom: 'main/resetFilterProductionYearFrom',
       setFilterProductionYearTo: 'main/setFilterProductionYearTo',
       resetFilterProductionYearTo: 'main/resetFilterProductionYearTo',
-      setValuta: 'main/setFilterValuta',
+      setCurrency: 'main/setFilterCurrency',
       setFixedMaxPrice: 'main/setFilterPriceRangeMax',
       setFixedMinPrice: 'main/setFilterPriceRangeMin',
       setPriceMax: 'main/setPriceMax',
@@ -433,29 +433,29 @@ export default {
   mounted() {
     try {
       (async () => {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/types`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`${process.env.API_URL}/api/filters/types`, { method: 'GET' });
 
-        this.categoryList = Object.values(data.data.types).map((item, index) => ({
+        this.categoryList = Object.values(data.types).map((item, index) => ({
           text: item,
           value: `${index + 1}`,
         }));
       })();
 
       (async () => {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/currencies`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/filters/currencies`, { method: 'GET' });
 
-        this.valutaList = Object.values(data.data.currencies).map((item) => ({
+        this.currencyList = Object.values(data.currencies).map((item) => ({
           text: item.name,
           value: item.name,
           meta: item,
         }));
 
-        this.setValuta(data.data.current_default.name);
+        this.setCurrency(data.current_default.name);
       })();
 
       (async () => {
-        const { data } = await axios.get(`${process.env.API_URL}/api/filters/prices`, { method: 'GET' });
-        const { min, max } = data.data;
+        const { data } = await this.$axios.$get(`/api/filters/prices`, { method: 'GET' });
+        const { min, max } = data;
 
         this.setPriceMin(min);
         this.setPriceMax(max);

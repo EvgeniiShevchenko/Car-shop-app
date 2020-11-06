@@ -8,7 +8,7 @@ const getDefaultState = () => {
       location: '',
       productionYearFrom: '',
       productionYearTo: '',
-      valuta: '',
+      currency: '',
       priceRange: {
         min: 0,
         max: 0,
@@ -30,8 +30,8 @@ export default {
     setFilterStates(state, payload) {
       state.filter.states = payload;
     },
-    setFilterValuta(state, payload) {
-      state.filter.valuta = payload;
+    setFilterCurrency(state, payload) {
+      state.filter.currency = payload;
     },
     setFilterType(state, payload) {
       state.filter.type = payload;
@@ -93,8 +93,8 @@ export default {
     resetFilterType({ commit }) {
       commit('resetFilterType');
     },
-    setFilterValuta({ commit }, payload) {
-      commit('setFilterValuta', payload);
+    setFilterCurrency({ commit }, payload) {
+      commit('setFilterCurrency', payload);
     },
     setFilterBrand({ commit }, payload) {
       commit('setFilterBrand', payload);

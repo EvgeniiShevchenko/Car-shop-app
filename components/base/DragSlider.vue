@@ -2,7 +2,7 @@
   <div>
     <div class="general">
       <p class="title" v-if="config.title.length !== 0">{{ config.title }}</p>
-      <button v-if="config.resetBtn" v-show="handlerChange" class="reset" type="button" @click="$emit('reset-filter')">reset</button>
+      <button class="reset" v-show="handlerChange && config.resetBtn" type="button" @click="$emit('reset-filter')">reset</button>
     </div>
     <slot class="detail" name="detail" />
     <vue-slider :value="sliderValue" class="slider" eventType="auto" :min="sliderData[0]" :max="sliderData[1]" :contained="true" :dotSize="config.dotSize" tooltip="none" @change="handlerSliderChange">
@@ -45,7 +45,7 @@ export default {
       type: Object,
       default: function () {
         return {
-          single: true,
+          single: false,
           subTitle: '',
           dotSize: 14,
           resetBtn: false,
@@ -55,11 +55,9 @@ export default {
   },
   computed: {
     handlerChange() {
-      if (this.config.single) {
-        return JSON.stringify(this.sliderValue) === JSON.stringify(this.sliderData[1]) ? false : true;
-      } else {
-        return JSON.stringify(this.sliderValue) === JSON.stringify(this.sliderData[1]) ? false : true;
-      }
+      if (this.config.single) return this.sliderValue === this.sliderData[0] ? false : true;
+
+      return JSON.stringify(this.sliderValue) === JSON.stringify(this.sliderData) ? false : true;
     },
   },
   methods: {
@@ -80,7 +78,7 @@ export default {
   }
 
   .reset {
-    color: black;
+    color: #000000;
     font-size: 15;
     border: none;
     padding: 0;

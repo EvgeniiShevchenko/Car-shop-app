@@ -10,7 +10,7 @@
       <li class="category-list-item empty"></li>
       <li class="category-list-item empty"></li>
     </ul>
-    <CarouselSingleLine class="carousel-wrapper" :config="carouselConfig" :collection="newsCollection" lazyLoad="ondemand">
+    <CarouselSingleLine class="carousel-wrapper" originId="main-news" :key="reloadSlider" :config="carouselConfig" :collection="newsCollection" lazyLoad="ondemand">
       <template slot="default" slot-scope="{ slotScope: item }">
         <n-link class="news-list-item" :to="`/news/${item.slug}`">
           <img class="item-preview" :src="item.image" alt="" />
@@ -43,7 +43,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 import VClamp from 'vue-clamp';
 import { mapState } from 'vuex';
 // components
@@ -57,6 +56,7 @@ export default {
       category: [],
       newsCollection: [],
       selectCategory: '',
+      reloadSlider: false,
       page: 1,
       range: 4,
       newsByDefault: 1,
@@ -87,23 +87,25 @@ export default {
   },
   methods: {
     goToTheNext() {
-      this.$children[0].$refs.carousel.next();
+      document.querySelector('.main-news').__vue__.next();
 
       this.page = this.page * this.range >= this.newsCollection.length ? this.page : this.page + 1;
     },
 
     goToThePrevious() {
-      this.$children[0].$refs.carousel.prev();
+      document.querySelector('.main-news').__vue__.prev();
 
       this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
     },
 
     async selectNewsCategory({ id }) {
       try {
-        const { data } = await axios.get(`${process.env.API_URL}/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
 
-        this.newsCollection = data.data.data;
+        this.newsCollection = data.data;
         this.selectCategory = id;
+        this.page = 1;
+        this.reloadSlider = !this.reloadSlider;
       } catch (error) {
         console.error(error);
       }
@@ -130,9 +132,9 @@ export default {
 
     try {
       (async () => {
-        const { data } = await axios.get(`${process.env.API_URL}/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
 
-        this.newsCollection = data.data.data;
+        this.newsCollection = data.data;
       })();
     } catch (error) {
       console.error(error);
