@@ -12,6 +12,7 @@ dist
 
 # idea
 .idea/
+.vscode
 
 # env
 .env
