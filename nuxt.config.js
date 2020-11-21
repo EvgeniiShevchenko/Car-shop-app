@@ -43,6 +43,10 @@ module.exports = {
   styleResources: {
     scss: ['~/assets/scss/app.scss'],
   },
+  vuetify: {
+    customVariables: ['~/assets/scss/base/vuetify-variables.scss'],
+    treeShake: true,
+  },
   build: {
     /*
      ** Run ESLint on save
