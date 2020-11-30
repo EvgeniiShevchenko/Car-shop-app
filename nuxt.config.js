@@ -12,6 +12,10 @@ module.exports = {
    */
   loading: { color: '#3B8070' },
   /*
+   ** Plugins to load before mounting the App
+   */
+  plugins: ['~/plugins/filters.js'],
+  /*
    ** Build configuration
    */
   modules: [

@@ -182,13 +182,14 @@ import publicationTimeList from '~/helpers/publicationTimeList.js';
 import isEmpty from '~/mixins/isEmpty.js';
 import isNull from '~/mixins/isNull.js';
 import stringReplaceAll from '~/mixins/stringReplaceAll.js';
+import getStatusName from '~/mixins/getStatusName.js';
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
 import setCatalogFilterDefaultParams from '~/mixins/setCatalogFilterDefaultParams.js';
 
 export default {
   name: 'Index',
-  mixins: [isEmpty, deleteFilterParamNameInLocalStorage, saveFilterParamNameInLocalStorage, isNull, stringReplaceAll, setCatalogFilterDefaultParams],
+  mixins: [isEmpty, deleteFilterParamNameInLocalStorage, saveFilterParamNameInLocalStorage, isNull, stringReplaceAll, setCatalogFilterDefaultParams, getStatusName],
   data() {
     return {
       filterParams: [],
@@ -230,19 +231,7 @@ export default {
   },
   computed: {
     getPagePathName() {
-      switch (Number(this.states)) {
-        case 0:
-          return 'Все автомобили';
-
-        case 1:
-          return 'Б/у автомобили';
-
-        case 2:
-          return 'Новые автомобили';
-
-        default:
-          return 'Под пригон автомобили';
-      }
+      return this.getStatusName(this.states);
     },
 
     getPageTitle() {

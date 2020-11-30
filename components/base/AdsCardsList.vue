@@ -1,10 +1,10 @@
 <template>
   <section>
     <div class="row no-gutters">
-      <h2 class="latest-title">Свежие объявления</h2>
-      <ul class="latest-ads-list col-md-12 col-lg-10 pr-lg-3">
-        <li :key="index" v-for="(item, index) in latestAds">
-          <CatalogCardsPreview class="latest-ads-item" :collection="item" />
+      <h2 class="card-title">{{ title }}</h2>
+      <ul class="card-list col-md-12 col-lg-10 pr-lg-3">
+        <li :key="index" v-for="(item, index) in collection">
+          <CatalogCardsPreview class="card-list-item" :collection="item" />
         </li>
       </ul>
       <div class="advertising col-md-12 col-lg-2 pl-lg-3"></div>
@@ -17,21 +17,17 @@
 import CatalogCardsPreview from '~/components/base/CatalogCardsPreview.vue';
 
 export default {
-  name: 'MainLatestAds',
-  data() {
-    return {
-      latestAds: [],
-    };
-  },
-  async mounted() {
-    const { products } = this.mainData;
-
-    this.latestAds = products;
-  },
+  name: 'AdsCardsList',
   props: {
-    mainData: {
-      type: Object,
-      required: true,
+    title: {
+      type: String,
+      default: 'Свежие объявления',
+    },
+    collection: {
+      type: Array,
+      default() {
+        return [];
+      },
     },
   },
   components: {
@@ -41,7 +37,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.latest-title {
+.card-title {
   margin-bottom: 42px;
 
   font-size: 32px;
@@ -50,13 +46,13 @@ export default {
   color: #222329;
 }
 
-.latest-ads-list {
+.card-list {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 170px;
   gap: 32px;
 
-  .latest-ads-item {
+  .card-list-item {
     display: flex;
     max-height: 170px;
   }
@@ -71,13 +67,13 @@ export default {
 }
 
 @include widescreen {
-  .latest-ads-list {
+  .card-list {
     margin-bottom: 72px;
   }
 }
 
 @include sm {
-  .latest-ads-list {
+  .card-list {
     grid-template-columns: 1fr;
     grid-template-rows: auto;
     gap: 32px;
@@ -86,15 +82,15 @@ export default {
 
 @include xs {
   .latest-ads {
-    .latest-title {
+    .card-title {
       font-size: 30px;
       line-height: 33px;
     }
 
-    .latest-ads-list {
+    .card-list {
       margin-bottom: 35px;
 
-      .latest-ads-item {
+      .card-list-item {
         position: relative;
         flex-direction: column;
         max-height: max-content;
