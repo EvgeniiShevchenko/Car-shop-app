@@ -64,7 +64,7 @@ export default {
       default: 'Default',
     },
     value: {
-      type: [String],
+      type: [String, Boolean, Number],
     },
     isPrepend: {
       type: Boolean,

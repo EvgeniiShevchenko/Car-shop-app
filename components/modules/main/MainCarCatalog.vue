@@ -110,7 +110,7 @@ export default {
         : this.page * this.shownQuantity;
     },
 
-    ...mapState({ locales: (state) => state.locales, type: (state) => state.main.filter.type, brand: (state) => state.main.filter.brand }),
+    ...mapState({ locales: (state) => state.locales, type: (state) => state.filter.filter.type, brand: (state) => state.filter.filter.brand }),
   },
   methods: {
     selectBrend(brand) {
@@ -158,7 +158,7 @@ export default {
 
     async handlerSortSelect(sortKey) {
       try {
-        const { data } = await this.$axios.$get(`/api/main/searchMark?search=${sortKey}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`main/searchMark?search=${sortKey}`, { method: 'GET' });
 
         this.carBrandList = data.marks;
         this.activeSortTab = sortKey;
@@ -171,7 +171,7 @@ export default {
       }
     },
 
-    ...mapActions({ setType: 'main/setFilterType', setBrand: 'main/setFilterBrand' }),
+    ...mapActions({ setType: 'filter/setFilterType', setBrand: 'filter/setFilterBrand' }),
   },
   async mounted() {
     const { types, liters_EN, liters_RU } = this.mainData;
@@ -190,7 +190,7 @@ export default {
 
     try {
       await (async () => {
-        const { data } = await this.$axios.$get(`/api/main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`main/searchMark?search=${this.activeSortTab}`, { method: 'GET' });
 
         this.carBrandList = data.marks;
       })();

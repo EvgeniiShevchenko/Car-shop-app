@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import main from './modules/main';
+import filter from './modules/filter';
 
 Vue.use(Vuex);
 
@@ -16,7 +16,7 @@ const store = () =>
     state: getDefaultState(),
     mutations: {},
     modules: {
-      main,
+      filter,
     },
   });
 

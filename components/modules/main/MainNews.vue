@@ -48,9 +48,12 @@ import { mapState } from 'vuex';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import CarouselPaginationBar from '~/components/base/CarouselPaginationBar.vue';
+// mixins
+import getCarouselRange from '~/mixins/getCarouselRange.js';
 
 export default {
   name: 'MainNews',
+  mixins: [getCarouselRange],
   data() {
     return {
       category: [],
@@ -100,7 +103,7 @@ export default {
 
     async selectNewsCategory({ id }) {
       try {
-        const { data } = await this.$axios.$get(`/api/main/getNewsHome?tag_id=${id}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`main/getNewsHome?tag_id=${id}`, { method: 'GET' });
 
         this.newsCollection = data.data;
         this.selectCategory = id;
@@ -110,16 +113,12 @@ export default {
         console.error(error);
       }
     },
-
-    defineCarouselRange() {
-      this.range = this.$vuetify.breakpoint.xs ? 1 : this.$vuetify.breakpoint.smAndDown ? 2 : 4;
-    },
   },
   async mounted() {
     const { news_tags } = this.mainData;
 
     this.$nextTick(() => {
-      this.defineCarouselRange();
+      this.range = this.getCarouselRange();
     });
 
     this.selectCategory = this.newsByDefault;
@@ -132,7 +131,7 @@ export default {
 
     try {
       (async () => {
-        const { data } = await this.$axios.$get(`/api/main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
 
         this.newsCollection = data.data;
       })();

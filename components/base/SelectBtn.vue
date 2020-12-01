@@ -1,5 +1,5 @@
 <template>
-  <div class="select">
+  <div :class="`select ${className}`">
     <div class="select-inner-wrapper">
       <v-select
         ref="mySelect"
@@ -27,6 +27,9 @@
         <template slot="no-data">
           <span></span>
         </template>
+        <template slot="prepend-inner" v-if="isPrependInput"
+          ><span class="prepend-content">{{ prependInputTitle }}</span></template
+        >
       </v-select>
       <slot name="reset" v-if="isReset">
         <button class="reset-btn" type="button" @click="$emit('reset')">
@@ -60,10 +63,10 @@ export default {
     },
     label: {
       type: String,
-      default: 'Default',
+      default: '',
     },
     value: {
-      type: [String],
+      type: [String, Number, Boolean],
     },
     isPrepend: {
       type: Boolean,
@@ -83,6 +86,18 @@ export default {
     isReset: {
       type: Boolean,
       default: false,
+    },
+    isPrependInput: {
+      type: Boolean,
+      default: false,
+    },
+    prependInputTitle: {
+      type: String,
+      default: 'Prepend',
+    },
+    className: {
+      type: String,
+      default: 'default',
     },
   },
 };
@@ -179,6 +194,45 @@ export default {
     ::v-deep .v-select--is-menu-active {
       .select-mark {
         transform: rotate(180deg);
+      }
+    }
+  }
+}
+
+.prepend {
+  .select-inner-wrapper {
+    width: min-content;
+
+    ::v-deep .v-select {
+      .v-input__control > div {
+        padding: 0;
+        height: min-content !important;
+
+        .v-input__prepend-inner {
+          align-self: center;
+          margin-top: 0;
+
+          .prepend-content {
+            white-space: nowrap;
+            font-size: 14px;
+            line-height: 17px;
+            color: #70848e;
+          }
+        }
+
+        fieldset {
+          border: none;
+        }
+
+        .v-select__selections {
+          .v-select__selection {
+            margin: 0 4px 0 0;
+          }
+
+          input {
+            display: none;
+          }
+        }
       }
     }
   }
