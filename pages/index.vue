@@ -8,7 +8,7 @@
         </div>
       </div>
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
-      <MainLatestAds class="latest-ads" :mainData="mainData" />
+      <AdsCardsList class="latest-ads" :collection="mainData.products" />
       <MainCarCatalog :mainData="mainData" />
       <MainNews class="news-wrapper" :mainData="mainData" />
       <MainComunity />
@@ -21,7 +21,7 @@
 <script>
 // components
 import MainFilter from '~/components/modules/main/MainFilter.vue';
-import MainLatestAds from '~/components/modules/main/MainLatestAds.vue';
+import AdsCardsList from '~/components/base/AdsCardsList.vue';
 import MainAbout from '~/components/modules/main/MainAbout.vue';
 import MainNews from '~/components/modules/main/MainNews.vue';
 import MainCarCatalog from '~/components/modules/main/MainCarCatalog.vue';
@@ -37,7 +37,7 @@ export default {
   },
   components: {
     MainFilter,
-    MainLatestAds,
+    AdsCardsList,
     MainAbout,
     MainNews,
     MainCarCatalog,

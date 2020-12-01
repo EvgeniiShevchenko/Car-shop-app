@@ -60,15 +60,7 @@ export default {
     config: {
       type: Array,
       default: () => {
-        return [
-          {
-            breakpoint: 960,
-            settings: {
-              slidesToShow: 2,
-              slidesToScroll: 2,
-            },
-          },
-        ];
+        return [];
       },
     },
   },
