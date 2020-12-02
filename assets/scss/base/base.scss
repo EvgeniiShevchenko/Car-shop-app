@@ -35,10 +35,26 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
+h1 {
+  font-family: Rubik;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 110%;
+  color: #222329;
+}
+
 .v-application {
   line-height: initial !important;
 }
 
 .v-application p {
   margin-bottom: 0;
+}
+
+.news_date {
+  font-weight: normal;
+  font-size: 13px;
+  line-height: 120%;
+  color: #70848E;
 }
