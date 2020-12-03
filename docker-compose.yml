@@ -3,16 +3,16 @@ version: "3"
 services:
   nuxt:
     build: ./
-    container_name: vuevixens-website
+    container_name: carsell-website
     restart: always
     ports:
-      - "3333:3333"
+      - "3000:3000"
     command:
       "npm run start"
 
   nginx:
     image: nginx:1.13
-    container_name: vuevixens-nginx
+    container_name: carsell-nginx
     ports:
       - "80:80"
     volumes:
