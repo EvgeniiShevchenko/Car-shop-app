@@ -8,5 +8,6 @@ ADD . ${APP_ROOT}
 
 RUN npm install
 RUN npm run build
+RUN nuxt start
 
 ENV HOST 0.0.0.0
