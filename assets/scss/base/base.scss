@@ -58,3 +58,13 @@ h1 {
   line-height: 120%;
   color: #70848E;
 }
+
+.send_btn {
+  background-color: #4CAD33 !important;
+  padding: 0 27px!important;
+  span {
+    color: #ffffff;
+    font-weight: 500;
+    font-size: 15px;
+  }
+}
