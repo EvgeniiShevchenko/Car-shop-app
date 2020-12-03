@@ -1,21 +1,41 @@
 <template>
   <main class="main container">
     <div class="outer-wrap">
-      <h1>Контакты</h1>
+      <h1 class="mb-8">Контакты</h1>
       <v-container>
         <v-row class="content_container" no-gutters>
-          <v-col class="pa-0" lg="6" md="6" sm="12" xs="12">
-            <v-flex class="pa-0" v-html="description">
-            </v-flex>
+          <v-col v-if="description" class="pa-0" lg="6" md="6" sm="12" xs="12">
+            <v-flex class="pa-0" v-html="description"> </v-flex>
           </v-col>
-          <v-col class="pa-0" lg="5" md="5" sm="12" xs="12">
+          <v-col class="pa-0" lg="5" md="5" sm="8" xs="12">
             <v-flex class="pa-0">
-              <v-form ref="form" v-model="valid" lazy-validation>
-                <v-flex v-for="input of form" :key="input.alias">
-                  <span> {{ input.name }} </span>
-                  <v-text-field outlined dense height="36" :rules="input.required ? [(v) => !!v || `Это поле является обязательным`] : []" :required="!!input.required"> </v-text-field>
+              <v-form ref="form" v-model="valid" @submit.prevent="submit" lazy-validation>
+                <v-flex v-for="input of formSettings" :key="input.alias">
+                  <span> {{ input.name }} </span><span v-if="input.required" class="required">*</span>
+                  <v-text-field
+                    v-if="input.alias !== 'message'"
+                    v-model="form[input.alias]"
+                    outlined
+                    dense
+                    :type="input.alias === 'email' ? 'email' : input.alias === 'phone' ? 'number' : ''"
+                    height="36"
+                    :rules="getFieldRules(input)"
+                    :required="!!input.required"
+                  >
+                  </v-text-field>
+                  <v-textarea
+                    v-if="input.alias === 'message'"
+                    v-model="form[input.alias]"
+                    outlined
+                    height="82"
+                    :rules="input.required ? [(v) => !!v || `Это поле является обязательным`] : []"
+                    :required="!!input.required"
+                  >
+                  </v-textarea>
                 </v-flex>
-                <v-btn class="send_btn"> Отправить </v-btn>
+                <v-alert v-if="isSucceeded" type="success"> Сообщение было отправленно администратору. </v-alert>
+                <v-alert v-if="isSucceeded === false" type="error"> Сообщение не было отправленно, что-то пошло не так. </v-alert>
+                <v-btn class="send_btn" type="submit"> Отправить </v-btn>
               </v-form>
             </v-flex>
           </v-col>
@@ -30,9 +50,17 @@ export default {
   name: 'Contacts',
   data() {
     return {
-      form: null,
+      formSettings: null,
       description: null,
       valid: true,
+      isSucceeded: null,
+      form: {
+        name: '',
+        company: '',
+        phone: '',
+        email: '',
+        message: '',
+      },
     };
   },
   mounted() {
@@ -43,12 +71,28 @@ export default {
       try {
         const data = (await this.$services.user.getContactForm()).data;
         this.description = data.static_info.description;
-        this.form = data.form;
-        console.log('this.text', this.description)
-        console.log('this.form', this.form)
-        console.log('data', data)
+        this.formSettings = data.form;
       } catch (error) {
         console.log(error);
+      }
+    },
+    async submit() {
+      if (!this.$refs.form.validate()) return;
+      try {
+        await this.$services.user.submitContactForm(this.form);
+        this.isSucceeded = true;
+      } catch (error) {
+        this.isSucceeded = false;
+        console.log(error);
+      }
+    },
+    getFieldRules(field) {
+      if (field.required && field.alias !== 'email') {
+        return [(v) => !!v || `Это поле является обязательным`];
+      } else if (field.alias === 'email') {
+        return field.required ? [(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'] : [(v) => /.+@.+\..+/.test(v) || 'Email должен содержать @'];
+      } else {
+        return [];
       }
     },
   },
@@ -57,10 +101,21 @@ export default {
 
 <style lang="scss" scoped>
 .main {
-  .content_container {
-    justify-content: space-between;
-    .v-text-field {
-
+  .container {
+    max-width: 100%;
+    padding: 0;
+    margin-bottom: 72px;
+    .content_container {
+      justify-content: space-between;
+      .required {
+        color: #f05156;
+      }
+      @include sm {
+        flex-direction: column;
+        .v-form {
+          margin-top: 24px;
+        }
+      }
     }
   }
 }
