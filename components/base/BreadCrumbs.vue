@@ -1,11 +1,13 @@
 <template>
   <nav class="breadcrumb" aria-label="breadcrumbs">
-    <n-link class="routing-home-link" to="/">
-      <svg class="home-link-icon">
-        <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-home" />
-      </svg>
-    </n-link>
     <ul class="routing-list">
+      <li class="routing-item">
+        <n-link class="routing-home-link" to="/">
+          <svg class="home-link-icon">
+            <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-home" />
+          </svg>
+        </n-link>
+      </li>
       <li :class="`routing-item ${collection.length === index + 1 ? 'is-active' : ''}`" :key="index" v-for="(item, index) in collection">
         <n-link class="routing-item-link" :to="item.path">
           <svg class="routing-link-icon">
@@ -36,15 +38,6 @@ export default {
   display: flex;
   align-items: center;
 
-  .routing-home-link {
-    font-size: 4px;
-
-    .home-link-icon {
-      width: 14px;
-      height: 14px;
-    }
-  }
-
   .routing-list {
     display: flex;
 
@@ -52,6 +45,15 @@ export default {
       display: flex;
       align-items: center;
       margin-left: 15px;
+
+      .routing-home-link {
+        font-size: 4px;
+
+        .home-link-icon {
+          width: 14px;
+          height: 14px;
+        }
+      }
 
       .routing-item-link {
         display: flex;

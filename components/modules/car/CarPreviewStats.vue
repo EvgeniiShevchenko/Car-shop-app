@@ -76,7 +76,7 @@
         <p class="price-currency">USD {{ collection.setting_price.USD_buy | cropFloatNumber }} грн • EUR {{ collection.setting_price.EUR_buy | cropFloatNumber }} грн</p>
       </div>
       <div class="price-manager-bar">
-        <n-link class="bar-scan-btn" to="/monitoring" role="button">
+        <n-link class="bar-scan-btn" :to="`/monitoring/${$route.params.id}`" role="button">
           Мониторинг цен
           <svg class="scan-btn-icon">
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />
@@ -203,6 +203,7 @@ export default {
     },
   },
   mounted() {
+    console.log('mounted -> mounted', this.collection);
     this.similarList = [...Array(8).keys()].map((item) => this.collection.similar[0]);
     this.generalStatsList = [
       { text: `ID ${this.collection.unique_id}`, icon: '' },
