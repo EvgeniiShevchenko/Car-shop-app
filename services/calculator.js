@@ -1,7 +1,7 @@
 import ApiService from './api';
 
 export default class CalculatorService extends ApiService {
-  getMonitoringPriceList() {
-    return this.axios.$get(`auth/one_car/price_monitoring/`);
+  getCalculationResult(carId, queryString) {
+    return this.axios.$get(`auth/one_car/calculation/${carId}${queryString}`);
   }
 }

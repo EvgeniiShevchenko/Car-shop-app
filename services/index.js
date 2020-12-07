@@ -1,5 +1,6 @@
 import AdsService from './ads';
 import MonitoringService from './monitoring';
+import CalculatorService from './calculator';
 import NewsService from './news';
 import UserService from './user';
 
@@ -9,5 +10,6 @@ export default (context) => {
     monitoring: new MonitoringService(context),
     news: new NewsService(context),
     user: new UserService(context),
+    calculator: new CalculatorService(context),
   };
 };

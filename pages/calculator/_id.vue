@@ -74,11 +74,13 @@ export default {
     }),
   },
   methods: {
-    calculation(carParams) {
+    async calculation(carParams) {
       try {
         const serverData = { ...carParams };
+        const { data } = await this.$services.calculator.getCalculationResult(this.getUniqueAdsNumber(), this.getQueryString(serverData));
 
-        this.$axios.$get(`auth/one_car/calculation/${this.getUniqueAdsNumber()}${this.getQueryString(serverData)}`);
+        this.collection = { ...this.collection, ...data.product };
+        this.setPriceChart(data.priceMonitoring);
       } catch (error) {
         console.error(error);
       }
@@ -119,6 +121,21 @@ export default {
       return routeList;
     },
 
+    setPriceChart(chartData) {
+      let labels = [];
+      let firstLine = [];
+      let secondLine = [];
+
+      for (let item of chartData) {
+        labels = [...labels, item.date];
+        firstLine = [...firstLine, item.maxPrice];
+        secondLine = [...secondLine, item.minPrice];
+      }
+
+      this.chart.labels = labels;
+      this.chart.data = { firstLine, secondLine };
+    },
+
     ...mapActions({
       setType: 'filter/setFilterType',
       setBrand: 'filter/setFilterBrand',
@@ -139,18 +156,8 @@ export default {
       this.setBrand(String(priceMonitoring.car_mark_id));
       this.setModel(String(priceMonitoring.car_model_id));
 
-      let labels = [];
-      let firstLine = [];
-      let secondLine = [];
+      this.setPriceChart(priceMonitoring.price_monitoring);
 
-      for (let item of priceMonitoring.price_monitoring) {
-        labels = [...labels, item.date];
-        firstLine = [...firstLine, item.maxPrice];
-        secondLine = [...secondLine, item.minPrice];
-      }
-
-      this.chart.labels = labels;
-      this.chart.data = { firstLine, secondLine };
       this.collection = priceMonitoring;
       this.isLoaded = true;
     } catch (error) {

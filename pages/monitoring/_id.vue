@@ -8,7 +8,7 @@
           <h2 class="stats-title">Средняя стоимость {{ collection.name }} по всей Украине</h2>
           <div class="stats-value-wrapper">
             <p class="stats-value-price">{{ collection.current_default }} {{ collection.price }}</p>
-            <p class="stats-value-convert" v-if="productsList.length">
+            <p class="stats-value-convert" v-if="productsDefaultList.length">
               {{ collection.price_another[0].price }} {{ collection.price_another[0].currency.name }}
               <span class="ml-6">{{ collection.price_another[1].currency.symbol }} {{ collection.price_another[1].price }}</span>
             </p>
@@ -20,7 +20,7 @@
             </svg>
           </n-link>
         </div>
-        <CurrencyRate :collection="collection" v-if="productsList.length" />
+        <CurrencyRate :collection="collection" v-if="productsDefaultList.length" />
       </div>
       <section class="liner-chart-wrapper">
         <h2 class="chart-title">Динмика изменения цен на {{ collection.name }}</h2>
@@ -35,13 +35,13 @@
             <button :class="`versions-item-btn ${modelVersionSelect === item.id ? 'is-select' : ''}`" type="button" @click="handlerSelectVersion(item)">{{ item.name }}</button>
           </li>
         </ul>
-        <AdsCardsList class="products" :collection="productsList" className="mobile" />
-        <n-link class="versions-more-btn" :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&currency_id=${currencyDefault}`" tag="button">
+        <AdsCardsList class="products" :collection="shownProductsList" className="mobile" />
+        <button class="versions-more-btn" type="button" @click="showMoreAds">
           Еще модели Volkswagen
           <svg class="more-btn-icon">
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />
           </svg>
-        </n-link>
+        </button>
       </div>
       <section class="rating">
         <h3 class="rating-title">Топ предложений {{ collection.name }}</h3>
@@ -114,6 +114,7 @@ export default {
     return {
       modelVersionList: [],
       productsList: [],
+      shownProductsList: [],
       productsDefaultList: [],
       sentenceList: [],
       currenciesList: [],
@@ -140,11 +141,14 @@ export default {
     },
   },
   methods: {
+    showMoreAds() {
+      this.shownProductsList = this.productsList.length <= 8 ? [...this.shownProductsList, ...this.productsList] : [...this.shownProductsList, ...this.productsList.splice(0, 8)];
+    },
+
     async selectCurrency({ value }) {
       try {
-        const { data } = await this.$axios.$get(`auth/one_car/sentence/${this.getUniqueAdsNumber()}/currency/${value}`);
+        this.sentenceList = (await this.$services.monitoring.getSentenceList(this.getUniqueAdsNumber(), value)).data.sentences;
 
-        this.sentenceList = data.sentences;
         this.currencyDefault = value;
       } catch (error) {
         console.error(error);
@@ -154,15 +158,16 @@ export default {
     async handlerSelectVersion({ id }) {
       try {
         if (!id) {
-          this.productsList = this.productsDefaultList;
+          this.productsList = [...this.productsDefaultList];
+          this.shownProductsList = this.productsList.splice(0, 8);
           this.modelVersionSelect = id;
 
           return;
         }
 
-        const { data } = await this.$axios.$get(`auth/one_car/price_monitoring/${this.getUniqueAdsNumber()}/fuel/${id}`);
+        this.productsList = (await this.$services.monitoring.getFuelProductsList(this.getUniqueAdsNumber(), id)).data.products;
 
-        this.productsList = data.products;
+        this.shownProductsList = this.productsList.splice(0, 8);
         this.modelVersionSelect = id;
       } catch (error) {
         console.error(error);
@@ -182,7 +187,7 @@ export default {
   },
   async fetch() {
     try {
-      const { data } = await this.$axios.$get(`auth/one_car/price_monitoring/${this.getUniqueAdsNumber()}`);
+      const { data } = await this.$services.monitoring.getMonitoringPriceList(this.getUniqueAdsNumber());
       const { fuels, sentence, select_currencies, products_fuels } = data.priceMonitoring;
 
       this.currenciesList = select_currencies.map((item) => {
@@ -191,8 +196,9 @@ export default {
       this.modelVersionList = [{ id: 0, name: 'Все' }, ...fuels];
       this.sentenceList = sentence;
       this.collection = data.priceMonitoring;
-      this.productsList = products_fuels;
       this.productsDefaultList = products_fuels;
+      this.productsList = [...products_fuels];
+      this.shownProductsList = this.productsList.splice(0, 8);
       let labels = [];
       let firstLine = [];
       let secondLine = [];
