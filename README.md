@@ -2,9 +2,13 @@
 
 > Nuxt.js project
 
-## Build Setup
+## Build Setup (local)
 
 ``` bash
+
+# copy .env.example to .env and add your api url
+$ cp .env.example .env
+
 # install dependencies
 $ npm install # Or yarn install
 
@@ -19,5 +23,16 @@ $ npm start
 $ npm run generate
 ```
 
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+## Build Setup (production)
 
+``` bash
+
+# copy .env.example to .env and add your api url
+$ cp .env.example .env
+
+# go to nginx/default.conf and change carsell-front.utest.space to your domain
+
+# run docker
+$  docker-compose up --build -d
+
+```
