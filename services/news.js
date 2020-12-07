@@ -4,4 +4,7 @@ export default class NewsService extends ApiService {
   getNewsList(params) {
     return this.axios.$get(`/news`, { params });
   }
+  GetNewsBySlug(params) {
+    return this.axios.$get(`/news/${params}`);
+  }
 }

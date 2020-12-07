@@ -42,6 +42,7 @@
         </div>
       </div>
     </header>
+    <bread-crumbs v-if="collection.length && $vuetify.breakpoint.mdAndUp" :collection="collection" :style="`max-width: ${width}`" />
     <nuxt class="content" :style="`max-width: ${width}`" />
     <footer class="footer">
       <div class="container footer-inner-wrapper" :style="`max-width: ${width}`">
@@ -116,9 +117,20 @@
 import moment from 'moment';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
+import pages from '../entities/pages';
+import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
 
 export default {
   name: 'Default',
+  data() {
+    return {
+      pages: pages,
+      collection: [],
+    };
+  },
+  mounted() {
+    this.getRouteHistory();
+  },
   computed: {
     getCurentYear() {
       return moment().format('YYYY');
@@ -139,7 +151,45 @@ export default {
     },
   },
   components: {
+    BreadCrumbs,
     MainHeaderMenu,
+  },
+  methods: {
+    getRouteHistory() {
+      const { path } = this.$route;
+      const breadCrumbs = [];
+      const pathArray = path.split('/').filter((path) => !!path);
+      pathArray.forEach((item) => {
+        let path, name;
+        if (item === 'catalog' || item === 'auto') {
+          let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
+          path = `/catalog?status=${this.getStatus(status)}`;
+          name = status ? status : 'Все автомобили';
+        } else {
+          path = `/${item}`;
+          name = this.pages[item] ? this.pages[item] : item;
+        }
+        breadCrumbs.push({ path, name });
+      });
+      this.collection = breadCrumbs;
+    },
+    getStatus(status) {
+      switch (status) {
+        case 'Б/у автомобили':
+          return 1;
+        case 'Новые автомобили':
+          return 2;
+        case 'Под пригон автомобили':
+          return 3;
+        default:
+          return 0;
+      }
+    },
+  },
+  watch: {
+    $route() {
+      this.getRouteHistory();
+    },
   },
 };
 </script>

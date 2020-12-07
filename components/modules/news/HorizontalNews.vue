@@ -1,12 +1,17 @@
 <template>
   <v-card class="mx-auto d-flex" max-width="567">
-    <v-img src="https://cdn.vuetifyjs.com/images/cards/sunshine.jpg" height="210px"></v-img>
+    <v-img v-if="news.mainImage" :src="news.mainImage" height="210px"></v-img>
+    <div v-else class="v-image">
+      <img src="~assets/images/news-placeholder.png" alt="news image" />
+    </div>
     <div class="px-4 py-5 content">
       <p class="news_date mb-2">
         {{ news.created_at | convertDateToFormatDDMMYYYY }}
       </p>
-      <v-card-title class="pa-0"> {{ news.name }} </v-card-title>
-      <v-card-text class="pa-0 mt-2"> {{ news.text }} </v-card-text>
+      <nuxt-link :to="{ name: 'news-id___ru', params: { id: news.alias }, query: $route.query }">
+        <v-card-title class="pa-0 mt-2"> {{ news.title }} </v-card-title>
+      </nuxt-link>
+      <v-card-text class="pa-0 mt-2"> {{ news.preview }} </v-card-text>
     </div>
   </v-card>
 </template>
@@ -26,8 +31,6 @@ export default {
 
 <style lang="scss" scoped>
 .v-card {
-  font-family: Rubik;
-  font-style: normal;
   .content {
     min-height: 202px;
     max-height: 202px;
@@ -62,6 +65,10 @@ export default {
   .v-image {
     height: 210px;
     width: 215px !important;
+    img {
+      width: 100%;
+      height: 100%;
+    }
   }
   @include tablet {
     .v-card {

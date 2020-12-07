@@ -1,12 +1,17 @@
 <template>
-  <v-card class="mx-auto">
-    <v-img :src="news.image" height="200px"></v-img>
+  <v-card>
+    <v-img v-if="news.mainImage" :src="news.mainImage" height="200px"></v-img>
+    <div v-else class="v-image">
+      <img src="~assets/images/news-placeholder.png" alt="news image" />
+    </div>
     <div class="px-4 py-5 content">
       <p class="news_date mb-2">
         {{ news.created_at | convertDateToFormatDDMMYYYY }}
       </p>
-      <v-card-title class="pa-0"> {{ news.name }} </v-card-title>
-      <v-card-text class="pa-0 mt-2"> {{ news.text }} </v-card-text>
+      <nuxt-link :to="{ name: 'news-id___ru', params: { id: news.alias }, query: $route.query }">
+        <v-card-title class="pa-0 mt-2"> {{ news.title }} </v-card-title>
+      </nuxt-link>
+      <v-card-text class="pa-0 mt-2"> {{ news.preview }} </v-card-text>
     </div>
   </v-card>
 </template>
