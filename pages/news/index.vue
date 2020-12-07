@@ -1,7 +1,6 @@
 <template>
   <main class="main container">
     <div class="outer-wrap">
-      <history-navigation />
       <h1 class="mt-3">Новости</h1>
       <v-tabs v-model="tab" next-icon="mdi-arrow-right-bold-box-outline" prev-icon="mdi-arrow-left-bold-box-outline" show-arrows background-color="#F2F7FA" height="38">
         <v-tab> Все </v-tab>
@@ -31,12 +30,11 @@
 <script>
 //Components
 import NewsList from '../../components/modules/news/NewsList.vue';
-import HistoryNavigation from '../../components/base/HistoryNavigation';
 import PaginationBar from '../../components/base/PaginationBar';
 
 export default {
   name: 'News',
-  components: { NewsList, HistoryNavigation, PaginationBar },
+  components: { NewsList, PaginationBar },
   data() {
     return {
       list: {

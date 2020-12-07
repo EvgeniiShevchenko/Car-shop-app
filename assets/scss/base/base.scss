@@ -35,13 +35,22 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-h1 {
-  font-family: Rubik;
-  font-style: normal;
+h1, h2, h4 {
   font-weight: 500;
-  font-size: 32px;
   line-height: 110%;
+}
+
+h1 {
+  font-size: 32px;
   color: #222329;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h4 {
+  font-size: 18px;
 }
 
 .v-application {

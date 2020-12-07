@@ -1,23 +1,25 @@
 <template>
-  <nav class="breadcrumb" aria-label="breadcrumbs">
-    <ul class="routing-list">
-      <li class="routing-item">
+  <main class="main container mt-3 pb-0">
+    <div class="outer-wrap">
+      <nav class="breadcrumb" aria-label="breadcrumbs">
         <n-link class="routing-home-link" to="/">
           <svg class="home-link-icon">
             <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-home" />
           </svg>
         </n-link>
-      </li>
-      <li :class="`routing-item ${collection.length === index + 1 ? 'is-active' : ''}`" :key="index" v-for="(item, index) in collection">
-        <n-link class="routing-item-link" :to="item.path">
-          <svg class="routing-link-icon">
-            <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-arrow" />
-          </svg>
-          {{ item.name }}
-        </n-link>
-      </li>
-    </ul>
-  </nav>
+        <ul class="routing-list pa-0">
+          <li :class="`routing-item ${collection.length === index + 1 ? 'is-active' : ''}`" :key="index" v-for="(item, index) in collection">
+            <n-link class="routing-item-link" :to="item.path">
+              <svg class="routing-link-icon">
+                <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-arrow" />
+              </svg>
+              {{ item.name }}
+            </n-link>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </main>
 </template>
 
 <script>
