@@ -69,7 +69,7 @@
         </v-col>
         <v-col class="general col-12 col-md-9 pl-md-3" v-show="!isMobileFilter">
           <div class="filter-manager">
-            <ul class="manager-list" :key="resetTags">
+            <ul class="manager-list">
               <li
                 :class="`manager-item ${getQueryParams.length - 1 === index ? 'is-margin-right-0' : ''} ${typeof item[1] === 'object' ? 'is-group' : ''}`"
                 :key="index"
@@ -77,7 +77,7 @@
               >
                 <div class="manager-item-single" v-if="typeof item[1] !== 'object'">
                   <button class="item-select-btn" type="button">
-                    <span>{{ getFilterParamTitle(item[0]) }}</span>
+                    <span>{{ !$isServer ? getFilterParamTitle(item[0]) : '' }}</span>
                   </button>
                   <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item)" v-if="!/is_ukraine|is_cleared/.test(item[0])">
                     <svg class="manager-btn-icon">
@@ -88,7 +88,7 @@
                 <ul class="manager-item-group" v-else>
                   <li class="manager-group-item" :key="index" v-for="(param, index) in item[1]">
                     <button class="item-select-btn" type="button">
-                      <span>{{ getFilterParamTitle(item[0], 'hello')[index] }}</span>
+                      <span>{{ !$isServer ? getFilterParamTitle(item[0], 'hello')[index] : '' }}</span>
                     </button>
                     <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item, param, index)">
                       <svg class="manager-btn-icon">
@@ -214,12 +214,13 @@ export default {
       },
       isMobileFilter: false,
       isMobile: false,
-      resetTags: false,
     };
   },
   created() {
     this.unsubscribe = this.$store.subscribe((mutation, state) => {
-      const paternIgnore = new RegExp(/initialFilterParams|setBrandList|setFilterPriceRangeMin|setFilterPriceRangeMax|setDefaultCurrency|setCategoryList|setModelList|setYearFromList|setYearToList/);
+      const paternIgnore = new RegExp(
+        /initialFilterParams|setBrandList|setFilterPriceRangeMin|setFilterPriceRangeMax|setDefaultCurrency|setCategoryList|setModelList|setYearFromList|setYearToList|initialFilterPriceRange/
+      );
 
       if (!paternIgnore.test(mutation.type)) {
         this.setQueryParams();
@@ -664,6 +665,12 @@ export default {
       this.initialFilterParams(initialChangeOptions);
     },
 
+    initialLocalStore() {
+      this.saveFilterParamNameInLocalStorage('is_ukraine', this.abroad ? 'Авто в Украине' : 'Авто не в Украине');
+      this.saveFilterParamNameInLocalStorage('is_cleared', this.customsCleared ? 'Растаможенные' : 'Нерастаможенные');
+      Number(this.states) !== 0 ? this.saveFilterParamNameInLocalStorage('status', 'Под пригон автомобили') : this.deleteFilterParamNameInLocalStorage(['status']);
+    },
+
     ...mapActions({
       resetFilterStates: 'filter/resetFilterStates',
       resetFilterType: 'filter/resetFilterType',
@@ -728,7 +735,7 @@ export default {
   mounted() {
     if (this.$vuetify.breakpoint.xs) this.paginationVisible = 3;
 
-    this.initializationData();
+    this.initialLocalStore();
 
     this.$nextTick(() => {
       this.isMobile = this.$vuetify.breakpoint.xs;
@@ -738,6 +745,7 @@ export default {
     });
   },
   async fetch() {
+    this.initializationData();
     const { data } = await this.$axios.$get(`catalog/main${this.getQueryString()}`);
     const { products, car_order, subscription } = data;
 

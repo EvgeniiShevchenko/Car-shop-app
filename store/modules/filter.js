@@ -269,6 +269,10 @@ export default {
     initialFilterParams(state, payload) {
       state.filter = { ...state.filter, ...payload };
     },
+    initialFilterPriceRange(state, { minPrice, maxPrice }) {
+      state.filter.priceMax = maxPrice;
+      state.filter.priceMin = minPrice;
+    },
   },
 
   actions: {
@@ -469,6 +473,9 @@ export default {
     },
     initialFilterParams({ commit }, payload) {
       commit('initialFilterParams', payload);
+    },
+    initialFilterPriceRange({ commit }, payload) {
+      commit('initialFilterPriceRange', payload);
     },
   },
 };

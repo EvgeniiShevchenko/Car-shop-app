@@ -37,3 +37,7 @@ Vue.filter('beforeNowInPastFromDate', (date) => {
 Vue.filter('cropFloatNumber', (floatNumber, croppedNumber = 2) => {
   return Number(floatNumber).toFixed(croppedNumber);
 });
+
+Vue.filter('getCurrentDateByFormat', (format = 'DD.MM.YYYY') => {
+  return moment().format(format);
+});
