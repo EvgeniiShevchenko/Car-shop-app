@@ -1,0 +1,62 @@
+[
+    {
+        "date": "01.01.2020",
+        "minPrice": 400,
+        "maxPrice": 600
+    },
+    {
+        "date": "01.02.2020",
+        "minPrice": 500,
+        "maxPrice": 600
+    },
+    {
+        "date": "01.03.2020",
+        "minPrice": 600,
+        "maxPrice": 600
+    },
+    {
+        "date": "01.04.2020",
+        "minPrice": 600,
+        "maxPrice": 600
+    },
+    {
+        "date": "01.05.2020",
+        "minPrice": 600,
+        "maxPrice": 1000
+    },
+    {
+        "date": "01.06.2020",
+        "minPrice": 1000,
+        "maxPrice": 1200
+    },
+    {
+        "date": "01.07.2020",
+        "minPrice": 1000,
+        "maxPrice": 1000
+    },
+    {
+        "date": "01.08.2020",
+        "minPrice": 1000,
+        "maxPrice": 1064
+    },
+    {
+        "date": "01.09.2020",
+        "minPrice": 1100,
+        "maxPrice": 1300
+    },
+    {
+        "date": "01.10.2020",
+        "minPrice": 1150,
+        "maxPrice": 1350
+    },
+    {
+        "date": "01.11.2020",
+        "minPrice": 1250,
+        "maxPrice": 1450
+    },
+    {
+        "date": "01.12.2020",
+        "minPrice": 1300,
+        "maxPrice": 1500
+    }
+]

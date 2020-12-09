@@ -48,6 +48,36 @@
           @reset="resetModelField"
         />
       </div>
+      <div class="carcas" v-if="className === 'calculator'">
+        <label class="filter-param-label">Тип кузова</label>
+        <AutocompleteBtn
+          :options="carcaseList"
+          :value="carcase"
+          :payload="true"
+          :isPrepend="isEmpty(model)"
+          :isReset="!isEmpty(carcase)"
+          label="Выбрать"
+          prependTitle="Выбырите сначало модель"
+          @change="selectCarcase($event)"
+          @reset="resetCarcaseField"
+        />
+      </div>
+      <div class="fuel" v-if="className === 'calculator'">
+        <label class="filter-param-label">Топливо</label>
+        <SelectBtn :options="fuelList" :value="fuelId" :payload="true" :isReset="!isEmpty(fuelId)" label="Выбрать" @change="selectFuel($event)" @reset="resetFuelField" />
+      </div>
+      <div class="unit-box" v-if="className === 'calculator'">
+        <label class="filter-param-label">КПП</label>
+        <SelectBtn
+          :options="transmissionList"
+          :value="transmissionId"
+          :payload="true"
+          :isReset="!isEmpty(transmissionId)"
+          label="Выбрать"
+          @change="selectTransmission($event)"
+          @reset="resetTransmissionField"
+        />
+      </div>
       <div class="location-car col-sm-6 pr-sm-4 mb-3 col-lg-6 pr-lg-4">
         <label class="filter-param-label">Регион</label>
         <AutocompleteBtn
@@ -59,8 +89,26 @@
           label="Выбрать"
           @change="selectLocation($event)"
           @focus="prefetchLocations()"
-          @reset="resetLocation"
+          @reset="resetFieldLocation"
         />
+      </div>
+      <div class="city" v-if="className === 'calculator'">
+        <label class="filter-param-label">Город</label>
+        <AutocompleteBtn
+          :options="cityList"
+          :value="city"
+          :payload="true"
+          :isReset="!isEmpty(city)"
+          :isPrepend="isEmpty(location)"
+          prependTitle="Выбырите регион"
+          label="Выбрать"
+          @change="selectCity($event)"
+          @reset="resetCity"
+        />
+      </div>
+      <div class="customs" v-if="className === 'calculator'">
+        <label class="filter-param-label">Растаможка</label>
+        <SelectBtn :options="customsList" :value="isCustomsCleared" :payload="true" :isReset="isEmpty(isCustomsCleared)" label="Выбрать" @change="selectCustoms($event)" @reset="resetCustoms" />
       </div>
       <div class="production-year col-sm-6 pl-sm-4 mb-3 col-lg-6 pl-lg-4">
         <AcordionSingle class="acordion-year" :isOpen="0" className="simple" title="Год выпуска">
@@ -95,8 +143,9 @@
           </template>
         </AcordionSingle>
       </div>
-      <AcordionSingle class="acordion-mileage" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Пробег, тыс. км">
+      <AcordionSingle class="acordion-mileage" v-if="/catalog|calculator/.test(this.className)" :isOpen="0" className="simple" title="Пробег, тыс. км">
         <template slot="content">
+          <label class="filter-param-label">Пробег</label>
           <div class="group-mileage row no-gutters">
             <input class="mileage-from" :value="mileageFrom" type="number" placeholder="от" autocomplete @input="changeMileageFrom" />
             <input class="mileage-to" :value="mileageTo" type="number" placeholder="до" autocomplete @input="changeMileageTo" />
@@ -249,6 +298,7 @@
             <use xlink:href="~assets/images/sprites/main.svg#icon-search-btn" />
           </svg>
         </button>
+        <button class="cost-btn" v-if="className === 'calculator'" type="button" @click="sendFilterData">Узнать стоимость авто</button>
       </div>
     </form>
   </div>
@@ -264,20 +314,19 @@ import CheckBox from '~/components/base/CheckBox.vue';
 import CheckBoxGroup from '~/components/base/CheckBoxGroup.vue';
 import AcordionSingle from '~/components/base/AcordionSingle.vue';
 // helpers
-import transmissionList from '~/helpers/transmissionList.js';
-import fuelList from '~/helpers/fuelList.js';
 import additionalOptionsList from '~/helpers/additionalOptionsList.js';
-import driveUnitList from '~/helpers/driveUnitList.js';
 import sortList from '~/helpers/sortList.js';
 import publicationTimeList from '~/helpers/publicationTimeList.js';
 // mixins
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
+import transformObjectInArrayForSelect from '~/mixins/transformObjectInArrayForSelect.js';
 import isNull from '~/mixins/isNull.js';
+import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
   name: 'MainFilter',
-  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, isNull],
+  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformObjectInArrayForSelect, isNull, isEmpty],
   data() {
     return {
       statesList: ['Все', 'Б/у', 'Новые', this.$i18n.t('под-пригон')],
@@ -293,9 +342,9 @@ export default {
       hasBrand: false,
       hasModel: false,
       isLocationsLoading: false,
-      transmissionList: transmissionList,
-      fuelList: fuelList,
-      driveUnitList: driveUnitList,
+      transmissionList: [],
+      fuelList: [],
+      driveUnitList: [],
       additionalOptionsList: additionalOptionsList,
       customsClearedList: ['Растаможенные', 'Нерастаможенные'],
       abroadList: ['Авто в Украине', 'Авто не в Украине'],
@@ -309,6 +358,17 @@ export default {
       ],
       sortList: sortList,
       publicationTimeList: publicationTimeList,
+      city: '',
+      cityList: [],
+      carcase: '',
+      carcaseList: [],
+      fuelId: '',
+      transmissionId: '',
+      isCustomsCleared: true,
+      customsList: [
+        { text: 'растаможен', value: true },
+        { text: 'Не растаможен', value: false },
+      ],
     };
   },
   computed: {
@@ -347,6 +407,21 @@ export default {
     }),
   },
   methods: {
+    sendFilterData() {
+      const filterData = {
+        is_cleared: this.isCustomsCleared,
+        car_type_id: this.type,
+        car_mark_id: this.brand,
+        car_model_id: this.model,
+        region_id: this.location,
+        city_id: this.city,
+        transmission_id: this.transmissionId ? [this.transmissionId] : [],
+        fuel_id: this.fuelId ? [this.fuelId] : [],
+      };
+
+      this.$emit('send-data', filterData);
+    },
+
     selectVinCode(e) {
       if (e) {
         this.saveFilterParamNameInLocalStorage('vin_code_verified', 'Проверенный VIN-код');
@@ -393,6 +468,8 @@ export default {
       this.resetFieldModel();
       this.resetFieldsFromAndTo();
       this.deleteFilterParamNameInLocalStorage(['car_type_id', 'car_mark_id', 'car_model_id', 'year_from', 'year_to']);
+
+      if (this.className === 'calculator') this.resetCarcase();
     },
 
     resetBrandField() {
@@ -400,12 +477,33 @@ export default {
       this.resetFieldModel();
       this.resetFieldsFromAndTo();
       this.deleteFilterParamNameInLocalStorage(['car_mark_id', 'car_model_id', 'year_from', 'year_to']);
+
+      if (this.className === 'calculator') this.resetCarcase();
     },
 
     resetModelField() {
       this.resetModel();
       this.resetFieldsFromAndTo();
       this.deleteFilterParamNameInLocalStorage(['car_model_id', 'year_from', 'year_to']);
+
+      if (this.className === 'calculator') this.resetCarcase();
+    },
+
+    resetCarcaseField() {
+      this.carcase = '';
+    },
+
+    resetFuelField() {
+      this.fuelId = '';
+    },
+
+    resetTransmissionField() {
+      this.transmissionId = '';
+    },
+
+    resetCarcase() {
+      this.carcase = '';
+      this.carcaseList = [];
     },
 
     resetFieldFrom() {
@@ -418,9 +516,18 @@ export default {
       this.deleteFilterParamNameInLocalStorage(['year_to']);
     },
 
-    resetLocation() {
+    resetFieldLocation() {
       this.resetLocation();
       this.deleteFilterParamNameInLocalStorage(['location_id']);
+
+      if (this.className === 'calculator') {
+        this.city = '';
+        this.cityList = [];
+      }
+    },
+
+    resetCity() {
+      this.city = '';
     },
 
     resetFieldBroken() {
@@ -449,18 +556,30 @@ export default {
     },
 
     selectTransmission(optionList) {
+      if (this.className === 'calculator') {
+        this.transmissionId = optionList.value;
+
+        return;
+      }
+
       this.saveFilterParamNameInLocalStorage(
         'transmission_id',
-        optionList.map((item) => transmissionList.find((param) => param.value === item).text)
+        optionList.map((item) => this.transmissionList.find((param) => param.value === item).text)
       );
 
       this.setTransmission(optionList);
     },
 
     selectFuel(optionList) {
+      if (this.className === 'calculator') {
+        this.fuelId = optionList.value;
+
+        return;
+      }
+
       this.saveFilterParamNameInLocalStorage(
         'fuel_id',
-        optionList.map((item) => fuelList.find((param) => param.value === item).text)
+        optionList.map((item) => this.fuelList.find((param) => param.value === item).text)
       );
 
       this.setFuel(optionList);
@@ -469,7 +588,7 @@ export default {
     selectDriveUnit(optionList) {
       this.saveFilterParamNameInLocalStorage(
         'drive_unit_id',
-        optionList.map((item) => driveUnitList.find((param) => param.value === item).text)
+        optionList.map((item) => this.driveUnitList.find((param) => param.value === item).text)
       );
 
       this.setDriveUnit(optionList);
@@ -627,6 +746,27 @@ export default {
       } catch (error) {
         console.error(error);
       }
+
+      if (this.className === 'calculator') {
+        this.carcase = '';
+
+        try {
+          const { data } = await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.collection.year_begin}`);
+          let carcas = [];
+
+          for (let item in data.series) {
+            carcas = [...carcas, { text: data.series[item], value: item }];
+          }
+
+          this.carcaseList = carcas;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+
+    selectCarcase({ text, value }) {
+      this.carcase = value;
     },
 
     checkExistBrand() {
@@ -644,9 +784,36 @@ export default {
       this.resetModelList();
     },
 
-    selectLocation({ text, value }) {
+    async selectLocation({ text, value }) {
       this.saveFilterParamNameInLocalStorage('location_id', text);
       this.setLocation(value);
+
+      if (this.className === 'calculator') {
+        try {
+          const { data } = await this.$axios.$get(`filters/cities?region=${value}`);
+          let cities = [];
+
+          for (let item in data.cities) {
+            cities = [...cities, { text: data.cities[item], value: item }];
+          }
+
+          this.cityList = cities;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    },
+
+    selectCity({ value }) {
+      this.city = value;
+    },
+
+    selectCustoms({ value }) {
+      this.isCustomsCleared = value;
+    },
+
+    resetCustoms() {
+      this.isCustomsCleared = true;
     },
 
     async prefetchLocations() {
@@ -781,6 +948,7 @@ export default {
       setDriveUnit: 'filter/setDriveUnit',
       setAdditionalSettings: 'filter/setAdditionalSettings',
       resetAdditionalSettings: 'filter/resetAdditionalSettings',
+      initialFilterPriceRange: 'filter/initialFilterPriceRange',
     }),
   },
   async mounted() {
@@ -803,6 +971,8 @@ export default {
         if (this.className !== 'catalog') {
           this.setPriceMin(min);
           this.setPriceMax(max);
+        } else {
+          this.initialFilterPriceRange({ minPrice: min, maxPrice: max });
         }
 
         this.setFixedMinPrice(min);
@@ -827,6 +997,35 @@ export default {
         this.setCurrency(data.current_default.id);
       }
     })();
+
+    if (/catalog|calculator/.test(this.className)) {
+      try {
+        const { transmissions, driveUnits, fuels, engineCapacities, enginePowers } = (await this.$axios.$get(`filters/characteristic`)).data;
+
+        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
+        this.fuelList = this.transformObjectInArrayForSelect(fuels);
+        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
+      } catch (error) {
+        console.error(error);
+      }
+
+      if (this.className === 'calculator' && !this.isEmpty(this.model)) {
+        try {
+          this.carcase = '';
+
+          const { data } = await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.collection.year_begin}`);
+          let carcas = [];
+
+          for (let item in data.series) {
+            carcas = [...carcas, { text: data.series[item], value: item }];
+          }
+
+          this.carcaseList = carcas;
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    }
 
     this.$nextTick(async () => {
       if (this.type) {
@@ -877,6 +1076,10 @@ export default {
     },
     results: {
       type: Object,
+    },
+    collection: {
+      type: Object,
+      default: () => ({}),
     },
   },
   components: {
@@ -1259,6 +1462,13 @@ export default {
           height: 12px;
         }
       }
+
+      .cost-btn {
+        @extend .search-link;
+        font-family: Rubik;
+        font-weight: 500;
+        line-height: 15px;
+      }
     }
 
     .slider-dot {
@@ -1399,6 +1609,146 @@ export default {
   }
 }
 
+.is-calculator {
+  @extend .is-main;
+  padding: 0;
+  background: none;
+
+  &::before {
+    content: none;
+  }
+
+  .filter-form {
+    .category-car {
+      max-width: calc(100% / 2);
+      padding-right: 16px;
+
+      order: 1;
+    }
+
+    .brend-car {
+      margin-top: 12px;
+
+      order: 5;
+    }
+
+    .model-car {
+      padding-left: 0 !important;
+      padding-right: 16px;
+
+      order: 7;
+    }
+
+    .carcas {
+      max-width: calc(100% / 2);
+      width: 100%;
+      padding-right: 16px;
+
+      order: 3;
+    }
+
+    .fuel {
+      padding-left: 16px;
+      max-width: calc(100% / 2);
+      width: 100%;
+
+      order: 8;
+    }
+
+    .unit-box {
+      padding-left: 16px;
+      margin-top: 12px;
+
+      max-width: calc(100% / 2);
+      width: 100%;
+
+      order: 6;
+    }
+
+    .location-car {
+      padding-right: 0 !important;
+      padding-left: 16px;
+
+      order: 2;
+    }
+
+    .city {
+      max-width: calc(100% / 2);
+      width: 100%;
+      padding-left: 16px;
+
+      order: 4;
+    }
+
+    .production-year {
+      padding-left: 0 !important;
+      padding-right: 16px;
+
+      order: 9;
+    }
+
+    .acordion-mileage {
+      max-width: calc(100% / 2);
+      padding-left: 16px;
+
+      order: 10;
+
+      ::v-deep .accordion {
+        padding: 0;
+        box-shadow: none;
+
+        .v-expansion-panel-header {
+          display: none;
+        }
+
+        .v-expansion-panel-content {
+          margin-top: 0;
+
+          .filter-param-label {
+            margin-bottom: 0;
+          }
+
+          .group-mileage {
+            margin-top: 0;
+          }
+        }
+      }
+    }
+
+    .filter-tabs-bar {
+      display: none;
+    }
+
+    .price-car {
+      display: none;
+    }
+
+    .customs {
+      max-width: calc(100% / 2);
+      width: 100%;
+      padding-right: 16px;
+
+      order: 11;
+    }
+
+    .search-btn-wrapper {
+      padding-left: 16px;
+      max-width: calc(100% / 2);
+      width: 100%;
+
+      order: 12;
+
+      .extend-search-link {
+        display: none;
+      }
+
+      .search-link {
+        display: none;
+      }
+    }
+  }
+}
+
 @include sm {
   .filter::before {
     background: #f2f7fa;
@@ -1407,6 +1757,69 @@ export default {
 }
 
 @include xs {
+  .is-calculator .filter-form {
+    .category-car {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .model-car {
+      padding: 0;
+      margin-top: 12px;
+    }
+
+    .carcas {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .fuel {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .unit-box {
+      padding: 0;
+      margin-top: 0;
+      max-width: 100%;
+    }
+
+    .location-car {
+      padding: 0;
+    }
+
+    .city {
+      padding: 0;
+      margin-top: 12px;
+      max-width: 100%;
+    }
+
+    .customs {
+      padding: 0;
+      margin-top: 12px;
+      max-width: 100%;
+    }
+
+    .production-year {
+      padding: 0;
+      margin-top: 12px;
+    }
+
+    .acordion-mileage {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .search-btn-wrapper {
+      padding: 0;
+      max-width: max-content;
+
+      .cost-btn {
+        padding: 14px 20px;
+      }
+    }
+  }
+
   .filter .filter-form {
     .filter-tabs-bar {
       justify-content: space-between;
