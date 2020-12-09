@@ -13,6 +13,7 @@
     "start": "nuxt start"
   },
   "dependencies": {
+    "@mdi/font": "^5.8.55",
     "@nuxtjs/axios": "^5.12.2",
     "@nuxtjs/dotenv": "^1.4.1",
     "axios": "^0.20.0",

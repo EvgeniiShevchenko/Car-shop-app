@@ -9,6 +9,12 @@
   font-family: Raleway;
 }
 
+@mixin mobile {
+  @media only screen and (max-width: $mobile) {
+    @content;
+  }
+}
+
 @mixin init-title($color: #222329, $size: 32px, $weight: 500, $height: 35px) {
   font-size: $size;
   font-weight: $weight;
