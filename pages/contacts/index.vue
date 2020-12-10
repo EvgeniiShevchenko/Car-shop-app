@@ -17,6 +17,7 @@
                     v-model="form[input.alias]"
                     outlined
                     dense
+                    color="#4CAD33"
                     :type="input.alias === 'email' ? 'email' : input.alias === 'phone' ? 'number' : ''"
                     height="36"
                     :rules="getFieldRules(input)"
@@ -27,13 +28,14 @@
                     v-if="input.alias === 'message'"
                     v-model="form[input.alias]"
                     outlined
+                    color="#4CAD33"
                     height="82"
                     :rules="input.required ? [(v) => !!v || `Это поле является обязательным`] : []"
                     :required="!!input.required"
                   >
                   </v-textarea>
                 </v-flex>
-                <v-alert v-if="isSucceeded" type="success"> Сообщение было отправленно администратору. </v-alert>
+                <v-alert icon="mdi-checkbox-marked-circle-outline" v-if="isSucceeded" type="success"> Сообщение было отправленно администратору. </v-alert>
                 <v-alert v-if="isSucceeded === false" type="error"> Сообщение не было отправленно, что-то пошло не так. </v-alert>
                 <v-btn class="send_btn" type="submit"> Отправить </v-btn>
               </v-form>
@@ -90,7 +92,7 @@ export default {
       if (field.required && field.alias !== 'email') {
         return [(v) => !!v || `Это поле является обязательным`];
       } else if (field.alias === 'email') {
-        return field.required ? [(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'E-mail must be valid'] : [(v) => /.+@.+\..+/.test(v) || 'Email должен содержать @'];
+        return field.required ? [(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'Email должен содержать @'] : [(v) => !v || /.+@.+\..+/.test(v) || 'Email должен содержать @'];
       } else {
         return [];
       }

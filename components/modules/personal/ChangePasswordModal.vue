@@ -56,7 +56,7 @@
             </v-text-field>
           </v-flex>
           <v-card-actions>
-            <v-alert v-if="isSucceeded" type="success" class="my-4"> Изменения были сохраненны </v-alert>
+            <v-alert icon="mdi-checkbox-marked-circle-outline" v-if="isSucceeded" type="success" class="my-4"> Изменения были сохраненны </v-alert>
             <v-alert v-if="isSucceeded === false" type="error" class="my-4"> Изменения не были сохраненны, что-то пошло не так. </v-alert>
             <v-btn class="send_btn" @click="submit"> Сохранить изменения </v-btn>
           </v-card-actions>

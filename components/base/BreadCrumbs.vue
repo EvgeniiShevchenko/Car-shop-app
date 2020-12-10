@@ -39,6 +39,14 @@ export default {
 .breadcrumb {
   display: flex;
   align-items: center;
+  .routing-home-link {
+    font-size: 4px;
+
+    .home-link-icon {
+      width: 14px;
+      height: 14px;
+    }
+  }
 
   .routing-list {
     display: flex;
@@ -47,15 +55,6 @@ export default {
       display: flex;
       align-items: center;
       margin-left: 15px;
-
-      .routing-home-link {
-        font-size: 4px;
-
-        .home-link-icon {
-          width: 14px;
-          height: 14px;
-        }
-      }
 
       .routing-item-link {
         display: flex;
