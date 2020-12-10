@@ -27,7 +27,7 @@
           <span> Город </span>
           <v-autocomplete
             color="#4CAD33"
-            v-model="userInfo.city"
+            v-model="userInfo.city_id"
             :items="cities"
             :search-input.sync="search"
             height="36px"
@@ -68,11 +68,12 @@
         </v-flex>
         <v-flex>
           <span> Viber </span>
-          <v-text-field color="#4CAD33" v-model="userInfo.phone_social" outlined dense height="36"> </v-text-field>
+          <v-text-field color="#4CAD33" v-model="userInfo.phone_viber" outlined dense height="36"> </v-text-field>
         </v-flex>
         <v-flex>
           <span> Статус </span>
           <v-select
+            v-model="userInfo.type_user"
             color="#4CAD33"
             :items="status"
             item-value="value"
@@ -85,7 +86,7 @@
         </v-flex>
         <v-flex>
           <span> Telegram </span>
-          <v-text-field color="#4CAD33" v-model="userInfo.phone_social" outlined dense height="36"> </v-text-field>
+          <v-text-field color="#4CAD33" v-model="userInfo.phone_telegram" outlined dense height="36"> </v-text-field>
         </v-flex>
         <div class="user_condition">
           <check-box class="pb-3" @change="userInfo.is_chat = $event" :value="userInfo.is_chat ? !!userInfo.is_chat : false" :label="'Разрешить покупателям связываться со мной через чат'" />
@@ -146,12 +147,12 @@ export default {
       isChangedAvatar: false,
       status: [
         {
-          title: 'Физ. лицо',
-          value: 1,
+          title: 'Физическое лицо',
+          value: 'personal',
         },
         {
-          title: 'Юр. лицо',
-          value: 2,
+          title: 'Юридическое лицо',
+          value: 'entity',
         },
       ],
     };
