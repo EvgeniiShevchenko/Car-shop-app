@@ -2,14 +2,17 @@
   <main class="main container pt-0">
     <h1>Настройки аккаунта</h1>
     <div class="outer-wrap">
-      <div class="d-flex my-6 align-center user_avatar_container">
-        <v-avatar size="96" class="mr-8">
-          <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
-          <img v-else src="~assets/images/user_placeholder.png" alt="avatar" />
-        </v-avatar>
-        <v-file-input v-model="avatar" :rules="rules" class="d-none" ref="v_file_input" accept="image/png, image/jpeg" @change="onFilePicked"></v-file-input>
-        <v-btn class="upload_btn" @click="$refs.v_file_input.$refs.input.click()"> {{ avatarUrl ? 'Изменить фото' : 'Добавить фото' }} </v-btn>
-        <v-btn v-if="avatarUrl" class="remove_btn ml-6" @click="removeAvatar"> Удалить </v-btn>
+      <div>
+        <div class="d-flex my-6 align-center user_avatar_container">
+          <v-avatar size="96" class="mr-8">
+            <img v-if="avatarUrl" :src="avatarUrl" alt="avatar" />
+            <img v-else src="~assets/images/user_placeholder.png" alt="avatar" />
+          </v-avatar>
+          <v-file-input v-model="avatar" :rules="rules" class="d-none" ref="v_file_input" accept="image/png, image/jpeg" @change="onFilePicked"></v-file-input>
+          <v-btn class="upload_btn" @click="$refs.v_file_input.$refs.input.click()"> {{ avatarUrl ? 'Изменить фото' : 'Добавить фото' }} </v-btn>
+          <v-btn v-if="avatarUrl" class="remove_btn ml-6" @click="removeAvatar"> Удалить </v-btn>
+        </div>
+        <v-alert v-if="isAvatarError" type="error" class="my-4"> Размер фото не должен превышать 2 MB! </v-alert>
       </div>
       <v-form ref="form" v-model="valid" lazy-validation>
         <v-flex>
@@ -64,12 +67,25 @@
           </v-text-field>
         </v-flex>
         <v-flex>
-          <span> Viber/Telegram </span>
+          <span> Viber </span>
           <v-text-field color="#4CAD33" v-model="userInfo.phone_social" outlined dense height="36"> </v-text-field>
         </v-flex>
-        <v-flex class="social_container">
-          <check-box @change="userInfo.viber = $event" :value="userInfo.viber ? !!userInfo.viber : false" :label="'Viber'" />
-          <check-box @change="userInfo.telegram = $event" :value="userInfo.telegram ? !!userInfo.telegram : false" class="ml-8" :label="'Telegram'" />
+        <v-flex>
+          <span> Статус </span>
+          <v-select
+            color="#4CAD33"
+            :items="status"
+            item-value="value"
+            item-text="title"
+            outlined
+            dense
+            height="36"
+          >
+          </v-select>
+        </v-flex>
+        <v-flex>
+          <span> Telegram </span>
+          <v-text-field color="#4CAD33" v-model="userInfo.phone_social" outlined dense height="36"> </v-text-field>
         </v-flex>
         <div class="user_condition">
           <check-box class="pb-3" @change="userInfo.is_chat = $event" :value="userInfo.is_chat ? !!userInfo.is_chat : false" :label="'Разрешить покупателям связываться со мной через чат'" />
@@ -95,7 +111,7 @@
           </div>
         </div>
         <div class="user_actions">
-          <v-alert v-if="isSucceeded" type="success" class="my-4"> Изменения были сохраненны </v-alert>
+          <v-alert icon="mdi-checkbox-marked-circle-outline" v-if="isSucceeded" type="success" class="my-4"> Изменения были сохраненны </v-alert>
           <v-alert v-if="isSucceeded === false" type="error" class="my-4"> Изменения не были сохраненны, что-то пошло не так. </v-alert>
           <v-btn class="send_btn" @click="submit">Сохранить изменения</v-btn>
         </div>
@@ -125,13 +141,23 @@ export default {
       rules: [(value) => !value || value.size < 2000000 || 'Размер фото не должен превышать 2 MB!'],
       avatarUrl: '',
       avatar: null,
+      isAvatarError: false,
       isDeletedAvatar: false,
       isChangedAvatar: false,
+      status: [
+        {
+          title: 'Физ. лицо',
+          value: 1,
+        },
+        {
+          title: 'Юр. лицо',
+          value: 2,
+        },
+      ],
     };
   },
   mounted() {
     this.getUserInfo();
-    //this.getCitiesList();
   },
   methods: {
     async submit() {
@@ -173,12 +199,14 @@ export default {
       this.isDeletedAvatar = true;
     },
     onFilePicked() {
-      this.isChangedAvatar = true;
-      if (this.avatar) {
+      if (this.avatar && this.avatar.size > 2000000) this.isAvatarError = true;
+      if (this.avatar && this.avatar.size <= 2000000) {
+        this.isChangedAvatar = true;
         const fileReader = new FileReader();
         fileReader.readAsDataURL(this.avatar);
         fileReader.addEventListener('load', () => {
           this.avatarUrl = fileReader.result;
+          this.isAvatarError = false;
         });
       } else {
         this.avatarUrl = '';
