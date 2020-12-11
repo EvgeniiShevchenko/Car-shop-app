@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card outlined>
     <v-img v-if="news.mainImage" :src="news.mainImage" height="200px"></v-img>
     <div v-else class="v-image">
       <img src="~assets/images/news-placeholder.png" alt="news image" />
