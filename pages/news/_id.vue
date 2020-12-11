@@ -127,4 +127,12 @@ export default {
     }
   }
 }
+::v-deep ul {
+  li {
+    list-style-type: disc;
+  }
+  li::marker {
+    color: #79ca64;
+  }
+}
 </style>
