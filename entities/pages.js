@@ -4,4 +4,5 @@ export default {
   contacts: 'Контакты',
   personal: 'Профиль',
   settings: 'Настройки',
+  about_us: 'О нас',
 };
