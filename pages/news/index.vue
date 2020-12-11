@@ -1,8 +1,8 @@
 <template>
   <main class="main container">
     <div class="outer-wrap">
-      <h1 class="mt-3">Новости</h1>
-      <v-tabs v-model="tab" next-icon="mdi-arrow-right-bold-box-outline" prev-icon="mdi-arrow-left-bold-box-outline" show-arrows background-color="#F2F7FA" height="38">
+      <h1 class="mt-3 px-4">Новости</h1>
+      <v-tabs class="px-4" v-model="tab" next-icon="mdi-arrow-right-bold-box-outline" prev-icon="mdi-arrow-left-bold-box-outline" show-arrows background-color="#F2F7FA" height="38">
         <v-tab> Все </v-tab>
         <v-tab> Автомобильные новости </v-tab>
         <v-tab> Тест-драйвы </v-tab>
@@ -14,9 +14,9 @@
       <div>
         <news-list :list="list.items" />
       </div>
-      <div class="pagination-wrapper">
+      <div class="pagination-wrapper px-4">
         <pagination-bar
-          :page="list.pagination.total_pages - 1"
+          :page="list.pagination.current_page"
           :visibleNumber="paginationVisible"
           @request-data="getCurrentPageNews($event)"
           :amount="list.pagination.total_pages"
@@ -94,6 +94,7 @@ export default {
   watch: {
     tab() {
       this.params.tag_id = this.tab;
+      this.params.page = 1;
       this.getList();
     },
   },
@@ -102,6 +103,9 @@ export default {
 
 <style lang="scss" scoped>
 .main {
+  padding-left: 0;
+  padding-right: 0;
+  max-width: 1200px !important;
   .outer-wrap {
     min-height: calc(100vh - 200px);
   }

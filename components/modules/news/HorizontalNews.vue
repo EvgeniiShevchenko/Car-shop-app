@@ -1,5 +1,5 @@
 <template>
-  <v-card class="mx-auto d-flex" max-width="567">
+  <v-card outlined class="mx-auto d-flex" max-width="567">
     <v-img v-if="news.mainImage" :src="news.mainImage" height="210px"></v-img>
     <div v-else class="v-image">
       <img src="~assets/images/news-placeholder.png" alt="news image" />
@@ -65,6 +65,7 @@ export default {
   .v-image {
     height: 210px;
     width: 215px !important;
+    border-bottom-left-radius: 6px;
     img {
       width: 100%;
       height: 100%;
