@@ -1,38 +1,87 @@
 <template>
-  <section class="comunity row no-gutters">
-    <h3 class="comunity-title">Сообщество AutoSill</h3>
-    <div class="ytube-wrapper col-md-8 pr-md-3 col-xl-8 pr-xl-3">
-      <img class="ytube-player" src="~/assets/images/ytube-frame.png" alt="" />
-    </div>
-    <ul class="social-list row no-gutters col-md-4 pl-md-3 col-xl-4 pl-xl-3">
-      <li class="social-item col-md-12" :key="index" v-for="(item, index) in socialList">
-        <a :class="`social-item-ref is-${item.key}`" v-if="item.type === 'reference'" href="#">
-          <span class="content-wrapper">
-            <svg class="social-item-icon">
-              <use :xlink:href="require('~/assets/images/sprites/main.svg') + `#${item.key}`"></use>
-            </svg>
-            {{ item.name }}
-          </span>
-        </a>
-        <a :class="`social-item-ref is-${item.key}`" v-else href="#">
-          <span class="content-wrapper">
-            <svg class="social-item-icon">
-              <use :xlink:href="require('~/assets/images/sprites/main.svg') + `#${item.key}`"></use>
-            </svg>
-            {{ item.name }}
-            <svg class="social-item-mark">
-              <use xlink:href="~assets/images/sprites/main.svg#icon-select-mark" />
-            </svg>
-          </span>
-        </a>
-      </li>
-    </ul>
-  </section>
+  <div>
+    <section class="comunity row no-gutters" v-if="!communityInfo.id">
+      <h3 class="comunity-title">Сообщество AutoSill</h3>
+      <div class="ytube-wrapper col-md-8 pr-md-3 col-xl-8 pr-xl-3">
+        <img class="ytube-player" src="~/assets/images/ytube-frame.png" alt="" />
+      </div>
+      <ul class="social-list row no-gutters col-md-4 pl-md-3 col-xl-4 pl-xl-3">
+        <li class="social-item col-md-12" :key="index" v-for="(item, index) in socialList">
+          <a :class="`social-item-ref is-${item.key}`" v-if="item.type === 'reference'" href="#">
+            <span class="content-wrapper">
+              <svg class="social-item-icon">
+                <use :xlink:href="require('~/assets/images/sprites/main.svg') + `#${item.key}`"></use>
+              </svg>
+              {{ item.name }}
+            </span>
+          </a>
+          <a :class="`social-item-ref is-${item.key}`" v-else href="#">
+            <span class="content-wrapper">
+              <svg class="social-item-icon">
+                <use :xlink:href="require('~/assets/images/sprites/main.svg') + `#${item.key}`"></use>
+              </svg>
+              {{ item.name }}
+              <svg class="social-item-mark">
+                <use xlink:href="~assets/images/sprites/main.svg#icon-select-mark" />
+              </svg>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+    <section class="comunity row no-gutters" v-if="communityInfo.community_values && communityInfo.community_values.length">
+      <div class="ytube-wrapper col-md-8 pr-md-3 col-xl-8 pr-xl-3 about_us">
+        <a :href="communityInfo.youtube"
+          ><v-btn color="#f80703" :class="!isPlaying ? 'chanel_link' : 'd-none chanel_link'"
+            ><span class="pr-1"><v-icon>mdi-youtube</v-icon></span
+            ><span class="pr-1">YouTube</span><span class="auto_sill">AutoSill</span></v-btn
+          ></a
+        >
+        <no-ssr placeholder="Loading...">
+          <youtube @playing="isPlaying = true" @paused="isPlaying = false" ref="youtube" :player-width="100" :player-height="100" :video-id="communityInfo.video" style="width: 100%; height: 100%" />
+        </no-ssr>
+      </div>
+      <ul class="social-list row no-gutters col-md-4 pl-md-3 col-xl-4 pl-xl-3">
+        <li class="social-item col-md-12" :key="index" v-for="(item, index) in communityInfo.community_values">
+          <a v-if="item.position < 5" :class="`social-item-ref is-facebook`" :style="item.color" href="#">
+            <span class="d-flex">
+              <div style="width: auto">
+                <img class="social-item-icon" style="width: auto" :src="item.icon" />
+              </div>
+              {{ item.name }}
+            </span>
+          </a>
+          <a v-if="item.position > 4" :style="item.color" :class="`social-item-ref is-facebook-bot`" href="#">
+            <span class="content-wrapper">
+              <div style="width: auto">
+                <img class="social-item-icon" style="width: auto; bottom: 0" :src="item.icon" />
+              </div>
+              {{ item.name }}
+              <svg class="social-item-mark">
+                <use xlink:href="~assets/images/sprites/main.svg#icon-select-mark" />
+              </svg>
+            </span>
+          </a>
+        </li>
+      </ul>
+    </section>
+  </div>
 </template>
 
 <script>
+import VueYoutube from 'vue-youtube';
 export default {
   name: 'MainComunity',
+  components: { VueYoutube },
+  props: {
+    communityInfo: {
+      type: Object,
+      // eslint-disable-next-line vue/require-valid-default-prop
+      default() {
+        return {};
+      },
+    },
+  },
   data() {
     return {
       socialList: [
@@ -43,6 +92,7 @@ export default {
         { name: 'Поиск авто • Чат-бот', type: 'bot', key: 'facebook-bot', color: '', icon: '' },
         { name: 'Поиск авто • Чат-бот', type: 'bot', key: 'telegram-bot', color: '', icon: '' },
       ],
+      isPlaying: false,
     };
   },
 };
@@ -61,7 +111,21 @@ export default {
     line-height: 35px;
   }
 
+  .about_us {
+    position: relative;
+    .chanel_link {
+      position: absolute;
+      top: 60px;
+      margin: 5px;
+      color: #ffffff;
+      .auto_sill {
+        font-weight: 500;
+      }
+    }
+  }
+
   .ytube-wrapper {
+    min-height: 360px;
     .ytube-player {
       width: 100%;
       height: 100%;
