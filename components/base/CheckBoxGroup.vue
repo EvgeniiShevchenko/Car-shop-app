@@ -7,6 +7,7 @@
         </template>
       </v-checkbox>
     </li>
+    <li :class="`empty-string ${isFixAlign ? 'has-empty' : ''}`" :style="`height: ${emptyHeight}px`" :key="collection.length + item" v-for="item in amountEmptyStirng"></li>
   </ul>
 </template>
 
@@ -29,6 +30,17 @@ export default {
     collection: {
       type: Array,
       required: true,
+    },
+    isFixAlign: {
+      type: Boolean,
+      default: false,
+    },
+    amountEmptyStirng: {
+      type: Number,
+    },
+    emptyHeight: {
+      type: Number,
+      default: 24,
     },
   },
 };
@@ -74,6 +86,16 @@ export default {
         }
       }
     }
+  }
+
+  .empty-string {
+    display: none;
+    width: 100%;
+    height: 0;
+  }
+
+  .has-empty {
+    display: block;
   }
 }
 </style>

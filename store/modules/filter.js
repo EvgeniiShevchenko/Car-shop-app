@@ -20,6 +20,7 @@ const getDefaultState = () => {
       brand: '',
       model: '',
       location: null,
+      city: null,
       productionYearFrom: 0,
       productionYearTo: 0,
       currency: '',
@@ -273,6 +274,12 @@ export default {
       state.filter.priceMax = maxPrice;
       state.filter.priceMin = minPrice;
     },
+    setFilterCity(state, payload) {
+      state.filter.city = payload;
+    },
+    resetFilterCity(state) {
+      state.filter.city = null;
+    },
   },
 
   actions: {
@@ -476,6 +483,12 @@ export default {
     },
     initialFilterPriceRange({ commit }, payload) {
       commit('initialFilterPriceRange', payload);
+    },
+    setFilterCity({ commit }, payload) {
+      commit('setFilterCity', payload);
+    },
+    resetFilterCity({ commit }, payload) {
+      commit('resetFilterCity', payload);
     },
   },
 };
