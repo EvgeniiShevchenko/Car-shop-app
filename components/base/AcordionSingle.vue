@@ -5,6 +5,9 @@
         <slot name="header">
           <h3 class="accordion-title">{{ title }}</h3>
         </slot>
+        <template v-slot:actions v-if="isCustomizingMark">
+          <v-icon :style="`font-size: ${sizeMark}px;`" :color="colorMark"> $expand </v-icon>
+        </template>
       </v-expansion-panel-header>
       <v-expansion-panel-content class="accordion-content">
         <slot name="content"> </slot>
@@ -33,6 +36,18 @@ export default {
     className: {
       type: String,
       default: 'default',
+    },
+    isCustomizingMark: {
+      type: Boolean,
+      default: false,
+    },
+    sizeMark: {
+      type: Number,
+      default: 24,
+    },
+    colorMark: {
+      type: String,
+      default: 'primary',
     },
   },
 };

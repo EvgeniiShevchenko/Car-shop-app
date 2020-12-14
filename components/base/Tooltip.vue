@@ -1,5 +1,5 @@
 <template>
-  <div class="tooltipe-wrapper">
+  <div class="tooltipe-wrapper" @mouseover="handlerMouseOver" @mouseout="handlerMouseOut">
     <div class="activator" @click="showTooltip">
       <slot name="activator">
         <button type="button">Tooltipe</button>
@@ -7,7 +7,7 @@
     </div>
     <div class="tooltipe" ref="tooltip" v-if="isSocialNetworks" v-click-outside="hideSocialNetworks">
       <slot name="tooltipe">
-        <p>Content</p>
+        <p class="tooltipe-content">{{ text }}</p>
       </slot>
       <div class="triangle" ref="triangle"></div>
     </div>
@@ -27,7 +27,7 @@ export default {
       this.isSocialNetworks = true;
 
       this.$nextTick(() => {
-        const tooltipNode = document.querySelector('.tooltipe-wrapper');
+        const tooltipNode = this.$refs.tooltip;
         const x = event.pageX;
         const screenWidth = window.screen.width;
         const targetWidth = tooltipNode.offsetWidth;
@@ -47,6 +47,24 @@ export default {
     hideSocialNetworks() {
       this.isSocialNetworks = false;
     },
+
+    handlerMouseOver(e) {
+      if (this.isHover) this.showTooltip(e);
+    },
+
+    handlerMouseOut(e) {
+      if (this.isHover) this.isSocialNetworks = false;
+    },
+  },
+  props: {
+    text: {
+      type: String,
+      default: 'Your text there',
+    },
+    isHover: {
+      type: Boolean,
+      default: false,
+    },
   },
 };
 </script>
@@ -65,7 +83,11 @@ export default {
 
     border-radius: 8px;
     background: #ffffff;
-    z-index: 1;
+    z-index: 10;
+
+    .tooltipe-content {
+      max-width: 600px;
+    }
 
     .triangle {
       position: absolute;
@@ -82,6 +104,12 @@ export default {
       left: auto;
       right: 12px;
     }
+  }
+}
+
+@include xs {
+  .tooltipe-wrapper .tooltipe .tooltipe-content {
+    max-width: 200px;
   }
 }
 </style>

@@ -35,7 +35,9 @@ input[type=number]::-webkit-outer-spin-button {
   margin: 0;
 }
 
-h1, h2, h4 {
+h1,
+h2,
+h4 {
   font-weight: 500;
   line-height: 110%;
 }
@@ -70,10 +72,38 @@ h4 {
 
 .send_btn {
   background-color: #4CAD33 !important;
-  padding: 0 27px!important;
+  padding: 0 27px !important;
+
   span {
     color: #ffffff;
     font-weight: 500;
     font-size: 15px;
+  }
+}
+
+.input-text-classic {
+  padding-left: 10px;
+  height: 36px;
+  border-radius: 2px;
+  border: 1px solid #8fa5b0;
+  outline: none;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 17px;
+  color: #4a4d5c;
+
+  &:focus {
+    border: 1px solid #51a9f2;
+  }
+
+  &::placeholder {
+    color: #8fa5b0;
+  }
+}
+
+.hide-scroll-bar {
+  &::-webkit-scrollbar {
+    width: 0px;
   }
 }
