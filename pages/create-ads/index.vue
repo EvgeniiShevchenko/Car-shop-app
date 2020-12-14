@@ -211,11 +211,11 @@ import MainFilter from '~/components/modules/main/MainFilter.vue';
 // mixins
 import isNull from '~/mixins/isNull.js';
 import isEmpty from '~/mixins/isEmpty.js';
-import transformObjectInArrayForSelect from '~/mixins/transformObjectInArrayForSelect.js';
+import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 
 export default {
   name: 'CreateAds',
-  mixins: [isNull, isEmpty, transformObjectInArrayForSelect],
+  mixins: [isNull, isEmpty, transformArrayForSelectBtn],
   data() {
     return {
       currencyDefault: null,
@@ -390,7 +390,7 @@ export default {
 
         const { regions } = (await this.$services.createAds.getAdditionalTest()).data;
 
-        this.countryList = this.transformObjectInArrayForSelect(regions);
+        this.countryList = this.transformArrayForSelectBtn(regions);
         this.isCountriesLoading = false;
       } catch (error) {
         console.error(error);

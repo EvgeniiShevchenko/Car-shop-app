@@ -152,9 +152,9 @@ export default {
     try {
       const { priceMonitoring } = (await this.$services.monitoring.getMonitoringPriceList(this.getUniqueAdsNumber())).data;
 
-      this.setType(String(priceMonitoring.car_type_id));
-      this.setBrand(String(priceMonitoring.car_mark_id));
-      this.setModel(String(priceMonitoring.car_model_id));
+      this.setType(priceMonitoring.car_type_id);
+      this.setBrand(priceMonitoring.car_mark_id);
+      this.setModel(priceMonitoring.car_model_id);
 
       this.setPriceChart(priceMonitoring.price_monitoring);
 
