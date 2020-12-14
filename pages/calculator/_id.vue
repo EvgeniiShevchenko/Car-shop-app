@@ -29,12 +29,13 @@
           Подать объявление
         </n-link>
       </div>
-      <section class="liner-chart-wrapper" v-if="Object.keys(collection).length">
+      <section class="liner-chart-wrapper" v-if="isChart">
         <h2 class="chart-title">Динмика изменения цен на {{ collection.name }}</h2>
         <div class="linear-chart">
           <LineChart class="chart" v-if="isLoaded" :chartData="chart.data" :chartLabels="chart.labels" :maintainAspectRatio="false" :responsive="true" cssClasses="chart-wrapper" />
         </div>
       </section>
+      <v-alert class="error-message" v-else color="red" type="error" dismissible> Статистика недоступна </v-alert>
     </div>
   </main>
 </template>
@@ -50,11 +51,12 @@ import MainFilter from '~/components/modules/main/MainFilter.vue';
 import getUniqueAdsNumber from '~/mixins/getUniqueAdsNumber.js';
 import getStatusName from '~/mixins/getStatusName.js';
 import stringReplaceAll from '~/mixins/stringReplaceAll.js';
+import initialMonitoringPriceChart from '~/mixins/initialMonitoringPriceChart.js';
 import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
   name: 'Calculator',
-  mixins: [getStatusName, getUniqueAdsNumber, stringReplaceAll, isEmpty],
+  mixins: [getStatusName, getUniqueAdsNumber, stringReplaceAll, isEmpty, initialMonitoringPriceChart],
   data() {
     return {
       collection: {},
@@ -64,6 +66,7 @@ export default {
       },
       searchResult: {},
       isLoaded: false,
+      isChart: false,
     };
   },
   computed: {
@@ -80,7 +83,7 @@ export default {
         const { data } = await this.$services.calculator.getCalculationResult(this.getUniqueAdsNumber(), this.getQueryString(serverData));
 
         this.collection = { ...this.collection, ...data.product };
-        this.setPriceChart(data.priceMonitoring);
+        this.initialMonitoringPriceChart(data.priceMonitoring);
       } catch (error) {
         console.error(error);
       }
@@ -121,21 +124,6 @@ export default {
       return routeList;
     },
 
-    setPriceChart(chartData) {
-      let labels = [];
-      let firstLine = [];
-      let secondLine = [];
-
-      for (let item of chartData) {
-        labels = [...labels, item.date];
-        firstLine = [...firstLine, item.maxPrice];
-        secondLine = [...secondLine, item.minPrice];
-      }
-
-      this.chart.labels = labels;
-      this.chart.data = { firstLine, secondLine };
-    },
-
     ...mapActions({
       setType: 'filter/setFilterType',
       setBrand: 'filter/setFilterBrand',
@@ -156,9 +144,11 @@ export default {
       this.setBrand(String(priceMonitoring.car_mark_id));
       this.setModel(String(priceMonitoring.car_model_id));
 
-      this.setPriceChart(priceMonitoring.price_monitoring);
+      this.initialMonitoringPriceChart(priceMonitoring.price_monitoring);
 
       this.collection = priceMonitoring;
+
+      this.isChart = !!priceMonitoring.price_monitoring.length;
       this.isLoaded = true;
     } catch (error) {
       console.error(error);
@@ -301,6 +291,16 @@ export default {
         margin-top: 32px;
       }
     }
+  }
+
+  .error-message {
+    margin-top: 20px;
+    width: 100%;
+
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 15px;
+    color: #ffffff;
   }
 }
 
