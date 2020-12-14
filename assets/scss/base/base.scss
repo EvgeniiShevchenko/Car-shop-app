@@ -37,6 +37,7 @@ input[type=number]::-webkit-outer-spin-button {
 
 h1,
 h2,
+h3,
 h4 {
   font-weight: 500;
   line-height: 110%;
@@ -71,6 +72,7 @@ h4 {
 }
 
 .send_btn {
+  border-radius: 2px;
   background-color: #4CAD33 !important;
   padding: 0 27px !important;
 
@@ -78,6 +80,7 @@ h4 {
     color: #ffffff;
     font-weight: 500;
     font-size: 15px;
+    text-transform: none;
   }
 }
 
@@ -106,4 +109,44 @@ h4 {
   &::-webkit-scrollbar {
     width: 0px;
   }
+}
+
+.required {
+  color: #F05156;
+}
+
+.upload_btn {
+  border: 1px solid #4A4D5C;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-color: #FFFFFF !important;
+  padding: 0 20px !important;
+
+  span {
+    color: #4A4D5C;
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: none;
+  }
+}
+
+.remove_btn {
+  border: 1px solid #F05156;
+  box-sizing: border-box;
+  border-radius: 2px;
+  background-color: #FFFFFF !important;
+  padding: 0 20px !important;
+
+  span {
+    color: #F05156;
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: none;
+  }
+}
+
+.v-alert__content {
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 110%;
 }

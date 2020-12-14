@@ -2,7 +2,7 @@
   <div class="d-flex wrap news_list">
     <div v-for="(news, index) of list" :key="index" :class="news === 'banner' ? 'full_width news_list-item' : 'news_list-item'">
       <horizontal-news v-if="index < 4 && news !== 'banner'" :news="news" />
-      <vertical-news v-if="index > 4 && news !== 'banner'" :news="news" />
+      <vertical-news class="vertical-news" v-if="index > 4 && news !== 'banner'" :news="news" />
       <horizontal-banner v-if="news === 'banner'" />
     </div>
   </div>
@@ -34,9 +34,10 @@ export default {
   font-family: Rubik;
   font-style: normal;
   flex-wrap: wrap;
-  justify-content: space-between;
   &-item {
     margin: 16px 0;
+    padding-right: 16px;
+    padding-left: 16px;
   }
   .full_width {
     width: 100%;

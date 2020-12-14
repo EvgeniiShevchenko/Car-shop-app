@@ -69,6 +69,11 @@ export default {
       default: 6,
     },
   },
+  watch: {
+    page() {
+      this.currentPage = this.page;
+    },
+  },
 };
 </script>
 
