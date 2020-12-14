@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       options: {
-        url: 'http://httpbin.org/anything',
+        url: 'http://carsell-front.utest.space',
         autoProcessQueue: false,
         previewsContainer: false,
         maxFilesize: 10,
