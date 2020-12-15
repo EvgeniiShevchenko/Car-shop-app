@@ -17,6 +17,8 @@
                     v-model="form[input.alias]"
                     outlined
                     dense
+                    class="mt-1"
+                    :placeholder="getPlaceholder(input.alias)"
                     color="#4CAD33"
                     :type="input.alias === 'email' ? 'email' : input.alias === 'phone' ? 'number' : ''"
                     height="36"
@@ -28,8 +30,9 @@
                     v-if="input.alias === 'message'"
                     v-model="form[input.alias]"
                     outlined
+                    class="mt-1"
+                    placeholder="Текст сообщения"
                     color="#4CAD33"
-                    height="82"
                     :rules="input.required ? [(v) => !!v || `Это поле является обязательным`] : []"
                     :required="!!input.required"
                   >
@@ -37,7 +40,7 @@
                 </v-flex>
                 <v-alert icon="mdi-checkbox-marked-circle-outline" v-if="isSucceeded" type="success"> Сообщение было отправленно администратору. </v-alert>
                 <v-alert v-if="isSucceeded === false" type="error"> Сообщение не было отправленно, что-то пошло не так. </v-alert>
-                <v-btn class="send_btn" type="submit"> Отправить </v-btn>
+                <v-btn class="send_btn" height="43" type="submit"> Отправить </v-btn>
               </v-form>
             </v-flex>
           </v-col>
@@ -97,6 +100,9 @@ export default {
         return [];
       }
     },
+    getPlaceholder(alias) {
+      return alias === 'phone' ? '+38 011 111 11 11' : alias === 'name' ? 'Семен' : alias === 'company' ? 'Введите компанию' : 'mail@mail.com';
+    },
   },
 };
 </script>
@@ -109,6 +115,14 @@ export default {
     margin-bottom: 72px;
     .content_container {
       justify-content: space-between;
+      ::v-deep textarea {
+        height: 82px;
+        font-size: 15px;
+        line-height: 110%;
+        @include xs {
+          height: 230px;
+        }
+      }
       .required {
         color: #f05156;
       }
@@ -119,6 +133,9 @@ export default {
         }
       }
     }
+  }
+  span {
+    cursor: default;
   }
 }
 </style>

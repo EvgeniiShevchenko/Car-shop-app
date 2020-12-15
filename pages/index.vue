@@ -11,7 +11,7 @@
       <AdsCardsList class="latest-ads" :collection="mainData.products" />
       <MainCarCatalog :mainData="mainData" />
       <MainNews class="news-wrapper" :mainData="mainData" />
-      <MainComunity />
+      <MainComunity :communityInfo="mainData.community" />
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
       <MainAbout />
     </div>
@@ -34,6 +34,11 @@ export default {
     const { data } = await $axios.$get(`main`);
 
     return { mainData: data };
+  },
+  data() {
+    return {
+      mainData: {},
+    };
   },
   components: {
     MainFilter,

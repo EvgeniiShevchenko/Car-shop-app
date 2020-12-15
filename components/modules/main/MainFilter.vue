@@ -1,6 +1,7 @@
 <template>
   <div :class="`filter is-${className}`">
     <form class="filter-form row no-gutters" method="POST">
+      <slot name="inject" />
       <ul class="filter-tabs-bar row no-gutters">
         <li class="tabs-bar-item col col-sm-3" :key="index" v-for="(item, index) in statesList">
           <button :class="`tabs-item-btn ${defineStyleTabs(index)}`" type="button" @click="selectFilterStates(index)">{{ item }}</button>
@@ -16,7 +17,7 @@
       </div>
       <div class="category-car col-12 mb-3">
         <label class="filter-param-label">Тип транспорта</label>
-        <AutocompleteBtn :options="categoryList" :value="type" label="Выбрать" :payload="true" :isReset="!!type.length" @change="selectCategory($event)" @reset="resetTypeField" />
+        <AutocompleteBtn :options="categoryList" :value="type" label="Выбрать" :payload="true" :isReset="!isEmpty(!!type)" @change="selectCategory($event)" @reset="resetTypeField" />
       </div>
       <div class="brend-car col-sm-6 pr-sm-4 mb-3 col-lg-6 pr-lg-4">
         <label class="filter-param-label">Марка транспорта</label>
@@ -24,8 +25,8 @@
           :options="brandList"
           :value="brand"
           :payload="true"
-          :isPrepend="hasType || !type.length"
-          :isReset="!!brand.length"
+          :isPrepend="isEmpty(!!type)"
+          :isReset="!isEmpty(!!brand)"
           label="Выбрать"
           prependTitle="Выбырите сначало тип"
           @change="selectBrand($event)"
@@ -39,8 +40,8 @@
           :options="modelList"
           :value="model"
           :payload="true"
-          :isPrepend="hasBrand || !brand.length"
-          :isReset="!!model.length"
+          :isPrepend="isEmpty(!!brand)"
+          :isReset="!isEmpty(!!model)"
           label="Выбрать"
           prependTitle="Выбырите марку"
           @change="selectModel($event)"
@@ -48,16 +49,33 @@
           @reset="resetModelField"
         />
       </div>
-      <div class="carcas" v-if="className === 'calculator'">
+      <div class="year-begin" v-if="className === 'create-ads'">
+        <label class="filter-param-label">Год выпуска</label>
+        <AutocompleteBtn
+          :options="createYearList"
+          :value="createYear"
+          :isPrepend="isEmpty(model)"
+          :isReset="!isEmpty(createYear)"
+          label="Выбрать"
+          prependTitle="Выбырите сначало модель"
+          @change="selectCreateYear($event)"
+          @reset="resetCreateYearField"
+        />
+      </div>
+      <div class="modification" v-if="className === 'create-ads'">
+        <label class="modification-label">Модификация</label>
+        <input class="modification-input" :value="modification" type="text" @input="changeModification" />
+      </div>
+      <div class="carcas" v-if="/calculator|create-ads/.test(className)">
         <label class="filter-param-label">Тип кузова</label>
         <AutocompleteBtn
           :options="carcaseList"
           :value="carcase"
           :payload="true"
-          :isPrepend="isEmpty(model)"
+          :isPrepend="className === 'calculator' ? isEmpty(model) : isNull(createYear)"
           :isReset="!isEmpty(carcase)"
           label="Выбрать"
-          prependTitle="Выбырите сначало модель"
+          :prependTitle="`${className === 'calculator' ? 'Выбырите сначало модель' : 'Выбирите сначало год'}`"
           @change="selectCarcase($event)"
           @reset="resetCarcaseField"
         />
@@ -92,7 +110,7 @@
           @reset="resetFieldLocation"
         />
       </div>
-      <div class="city" v-if="className === 'calculator'">
+      <div class="city" v-if="/calculator|create-ads/.test(className)">
         <label class="filter-param-label">Город</label>
         <AutocompleteBtn
           :options="cityList"
@@ -119,8 +137,8 @@
                 class="col-6 pr-2 col-sm-6 pr-sm-2 pr-md-2 col-lg-6 pr-lg-2"
                 :options="yearFromList"
                 :value="fromYear"
-                :isPrepend="hasModel || !model.length"
-                :isReset="!!fromYear"
+                :isPrepend="isEmpty(!!model)"
+                :isReset="!isEmpty(!!fromYear)"
                 label="от"
                 prependTitle="Выбырите модель"
                 @change="selectYearFrom($event)"
@@ -131,8 +149,8 @@
                 class="col-6 pl-2 col-sm-6 pl-sm-2 pl-md-2 col-lg-6 pl-lg-2"
                 :options="yearToList"
                 :value="toYear"
-                :isPrepend="hasModel || !model.length"
-                :isReset="!!toYear"
+                :isPrepend="isEmpty(!!model)"
+                :isReset="!isEmpty(!!toYear)"
                 label="до"
                 prependTitle="Выбырите модель"
                 @change="selectYearTo($event)"
@@ -143,11 +161,11 @@
           </template>
         </AcordionSingle>
       </div>
-      <AcordionSingle class="acordion-mileage" v-if="/catalog|calculator/.test(this.className)" :isOpen="0" className="simple" title="Пробег, тыс. км">
+      <AcordionSingle class="acordion-mileage" v-if="/catalog|calculator|create-ads/.test(this.className)" :isOpen="0" className="simple" title="Пробег, тыс. км">
         <template slot="content">
-          <label class="filter-param-label">Пробег</label>
+          <label class="filter-param-label" v-if="className !== 'catalog'">Пробег</label>
           <div class="group-mileage row no-gutters">
-            <input class="mileage-from" :value="mileageFrom" type="number" placeholder="от" autocomplete @input="changeMileageFrom" />
+            <input class="mileage-from" :value="mileageFrom" type="number" :placeholder="`${className === 'create-ads' ? 'тыс. км' : 'от'}`" autocomplete @input="changeMileageFrom" />
             <input class="mileage-to" :value="mileageTo" type="number" placeholder="до" autocomplete @input="changeMileageTo" />
           </div>
         </template>
@@ -320,13 +338,13 @@ import publicationTimeList from '~/helpers/publicationTimeList.js';
 // mixins
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
-import transformObjectInArrayForSelect from '~/mixins/transformObjectInArrayForSelect.js';
+import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 import isNull from '~/mixins/isNull.js';
 import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
   name: 'MainFilter',
-  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformObjectInArrayForSelect, isNull, isEmpty],
+  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformArrayForSelectBtn, isNull, isEmpty],
   data() {
     return {
       statesList: ['Все', 'Б/у', 'Новые', this.$i18n.t('под-пригон')],
@@ -358,7 +376,6 @@ export default {
       ],
       sortList: sortList,
       publicationTimeList: publicationTimeList,
-      city: '',
       cityList: [],
       carcase: '',
       carcaseList: [],
@@ -369,6 +386,9 @@ export default {
         { text: 'растаможен', value: true },
         { text: 'Не растаможен', value: false },
       ],
+      createYear: null,
+      createYearList: [],
+      modification: '',
     };
   },
   computed: {
@@ -404,6 +424,7 @@ export default {
       yearToList: (state) => state.filter.collections.yearToList,
       abroad: (state) => state.filter.filter.abroad,
       customsCleared: (state) => state.filter.filter.customsCleared,
+      city: (state) => state.filter.filter.city,
     }),
   },
   methods: {
@@ -470,6 +491,10 @@ export default {
       this.deleteFilterParamNameInLocalStorage(['car_type_id', 'car_mark_id', 'car_model_id', 'year_from', 'year_to']);
 
       if (this.className === 'calculator') this.resetCarcase();
+      if (this.className === 'create-ads') {
+        this.resetCarcase();
+        this.resetCreateYearField();
+      }
     },
 
     resetBrandField() {
@@ -479,6 +504,10 @@ export default {
       this.deleteFilterParamNameInLocalStorage(['car_mark_id', 'car_model_id', 'year_from', 'year_to']);
 
       if (this.className === 'calculator') this.resetCarcase();
+      if (this.className === 'create-ads') {
+        this.resetCarcase();
+        this.resetCreateYearField();
+      }
     },
 
     resetModelField() {
@@ -487,10 +516,24 @@ export default {
       this.deleteFilterParamNameInLocalStorage(['car_model_id', 'year_from', 'year_to']);
 
       if (this.className === 'calculator') this.resetCarcase();
+      if (this.className === 'create-ads') {
+        this.resetCarcase();
+        this.resetCreateYearField();
+      }
     },
 
     resetCarcaseField() {
       this.carcase = '';
+
+      this.$emit('change-carcase', null);
+    },
+
+    resetCreateYearField() {
+      this.createYear = null;
+      this.createYearList = [];
+      this.resetCarcase();
+
+      this.$emit('change-year', null);
     },
 
     resetFuelField() {
@@ -504,6 +547,8 @@ export default {
     resetCarcase() {
       this.carcase = '';
       this.carcaseList = [];
+
+      this.$emit('change-carcase', null);
     },
 
     resetFieldFrom() {
@@ -520,14 +565,14 @@ export default {
       this.resetLocation();
       this.deleteFilterParamNameInLocalStorage(['location_id']);
 
-      if (this.className === 'calculator') {
-        this.city = '';
+      if (/calculator|createAds/.test(this.className)) {
+        this.resetFilterCity();
         this.cityList = [];
       }
     },
 
     resetCity() {
-      this.city = '';
+      this.resetFilterCity();
     },
 
     resetFieldBroken() {
@@ -680,12 +725,8 @@ export default {
 
       try {
         const { data } = await this.$axios.$get(`filters/marks?type=${param.value}`, { method: 'GET' });
-        this.setBrandList(
-          Object.values(data.marks).map((item, index) => ({
-            text: item,
-            value: `${index + 1}`,
-          }))
-        );
+
+        this.setBrandList(this.transformArrayForSelectBtn(data.marks));
       } catch (error) {
         console.error(error);
       }
@@ -704,12 +745,7 @@ export default {
       try {
         const { data } = await this.$axios.$get(`filters/models?type=${this.type}&mark=${value}`, { method: 'GET' });
 
-        this.setModelList(
-          Object.values(data.models).map((item, index) => ({
-            text: item,
-            value: `${index + 1}`,
-          }))
-        );
+        this.setModelList(this.transformArrayForSelectBtn(data.models));
       } catch (error) {
         console.error(error);
       }
@@ -739,10 +775,9 @@ export default {
 
       try {
         const { data } = await this.$axios.$get(`filters/years?type=${this.type}&model=${value}`, { method: 'GET' });
-        const productionYear = Object.values(data.years);
 
-        this.setYearFromList(productionYear);
-        this.setYearToList(productionYear);
+        this.setYearFromList(this.transformArrayForSelectBtn(data.years));
+        this.setYearToList(this.transformArrayForSelectBtn(data.years));
       } catch (error) {
         console.error(error);
       }
@@ -752,13 +787,19 @@ export default {
 
         try {
           const { data } = await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.collection.year_begin}`);
-          let carcas = [];
 
-          for (let item in data.series) {
-            carcas = [...carcas, { text: data.series[item], value: item }];
-          }
+          this.carcaseList = this.transformArrayForSelectBtn(data.series);
+        } catch (error) {
+          console.error(error);
+        }
+      }
 
-          this.carcaseList = carcas;
+      if (this.className === 'create-ads') {
+        try {
+          this.createYearList = (await this.$axios.$get(`filters/generations?car_type_id=${this.type}&car_model_id=${this.model}`)).data.generations
+            .filter((item) => !this.isNull(item.year_begin))
+            .map((item) => item.year_begin)
+            .sort();
         } catch (error) {
           console.error(error);
         }
@@ -767,6 +808,31 @@ export default {
 
     selectCarcase({ text, value }) {
       this.carcase = value;
+
+      this.$emit('change-carcase', value);
+    },
+
+    async selectCreateYear(year) {
+      this.createYear = year;
+      this.$emit('change-year', year);
+
+      try {
+        this.carcaseList = this.transformArrayForSelectBtn((await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${year}`)).data.series);
+      } catch (error) {
+        console.error(error);
+      }
+    },
+
+    changeModification(e) {
+      this.modification = e.target.value;
+
+      this.$emit('change-modification', this.modification);
+    },
+
+    resetCreateYear() {
+      this.createYear = null;
+
+      this.$emit('change-year', null);
     },
 
     checkExistBrand() {
@@ -788,16 +854,11 @@ export default {
       this.saveFilterParamNameInLocalStorage('location_id', text);
       this.setLocation(value);
 
-      if (this.className === 'calculator') {
+      if (/calculator|create-ads/.test(this.className)) {
         try {
           const { data } = await this.$axios.$get(`filters/cities?region=${value}`);
-          let cities = [];
 
-          for (let item in data.cities) {
-            cities = [...cities, { text: data.cities[item], value: item }];
-          }
-
-          this.cityList = cities;
+          this.cityList = this.transformArrayForSelectBtn(data.cities);
         } catch (error) {
           console.error(error);
         }
@@ -805,7 +866,7 @@ export default {
     },
 
     selectCity({ value }) {
-      this.city = value;
+      this.setFilterCity(value);
     },
 
     selectCustoms({ value }) {
@@ -824,10 +885,8 @@ export default {
 
         const { data } = await this.$axios.$get(`filters/regions`, { method: 'GET' });
 
-        this.locationsList = Object.values(data.regions).map((item, index) => ({
-          text: item,
-          value: `${index + 1}`,
-        }));
+        this.locationsList = this.transformArrayForSelectBtn(data.regions);
+
         this.isLocationsLoading = false;
       } catch (error) {
         console.error(error);
@@ -865,7 +924,7 @@ export default {
 
     async selectCurrency(currency) {
       try {
-        const { data } = await this.$axios.$get(`filters/prices?currency=${currency.meta.id}`, { method: 'GET' });
+        const { data } = await this.$axios.$get(`filters/prices?currency=${currency.value}`, { method: 'GET' });
         const { min, max } = data;
 
         this.setFixedMinPrice(min);
@@ -949,6 +1008,8 @@ export default {
       setAdditionalSettings: 'filter/setAdditionalSettings',
       resetAdditionalSettings: 'filter/resetAdditionalSettings',
       initialFilterPriceRange: 'filter/initialFilterPriceRange',
+      setFilterCity: 'filter/setFilterCity',
+      resetFilterCity: 'filter/resetFilterCity',
     }),
   },
   async mounted() {
@@ -956,12 +1017,7 @@ export default {
       (async () => {
         const { data } = await this.$axios.$get(`filters/types`, { method: 'GET' });
 
-        this.setCategoryList(
-          Object.values(data.types).map((item, index) => ({
-            text: item,
-            value: `${index + 1}`,
-          }))
-        );
+        this.setCategoryList(this.transformArrayForSelectBtn(data.types));
       })();
 
       (async () => {
@@ -985,11 +1041,7 @@ export default {
     (async () => {
       const { data } = await this.$axios.$get(`filters/currencies`, { method: 'GET' });
 
-      this.currencyList = Object.values(data.currencies).map((item) => ({
-        text: item.name,
-        value: item.id,
-        meta: item,
-      }));
+      this.currencyList = this.transformArrayForSelectBtn(data.currencies);
 
       this.setDefaultCurrency(data.current_default.id);
 
@@ -1000,27 +1052,20 @@ export default {
 
     if (/catalog|calculator/.test(this.className)) {
       try {
-        const { transmissions, driveUnits, fuels, engineCapacities, enginePowers } = (await this.$axios.$get(`filters/characteristic`)).data;
+        const { transmissions, driveUnits, fuels } = (await this.$axios.$get(`filters/characteristic`)).data;
 
-        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
-        this.fuelList = this.transformObjectInArrayForSelect(fuels);
-        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
+        this.transmissionList = this.transformArrayForSelectBtn(transmissions);
+        this.fuelList = this.transformArrayForSelectBtn(fuels);
+        this.driveUnitList = this.transformArrayForSelectBtn(driveUnits);
       } catch (error) {
         console.error(error);
       }
 
       if (this.className === 'calculator' && !this.isEmpty(this.model)) {
         try {
-          this.carcase = '';
-
           const { data } = await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.collection.year_begin}`);
-          let carcas = [];
 
-          for (let item in data.series) {
-            carcas = [...carcas, { text: data.series[item], value: item }];
-          }
-
-          this.carcaseList = carcas;
+          this.carcaseList = this.transformArrayForSelectBtn(data.series);
         } catch (error) {
           console.error(error);
         }
@@ -1031,12 +1076,8 @@ export default {
       if (this.type) {
         try {
           const { data } = await this.$axios.$get(`filters/marks?type=${this.type}`, { method: 'GET' });
-          this.setBrandList(
-            Object.values(data.marks).map((item, index) => ({
-              text: item,
-              value: `${index + 1}`,
-            }))
-          );
+
+          this.setBrandList(this.transformArrayForSelectBtn(data.marks));
         } catch (error) {
           console.error(error);
         }
@@ -1045,12 +1086,8 @@ export default {
       if (this.brand) {
         try {
           const { data } = await this.$axios.$get(`filters/models?type=${this.type}&mark=${this.brand}`, { method: 'GET' });
-          this.setModelList(
-            Object.values(data.models).map((item, index) => ({
-              text: item,
-              value: `${index + 1}`,
-            }))
-          );
+
+          this.setModelList(this.transformArrayForSelectBtn(data.models));
         } catch (error) {
           console.error(error);
         }
@@ -1059,10 +1096,25 @@ export default {
       if (this.model) {
         try {
           const { data } = await this.$axios.$get(`filters/years?type=${this.type}&model=${this.model}`, { method: 'GET' });
-          const productionYear = Object.values(data.years);
 
-          this.setYearFromList(productionYear);
-          this.setYearToList(productionYear);
+          this.setYearFromList(this.transformArrayForSelectBtn(data.years));
+          this.setYearToList(this.transformArrayForSelectBtn(data.years));
+        } catch (error) {
+          console.error(error);
+        }
+
+        if (className === 'create-ads') {
+          try {
+            this.createYearList = (await this.$axios.$get(`filters/generations?car_type_id=${this.type}&car_model_id=${this.model}`)).data.generations.map((item) => item.year_begin);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+      }
+
+      if (this.createYear) {
+        try {
+          this.carcaseList = (await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.createYear}`)).data.series.map((item) => ({ text: item.name, value: item.id }));
         } catch (error) {
           console.error(error);
         }
@@ -1284,6 +1336,26 @@ export default {
         .abroad-item {
           margin-top: 12px;
         }
+      }
+    }
+
+    .modification {
+      padding-right: 16px;
+      margin-top: 16px;
+
+      max-width: calc(100% / 2);
+      width: 100%;
+      order: 9;
+
+      .modification-label {
+        display: block;
+      }
+
+      .modification-input {
+        margin-top: 6px;
+        width: 100%;
+
+        @extend .input-text-classic;
       }
     }
 
@@ -1749,6 +1821,10 @@ export default {
   }
 }
 
+.is-create-ads {
+  @extend .is-calculator;
+}
+
 @include sm {
   .filter::before {
     background: #f2f7fa;
@@ -1758,6 +1834,69 @@ export default {
 
 @include xs {
   .is-calculator .filter-form {
+    .category-car {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .model-car {
+      padding: 0;
+      margin-top: 12px;
+    }
+
+    .carcas {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .fuel {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .unit-box {
+      padding: 0;
+      margin-top: 0;
+      max-width: 100%;
+    }
+
+    .location-car {
+      padding: 0;
+    }
+
+    .city {
+      padding: 0;
+      margin-top: 12px;
+      max-width: 100%;
+    }
+
+    .customs {
+      padding: 0;
+      margin-top: 12px;
+      max-width: 100%;
+    }
+
+    .production-year {
+      padding: 0;
+      margin-top: 12px;
+    }
+
+    .acordion-mileage {
+      max-width: 100%;
+      padding: 0;
+    }
+
+    .search-btn-wrapper {
+      padding: 0;
+      max-width: max-content;
+
+      .cost-btn {
+        padding: 14px 20px;
+      }
+    }
+  }
+
+  .is-create-ads .filter-form {
     .category-car {
       max-width: 100%;
       padding: 0;

@@ -9,8 +9,8 @@
             <img v-else src="~assets/images/user_placeholder.png" alt="avatar" />
           </v-avatar>
           <v-file-input v-model="avatar" :rules="rules" class="d-none" ref="v_file_input" accept="image/png, image/jpeg" @change="onFilePicked"></v-file-input>
-          <v-btn class="upload_btn" @click="$refs.v_file_input.$refs.input.click()"> {{ avatarUrl ? 'Изменить фото' : 'Добавить фото' }} </v-btn>
-          <v-btn v-if="avatarUrl" class="remove_btn ml-6" @click="removeAvatar"> Удалить </v-btn>
+          <v-btn depressed class="upload_btn" @click="$refs.v_file_input.$refs.input.click()"> {{ avatarUrl ? 'Изменить фото' : 'Добавить фото' }} </v-btn>
+          <v-btn depressed v-if="avatarUrl" class="remove_btn ml-6" @click="removeAvatar"> Удалить </v-btn>
         </div>
         <v-alert v-if="isAvatarError" type="error" class="my-4"> Размер фото не должен превышать 2 MB! </v-alert>
       </div>
@@ -72,17 +72,7 @@
         </v-flex>
         <v-flex>
           <span> Статус </span>
-          <v-select
-            v-model="userInfo.type_user"
-            color="#4CAD33"
-            :items="status"
-            item-value="value"
-            item-text="title"
-            outlined
-            dense
-            height="36"
-          >
-          </v-select>
+          <v-select v-model="userInfo.type_user" color="#4CAD33" :items="status" item-value="value" item-text="title" outlined dense height="36"> </v-select>
         </v-flex>
         <v-flex>
           <span> Telegram </span>
@@ -92,7 +82,7 @@
           <check-box class="pb-3" @change="userInfo.is_chat = $event" :value="userInfo.is_chat ? !!userInfo.is_chat : false" :label="'Разрешить покупателям связываться со мной через чат'" />
         </div>
         <div class="submit_button">
-          <v-btn class="upload_btn" @click="$refs.passwordModal.open()"> Изменить пароль </v-btn>
+          <v-btn depressed class="upload_btn" @click="$refs.passwordModal.open()"> Изменить пароль </v-btn>
         </div>
         <div class="user_additional my-6">
           <h3>Вход в AutoSill в один клик</h3>
@@ -101,11 +91,11 @@
             <span>Привяжите ваш профиль из социальных сетей для мгновенной авторизации на площадке в один клик</span>
           </div>
           <div class="user_additional-actions">
-            <v-btn class="mt-5">
+            <v-btn depressed class="mt-5">
               <img src="~assets/images/icons/google-symbol.svg" />
               Прявязать аккаунт Google
             </v-btn>
-            <v-btn class="mt-5">
+            <v-btn depressed class="mt-5">
               <img src="~assets/images/icons/facebook.svg" />
               Отключить аккаунт Facebook
             </v-btn>
@@ -225,6 +215,9 @@ export default {
 <style lang="scss" scoped>
 .main {
   .outer-wrap {
+    .v-btn:before {
+      background-color: #ffffff;
+    }
     .v-form {
       display: flex;
       flex-wrap: wrap;
