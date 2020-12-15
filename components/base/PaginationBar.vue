@@ -110,6 +110,11 @@ export default {
   }
 
   ::v-deep .v-pagination {
+    .v-pagination__more {
+      @media (max-width: 480px) {
+        max-width: 16px;
+      }
+    }
     & li:first-child {
       display: none;
     }
