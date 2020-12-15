@@ -143,11 +143,11 @@ import AutocompleteBtn from '~/components/base/AutocompleteBtn.vue';
 import CheckBox from '~/components/base/CheckBox.vue';
 import CheckBoxGroup from '~/components/base/CheckBoxGroup.vue';
 // mixins
-import transformObjectInArrayForSelect from '~/mixins/transformObjectInArrayForSelect.js';
+import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 
 export default {
   name: 'CreateAdsAdditional',
-  mixins: [transformObjectInArrayForSelect],
+  mixins: [transformArrayForSelectBtn],
   data() {
     return {
       transmissionList: [],
@@ -228,6 +228,10 @@ export default {
       this.additionalParams.color = value;
     },
 
+    selectAmountDoors({ text, value }) {
+      this.additionalParams.amountDoors = value;
+    },
+
     setColorMetallic(selectStatus) {
       this.additionalParams.isMetallic = selectStatus;
     },
@@ -273,12 +277,12 @@ export default {
       try {
         const { transmissions, fuels, driveUnits, doors, engineCapacities, colors } = (await this.$services.createAds.getAdditionalCharacteristic()).data;
 
-        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
-        this.engineCapacityList = this.transformObjectInArrayForSelect(engineCapacities);
-        this.driveUnitsList = this.transformObjectInArrayForSelect(driveUnits);
-        this.fuelList = this.transformObjectInArrayForSelect(fuels);
-        this.amountDoorsList = this.transformObjectInArrayForSelect(doors);
-        this.colorsList = colors.map((item) => ({ text: item.name, value: item.id }));
+        this.transmissionList = this.transformArrayForSelectBtn(transmissions);
+        this.engineCapacityList = this.transformArrayForSelectBtn(engineCapacities);
+        this.driveUnitsList = this.transformArrayForSelectBtn(driveUnits);
+        this.fuelList = this.transformArrayForSelectBtn(fuels);
+        this.amountDoorsList = this.transformArrayForSelectBtn(doors);
+        this.colorsList = this.transformArrayForSelectBtn(colors);
       } catch (error) {
         console.error(error);
       }
@@ -288,7 +292,7 @@ export default {
       try {
         const { carCondition } = (await this.$services.createAds.getAdditionalCarCondition()).data;
 
-        this.carStatesList = this.transformObjectInArrayForSelect(carCondition);
+        this.carStatesList = this.transformArrayForSelectBtn(carCondition);
       } catch (error) {
         console.error(error);
       }
@@ -298,7 +302,7 @@ export default {
       try {
         const { carComfort } = (await this.$services.createAds.getAdditionalComfortCondition()).data;
 
-        this.carComfortList = this.transformObjectInArrayForSelect(carComfort);
+        this.carComfortList = this.transformArrayForSelectBtn(carComfort);
       } catch (error) {
         console.error(error);
       }
@@ -308,7 +312,7 @@ export default {
       try {
         const { carMultimedia } = (await this.$services.createAds.getAdditionalMultimediaCondition()).data;
 
-        this.carMultimediaList = this.transformObjectInArrayForSelect(carMultimedia);
+        this.carMultimediaList = this.transformArrayForSelectBtn(carMultimedia);
       } catch (error) {
         console.error(error);
       }
@@ -318,7 +322,7 @@ export default {
       try {
         const { carSecurity } = (await this.$services.createAds.getAdditionalSecurityCondition()).data;
 
-        this.carSecurityList = this.transformObjectInArrayForSelect(carSecurity);
+        this.carSecurityList = this.transformArrayForSelectBtn(carSecurity);
       } catch (error) {
         console.error(error);
       }
@@ -328,7 +332,7 @@ export default {
       try {
         const { carAnother } = (await this.$services.createAds.getAdditionalAnotherCondition()).data;
 
-        this.carAnotherList = this.transformObjectInArrayForSelect(carAnother);
+        this.carAnotherList = this.transformArrayForSelectBtn(carAnother);
       } catch (error) {
         console.error(error);
       }

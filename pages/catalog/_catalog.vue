@@ -585,16 +585,16 @@ export default {
         switch (item[0]) {
           case 'status':
             initialChangeOptions = this.setCatalogFilterDefaultParams(Number(item[1]), initialChangeOptions);
-            initialChangeOptions['states'] = item[1];
+            initialChangeOptions['states'] = Number(item[1]);
             break;
           case 'car_type_id':
-            initialChangeOptions['type'] = item[1];
+            initialChangeOptions['type'] = Number(item[1]);
             break;
           case 'car_mark_id':
-            initialChangeOptions['brand'] = item[1];
+            initialChangeOptions['brand'] = Number(item[1]);
             break;
           case 'car_model_id':
-            initialChangeOptions['model'] = item[1];
+            initialChangeOptions['model'] = Number(item[1]);
             break;
           case 'location_id':
             initialChangeOptions['location'] = Number(item[1]);
