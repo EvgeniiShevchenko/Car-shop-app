@@ -44,12 +44,11 @@
 <script>
 import AdsCard from '@/components/modules/personal/AdsCard';
 import PaginationBar from '@/components/base/PaginationBar';
-import CheckBox from '@/components/base/CheckBox';
 
 export default {
   name: 'Advertising',
   layout: 'personal',
-  components: { AdsCard, PaginationBar, CheckBox },
+  components: { AdsCard, PaginationBar },
   data() {
     return {
       tab: null,
