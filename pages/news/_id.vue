@@ -4,7 +4,7 @@
     <div class="outer-wrap d-flex">
       <div>
         <news-carousel :news="currentNews" />
-        <div v-html="currentNews.text_first" class="mt-6"></div>
+        <div v-html="currentNews.text_first" class="mt-6 news_content"></div>
         <div v-if="currentNews.quote" class="outer-wrap-another_news">
           <div class="outer-wrap-another_news-container d-flex">
             <nuxt-link :to="{ name: 'news-id___ru', params: { id: currentNews.quote.alias }, query: $route.query }">
@@ -16,7 +16,7 @@
             </div>
           </div>
         </div>
-        <div v-html="currentNews.text_second" class="mt-6"></div>
+        <div v-html="currentNews.text_second" class="mt-6 news_content"></div>
         <to-share-block class="share_wrapper" />
         <horizontal-banner class="horizontal_banner" />
       </div>
@@ -91,6 +91,9 @@ export default {
     &-item {
       margin: 16px 0;
     }
+    h2 {
+      color: #222329;
+    }
   }
   &-another_news {
     padding: 20px;
@@ -127,7 +130,7 @@ export default {
     }
   }
 }
-::v-deep ul {
+::v-deep .news_content ul {
   li {
     list-style-type: disc;
   }
