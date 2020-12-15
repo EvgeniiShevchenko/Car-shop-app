@@ -9,6 +9,11 @@ Vue.filter('convertDateToFormatDDMMYYYY', (date) => {
   return moment(date).format('DD.MM.YYYY');
 });
 
+Vue.filter('convertEngineCapacity', (value) => {
+  value = value / 1000;
+  return value.toFixed(1);
+});
+
 Vue.filter('beforeNowInPastFromDate', (date) => {
   moment.updateLocale('ru', {
     relativeTime: {
