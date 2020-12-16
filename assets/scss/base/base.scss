@@ -151,3 +151,24 @@ h4 {
   font-size: 15px;
   line-height: 110%;
 }
+
+.accept-green-btn {
+  height: 43px;
+  width: 100%;
+
+  background: #4CAD33;
+  border-radius: 2px;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 15px;
+  color: #FFFFFF;
+
+  &:hover {
+    background: #2CA00D;
+  }
+}
+
+html {
+  overflow-y: auto;
+}

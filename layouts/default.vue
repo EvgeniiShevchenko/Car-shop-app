@@ -114,14 +114,18 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import moment from 'moment';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Default',
+  mixins: [getAuthToken],
   data() {
     return {
       pages: pages,
@@ -185,11 +189,21 @@ export default {
           return 0;
       }
     },
+
+    ...mapActions({ setLogin: 'setLogin' }),
   },
   watch: {
     $route() {
       this.getRouteHistory();
     },
+  },
+  mounted() {
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken());
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
 };
 </script>

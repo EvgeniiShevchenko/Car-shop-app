@@ -34,6 +34,7 @@ export default {
   .pop-up-success-icon {
     width: 21px;
     height: 22px;
+    fill: white;
   }
 
   .pop-up-success-text {
