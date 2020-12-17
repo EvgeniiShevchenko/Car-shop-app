@@ -5,4 +5,5 @@ export default {
   personal: 'Профиль',
   settings: 'Настройки',
   about_us: 'О нас',
+  advertising: 'Мои объявления',
 };
