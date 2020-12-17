@@ -98,7 +98,7 @@ export default {
         .$post('auth/sociallogin/' + provider, response)
         .then((response) => {
           localStorage.setItem('token', response.data.token);
-          this.$axios.setToken(response.data.token);
+          this.$axios.setToken(response.data.token, 'Bearer');
           this.$router.push('/personal/settings');
         })
         .catch((err) => {
@@ -112,7 +112,7 @@ export default {
     this.$root.$on('show-popup', this.showPopUp);
 
     if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken());
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
       this.setLogin(true);
     } else {
       this.setLogin(false);

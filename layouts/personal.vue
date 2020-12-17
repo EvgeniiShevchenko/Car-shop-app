@@ -212,7 +212,7 @@ export default {
   },
   mounted() {
     if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken());
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
       this.setLogin(true);
     } else {
       this.setLogin(false);

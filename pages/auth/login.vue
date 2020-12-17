@@ -93,7 +93,7 @@ export default {
       try {
         const { data } = await this.$services.auth.getLoginToken(serverData);
         localStorage.setItem('token', data.token);
-        this.$axios.setToken(response.data.token);
+        this.$axios.setToken(data.token, 'Bearer');
         this.$router.push('/personal/settings');
       } catch (error) {
         console.error(error);
