@@ -23,6 +23,7 @@
     "nuxt-dropzone": "^1.0.4",
     "nuxt-i18n": "^6.15.4",
     "qs": "^6.9.4",
+    "v-mask": "^2.2.3",
     "validator": "^13.1.17",
     "vue-axios": "^3.2.0",
     "vue-chartjs": "^3.5.1",

@@ -26,7 +26,9 @@
         inputName="phone"
         label="Телефон"
         type="tel"
+        patern="+38(###)-###-####"
         :value="phone"
+        :isMask="true"
         :errorList="error.locations"
         :errorMessage="error.message"
         @focus-field="handlerFocus"
@@ -86,13 +88,12 @@ import CheckBox from '~/components/base/CheckBox.vue';
 import SelectBtn from '~/components/base/SelectBtn.vue';
 // mixins
 import isEmpty from '~/mixins/isEmpty.js';
-import formatPhoneNumber from '~/mixins/formatPhoneNumber.js';
 import validationRegistrationFields from '~/mixins/validationRegistrationFields.js';
 import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 
 export default {
   name: 'registration',
-  mixins: [isEmpty, formatPhoneNumber, validationRegistrationFields, transformArrayForSelectBtn],
+  mixins: [isEmpty, validationRegistrationFields, transformArrayForSelectBtn],
   layout: 'auth',
   data() {
     return {
@@ -187,7 +188,7 @@ export default {
     },
 
     changePhone(value) {
-      this.phone = this.formatPhoneNumber(value);
+      this.phone = value;
     },
 
     changePassword(value) {

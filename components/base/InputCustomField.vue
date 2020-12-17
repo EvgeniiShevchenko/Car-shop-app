@@ -2,7 +2,8 @@
   <div :class="`custom-input ${errorList.has(inputName) ? 'is-error' : ''}`">
     <label :class="`input-label ${isRequiredMark ? 'is-required' : ''}`" for="">{{ label }}</label>
     <div class="input-wrapper">
-      <input class="input" :type="type" :value="value" :placeholder="placeholder" @input="changeField" @focus="$emit('focus-field', inputName)" />
+      <input class="input" v-if="isMask" :type="type" v-model="fieldValue" v-mask="patern" :placeholder="placeholder" @input="changeField" @focus="$emit('focus-field', inputName)" />
+      <input class="input" v-else :type="type" :value="value" :placeholder="placeholder" @input="changeField" @focus="$emit('focus-field', inputName)" />
       <slot name="default" v-if="isAppend">
         <button class="append-btn" type="button" @click="$emit('show')">
           <svg class="append-btn-icon">
@@ -22,6 +23,11 @@ export default {
     changeField(e) {
       this.$emit('change-field', e.target.value);
     },
+  },
+  data() {
+    return {
+      fieldValue: '',
+    };
   },
   props: {
     errorList: {
@@ -61,6 +67,13 @@ export default {
     isAppend: {
       type: Boolean,
       default: false,
+    },
+    isMask: {
+      type: Boolean,
+      default: false,
+    },
+    patern: {
+      type: String,
     },
   },
 };

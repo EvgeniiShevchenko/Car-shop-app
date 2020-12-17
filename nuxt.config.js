@@ -14,7 +14,7 @@ module.exports = {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/filters.js', '~/plugins/services', '~/plugins/youtube.js', { src: '~/plugins/vueSocialAuth.js', mode: 'client' }],
+  plugins: ['~/plugins/filters.js', '~/plugins/services', '~/plugins/youtube.js', { src: '~/plugins/vueSocialAuth.js', mode: 'client' }, '~/plugins/vue-mask.js'],
   /*
    ** Build configuration
    */
