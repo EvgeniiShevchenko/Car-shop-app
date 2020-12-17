@@ -228,6 +228,12 @@ export default {
 
 <style lang="scss">
 .layout {
+  .outer-wrap {
+    width: 100%;
+  }
+  .profile_nav {
+    margin-bottom: 70px;
+  }
   @include init-font;
   display: flex;
   flex-direction: column;
@@ -236,6 +242,9 @@ export default {
   @include desktop {
     .profile_nav {
       display: none;
+    }
+    .content {
+      padding: 0 !important;
     }
     .outer-wrap {
       width: 100%;
