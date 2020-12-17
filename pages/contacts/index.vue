@@ -92,10 +92,14 @@ export default {
       }
     },
     getFieldRules(field) {
-      if (field.required && field.alias !== 'email') {
+      if (field.required && field.alias !== 'email' && field.alias !== 'name') {
         return [(v) => !!v || `Это поле является обязательным`];
       } else if (field.alias === 'email') {
         return field.required ? [(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'Email должен содержать @'] : [(v) => !v || /.+@.+\..+/.test(v) || 'Email должен содержать @'];
+      } else if (field.alias === 'name') {
+        return field.required
+          ? [(v) => !!v || 'Это обязательное поле', (v) => /^[a-zа-яё]+$/i.test(v) || 'Имя должно содержать только буквы']
+          : [(v) => !v || /^[a-zа-яё]+$/i.test(v) || 'Имя должно содержать только буквы'];
       } else {
         return [];
       }
@@ -113,12 +117,22 @@ export default {
     max-width: 100%;
     padding: 0;
     margin-bottom: 72px;
+    .v-form {
+      span {
+        color: #4a4d5c;
+      }
+      ::v-deep input {
+        color: #4a4d5c;
+      }
+    }
     .content_container {
       justify-content: space-between;
       ::v-deep textarea {
+        min-height: 50px;
         height: 82px;
         font-size: 15px;
         line-height: 110%;
+        color: #4a4d5c;
         @include xs {
           height: 230px;
         }
