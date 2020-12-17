@@ -110,15 +110,20 @@ export default {
     margin-bottom: 60px;
   }
   ul {
+    padding: 0;
     li {
       text-align: left;
-      list-style-type: disc;
+    }
+    li:before {
+      content: '•';
+      margin-right: 6px;
     }
   }
   p {
     font-style: normal;
     text-align: left;
     font-weight: 500;
+    color: #222329;
   }
   &-navigation {
     padding: 0 44px 24px 44px;
@@ -140,7 +145,7 @@ export default {
       font-size: 18px;
       line-height: 110%;
       margin-bottom: 10px;
-      padding-left: 8px;
+      color: #4a4d5c;
     }
     ul {
       li {
