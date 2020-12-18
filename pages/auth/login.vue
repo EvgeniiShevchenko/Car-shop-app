@@ -2,7 +2,7 @@
   <div class="login">
     <InputCustomField
       class="login-field mt-6"
-      inputName="phone"
+      inputName="login"
       label="Email или номер телефона"
       placeholder="Email или номер телефона"
       type="text"
@@ -67,7 +67,7 @@ export default {
     },
     async pressLogin() {
       const serverData = {
-        phone: this.login,
+        login: this.login,
         password: this.password,
       };
 
