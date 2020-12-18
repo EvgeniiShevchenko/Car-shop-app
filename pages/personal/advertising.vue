@@ -91,6 +91,7 @@ export default {
       this.getAdsList();
     },
     selectAll() {
+      if (!this.list.products || !this.list.products.data || !this.list.products.data.length) return;
       this.selectedAds = [];
       this.isSelectedAll
         ? this.list.products.data.forEach((product) => {
@@ -104,6 +105,7 @@ export default {
           ids: this.selectedAds,
         };
         await this.$services.user.deleteUserAds(params);
+        await this.getAdsList();
       } catch (error) {
         console.log(error);
       }
@@ -145,11 +147,11 @@ export default {
 .main {
   padding-top: 0;
   padding-bottom: 70px;
-  @include desktop {
-    padding: 0 0 40px 0;
-  }
   .outer-wrap {
     width: 100%;
+    @include desktop {
+      padding: 0 0 40px 0;
+    }
     .catalog-list {
       .check-box {
         position: absolute;
@@ -239,6 +241,50 @@ export default {
     .catalog-list {
       li {
         position: relative;
+      }
+    }
+  }
+  @include sm {
+    .pagination-wrapper {
+      ::v-deep .pagination {
+        justify-content: center;
+
+        .prev-btn {
+          display: none;
+        }
+        .v-pagination {
+          .v-pagination__navigation {
+            border-radius: 2px;
+            border: 1px solid #222329;
+            box-shadow: none;
+
+            .v-icon {
+              color: #222329;
+            }
+          }
+          & li:first-child {
+            display: flex;
+            margin-right: auto;
+
+            .v-pagination__navigation {
+              margin-left: 0;
+              margin-top: 0;
+            }
+          }
+          & li:last-child {
+            display: flex;
+            margin-left: auto;
+
+            .v-pagination__navigation {
+              margin-right: 0;
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+          }
+        }
+        .next-btn {
+          display: none;
+        }
       }
     }
   }

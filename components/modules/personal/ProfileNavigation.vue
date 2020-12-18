@@ -21,8 +21,10 @@
         <v-btn class="send_btn mb-0 mx-auto px-6"> <v-icon left> mdi-close </v-icon> Подать объявление</v-btn>
 
         <v-list nav dense class="px-0 py-3 nav_list">
-          <v-list-item v-for="item of navItems" :key="item.title" link>
-            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          <v-list-item v-for="item of navItems" :key="item.title" link :class="isActive(item.link) ? 'active_link' : ''">
+            <a :href="item.link"
+              ><v-list-item-title>{{ item.title }}</v-list-item-title></a
+            >
           </v-list-item>
         </v-list>
       </v-navigation-drawer>
@@ -31,6 +33,8 @@
 </template>
 
 <script>
+import pages from '../../../entities/pages';
+
 export default {
   name: 'ProfileNavigation',
   props: {
@@ -38,6 +42,7 @@ export default {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
       default: {},
+      pages: pages,
     },
   },
   data() {
@@ -49,7 +54,7 @@ export default {
         },
         {
           title: 'Мои объявления',
-          link: '/',
+          link: '/personal/advertising',
         },
         {
           title: 'Личный счет',
@@ -69,7 +74,7 @@ export default {
         },
         {
           title: 'Избранное',
-          link: '/',
+          link: '/personal/favorite',
         },
         {
           title: 'Сообщения',
@@ -77,7 +82,7 @@ export default {
         },
         {
           title: 'Настройки аккаунта',
-          link: '/',
+          link: '/personal/settings',
         },
         {
           title: 'Выход',
@@ -85,6 +90,11 @@ export default {
         },
       ],
     };
+  },
+  methods: {
+    isActive(link) {
+      return this.$route.path === link;
+    },
   },
 };
 </script>
@@ -95,6 +105,14 @@ export default {
     display: block;
     i {
       transform: rotate(-45deg);
+    }
+  }
+  .active_link {
+    background-color: #51a9f2;
+    a {
+      .v-list-item__title {
+        color: #ffffff !important;
+      }
     }
   }
   .header_nav {
