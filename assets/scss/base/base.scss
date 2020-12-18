@@ -177,3 +177,27 @@ h4 {
     }
   }
 }
+.v-form {
+  ::v-deep textarea {
+    font-size: 15px;
+    line-height: 110%;
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  span {
+    color: #4a4d5c;
+  }
+  ::v-deep input {
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  ::v-deep fieldset {
+    color: #8fa5b0 !important;
+  }
+  ::v-deep input::placeholder {
+    font-weight: 400;
+  }
+  ::v-deep textarea::placeholder {
+    font-weight: 400;
+  }
+}
