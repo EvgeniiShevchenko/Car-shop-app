@@ -6,4 +6,5 @@ export default {
   settings: 'Настройки',
   about_us: 'О нас',
   advertising: 'Мои объявления',
+  favorite: 'Избранные объявления',
 };
