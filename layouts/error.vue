@@ -189,6 +189,9 @@ export default {
       }
     }
     &_container {
+      ul {
+        padding-left: 5px;
+      }
       @include sm {
         margin-top: 20px;
       }
