@@ -68,6 +68,9 @@ export default {
 
   background: #d3d3d3;
   background-position-x: -16px;
+  @media (max-width: 1264px) {
+    max-width: 1024px;
+  }
 }
 
 .mobile {

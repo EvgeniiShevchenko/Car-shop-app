@@ -2,7 +2,7 @@
   <div class="carousel">
     <v-row justify="space-between">
       <p class="news_date">
-        {{ news.created_at | convertDateToFormatDDMMYYYY }}
+        {{ news.created_at | convertNewsDate }}
       </p>
       <div v-if="news.images && news.images.length" class="d-flex arrows">
         <p class="news_date">{{ count + 1 }} из {{ news.images && news.images.length ? news.images.length : 0 }}</p>
