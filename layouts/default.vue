@@ -134,6 +134,12 @@ export default {
   },
   mounted() {
     this.getRouteHistory();
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
   computed: {
     getCurentYear() {
@@ -161,12 +167,12 @@ export default {
   methods: {
     getRouteHistory() {
       const { path } = this.$route;
-      const breadCrumbs = [];
+      let breadCrumbs = [];
       const pathArray = path.split('/').filter((path) => !!path);
+      let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
       pathArray.forEach((item) => {
         let path, name;
         if (item === 'catalog' || item === 'auto') {
-          let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
           path = `/catalog?status=${this.getStatus(status)}`;
           name = status ? status : 'Все автомобили';
         } else {
@@ -175,6 +181,9 @@ export default {
         }
         breadCrumbs.push({ path, name });
       });
+      if (pathArray[0] === 'check') {
+        breadCrumbs = this.getPathForCheck(pathArray);
+      }
       this.collection = breadCrumbs;
     },
     getStatus(status) {
@@ -189,6 +198,22 @@ export default {
           return 0;
       }
     },
+    getPathForCheck(pathArray) {
+      return [
+        {
+          path: `/catalog?status=${this.getStatus(status)}`,
+          name: status ? status : 'Все автомобили',
+        },
+        {
+          path: `/auto/${pathArray[1]}`,
+          name: pathArray[1],
+        },
+        {
+          path: `/check/${pathArray[1]}`,
+          name: 'Проверка авто',
+        },
+      ];
+    },
 
     ...mapActions({ setLogin: 'setLogin' }),
   },
@@ -196,14 +221,6 @@ export default {
     $route() {
       this.getRouteHistory();
     },
-  },
-  mounted() {
-    if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken(), 'Bearer');
-      this.setLogin(true);
-    } else {
-      this.setLogin(false);
-    }
   },
 };
 </script>
