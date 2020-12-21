@@ -122,11 +122,14 @@
 
 <script>
 import moment from 'moment';
+import { mapActions } from 'vuex';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
 import ProfileNavigation from '@/components/modules/personal/ProfileNavigation';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Personal',
@@ -137,6 +140,7 @@ export default {
       userInfo: {},
     };
   },
+  mixins: [getAuthToken],
   mounted() {
     this.getUserInfo();
     this.getRouteHistory();
@@ -203,6 +207,16 @@ export default {
         console.log(error);
       }
     },
+
+    ...mapActions({ setLogin: 'setLogin' }),
+  },
+  mounted() {
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
   watch: {
     $route() {

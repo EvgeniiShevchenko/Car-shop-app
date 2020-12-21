@@ -30,6 +30,7 @@
       </ul>
     </section>
     <section class="comunity row no-gutters" v-if="communityInfo.community_values && communityInfo.community_values.length">
+      <h3 v-if="$route.path !== '/about_us'" class="comunity-title">Сообщество AutoSill</h3>
       <div class="ytube-wrapper col-md-8 pr-md-3 col-xl-8 pr-xl-3 about_us">
         <a :href="communityInfo.youtube"
           ><v-btn color="#f80703" :class="!isPlaying ? 'chanel_link' : 'd-none chanel_link'"
@@ -41,7 +42,9 @@
           <youtube @playing="isPlaying = true" @paused="isPlaying = false" ref="youtube" :player-width="100" :player-height="100" :video-id="communityInfo.video" style="width: 100%; height: 100%" />
         </no-ssr>
       </div>
+      <h3 v-if="$route.path === '/about_us' && $vuetify.breakpoint.smAndDown" class="mb-2 mt-6">Сообщество AutoSill</h3>
       <ul class="social-list row no-gutters col-md-4 pl-md-3 col-xl-4 pl-xl-3">
+        <li v-if="$route.path === '/about_us' && !$vuetify.breakpoint.smAndDown"><h3 class="mb-2">Сообщество AutoSill</h3></li>
         <li class="social-item col-md-12" :key="index" v-for="(item, index) in communityInfo.community_values">
           <a v-if="item.position < 5" :class="`social-item-ref is-facebook`" :style="item.color" href="#">
             <span class="d-flex">

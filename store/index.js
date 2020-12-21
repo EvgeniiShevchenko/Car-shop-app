@@ -8,13 +8,23 @@ Vue.use(Vuex);
 const getDefaultState = () => {
   return {
     locales: 'ru',
+    isLogin: false,
   };
 };
 
 const store = () =>
   new Vuex.Store({
     state: getDefaultState(),
-    mutations: {},
+    mutations: {
+      setLogin(state, payload) {
+        state.isLogin = payload;
+      },
+    },
+    actions: {
+      setLogin({ commit }, payload) {
+        commit('setLogin', payload);
+      },
+    },
     modules: {
       filter,
     },
