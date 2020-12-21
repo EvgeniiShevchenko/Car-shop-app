@@ -6,7 +6,7 @@
     </div>
     <div class="px-4 py-5 content">
       <p class="news_date mb-2">
-        {{ news.created_at | convertDateToFormatDDMMYYYY }}
+        {{ news.created_at | convertNewsDate }}
       </p>
       <nuxt-link :to="{ name: 'news-id___ru', params: { id: news.alias }, query: $route.query }">
         <v-card-title class="pa-0 mt-2"> {{ news.title }} </v-card-title>

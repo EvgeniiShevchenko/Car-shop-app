@@ -110,6 +110,11 @@ export default {
   }
 
   ::v-deep .v-pagination {
+    .v-pagination__more {
+      @media (max-width: 480px) {
+        max-width: 16px;
+      }
+    }
     & li:first-child {
       display: none;
     }
@@ -162,7 +167,11 @@ export default {
   }
 
   .is-disabled {
-    opacity: 0.6;
+    border-color: #b1c4cd;
+    color: #b1c4cd;
+    svg {
+      fill: #b1c4cd;
+    }
   }
 }
 </style>
