@@ -746,7 +746,17 @@ export default {
   },
   async fetch() {
     this.initializationData();
-    const { data } = await this.$axios.$get(`catalog/main${this.getQueryString()}`);
+    const token = this.getAuthToken() ? this.getAuthToken() : '';
+    let data;
+    if (token) {
+      data = await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }).data;
+    } else {
+      data = await this.$axios.$get(`catalog/main${this.getQueryString()}`).data;
+    }
     const { products, car_order, subscription } = data;
 
     this.catalogList = products.data;
