@@ -38,13 +38,17 @@
 </template>
 
 <script>
+//Components
 import PaginationBar from '@/components/base/PaginationBar';
 import CatalogCardsPreview from '@/components/base/CatalogCardsPreview';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Favorite',
   layout: 'personal',
   components: { PaginationBar, CatalogCardsPreview },
+  mixins: [getAuthToken],
   data() {
     return {
       search: '',
@@ -70,7 +74,7 @@ export default {
   methods: {
     async getAdsList() {
       try {
-        this.list = (await this.$services.user.getUserFavorite(this.params)).data;
+        this.list = (await this.$services.user.getUserFavorite(this.params, this.getAuthToken())).data;
         this.pagination.current_page = this.list.wishlists.current_page;
         this.pagination.last_page = this.list.wishlists.last_page;
         this.isSelectedAll = false;
@@ -97,7 +101,7 @@ export default {
         let params = {
           ids: this.selectedAds,
         };
-        await this.$services.user.deleteUserFavorite(params);
+        await this.$services.user.deleteUserFavorite(params, this.getAuthToken());
         await this.getAdsList();
       } catch (error) {
         console.log(error);

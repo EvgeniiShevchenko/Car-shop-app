@@ -144,6 +144,12 @@ export default {
   mounted() {
     this.getUserInfo();
     this.getRouteHistory();
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
   computed: {
     getCurentYear() {
@@ -202,21 +208,13 @@ export default {
     },
     async getUserInfo() {
       try {
-        this.userInfo = (await this.$services.user.getUserData()).data.user;
+        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
       } catch (error) {
         console.log(error);
       }
     },
 
     ...mapActions({ setLogin: 'setLogin' }),
-  },
-  mounted() {
-    if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken(), 'Bearer');
-      this.setLogin(true);
-    } else {
-      this.setLogin(false);
-    }
   },
   watch: {
     $route() {
