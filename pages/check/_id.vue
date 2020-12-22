@@ -246,6 +246,9 @@ export default {
         .v-form {
           .v-input {
             margin-top: 6px;
+            ::v-deep .v-input__slot {
+              background-color: #ffffff;
+            }
           }
         }
         .send_call_btn {
