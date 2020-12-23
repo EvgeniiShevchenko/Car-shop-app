@@ -47,7 +47,7 @@
             <li><a href="/">Обзоры</a></li>
           </ul>
         </div>
-        <div>
+        <div v-if="isAuth">
           <p>Личный профиль</p>
           <ul>
             <li><a href="/">Основная информация </a></li>
@@ -69,9 +69,12 @@
 <script>
 // components
 import AdsCardsList from '~/components/base/AdsCardsList.vue';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   layout: 'empty',
+  mixins: [getAuthToken],
   props: {
     error: {
       type: Object,
@@ -89,11 +92,13 @@ export default {
       pageNotFound: 'Not Found',
       otherError: 'An error occurred',
       latestAds: [],
+      isAuth: false,
     };
   },
   async mounted() {
     try {
       this.latestAds = (await this.$services.ads.getLatestAdsFor404()).data;
+      this.isAuth = !!localStorage.token;
     } catch (error) {
       console.log(error);
     }

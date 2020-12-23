@@ -208,7 +208,7 @@ export default {
     },
     async getUserInfo() {
       try {
-        this.userInfo = (await this.$services.user.getUserData()).data.user;
+        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
       } catch (error) {
         console.log(error);
       }

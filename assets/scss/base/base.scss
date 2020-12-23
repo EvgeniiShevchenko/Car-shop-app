@@ -71,7 +71,7 @@ h4 {
   color: #70848E;
 }
 
-.send_btn {
+button.send_btn {
   border-radius: 2px;
   background-color: #4CAD33 !important;
   padding: 0 27px !important;
@@ -199,5 +199,30 @@ html {
       line-height: 17px;
       color: #4a4d5c;
     }
+  }
+}
+
+.v-form {
+  ::v-deep textarea {
+    font-size: 15px;
+    line-height: 110%;
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  span {
+    color: #4a4d5c;
+  }
+  ::v-deep input {
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  ::v-deep fieldset {
+    color: #8fa5b0 !important;
+  }
+  ::v-deep input::placeholder {
+    font-weight: 400;
+  }
+  ::v-deep textarea::placeholder {
+    font-weight: 400;
   }
 }
