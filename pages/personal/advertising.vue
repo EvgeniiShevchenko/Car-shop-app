@@ -42,13 +42,17 @@
 </template>
 
 <script>
+//Components
 import AdsCard from '@/components/modules/personal/AdsCard';
 import PaginationBar from '@/components/base/PaginationBar';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Advertising',
   layout: 'personal',
   components: { AdsCard, PaginationBar },
+  mixins: [getAuthToken],
   data() {
     return {
       tab: null,
@@ -77,7 +81,7 @@ export default {
   methods: {
     async getAdsList() {
       try {
-        this.list = (await this.$services.user.getUserAds(this.params)).data;
+        this.list = (await this.$services.user.getUserAds(this.params, this.getAuthToken())).data;
         this.pagination.current_page = this.list.products.current_page;
         this.pagination.last_page = this.list.products.last_page;
         this.isSelectedAll = false;
@@ -104,7 +108,7 @@ export default {
         let params = {
           ids: this.selectedAds,
         };
-        await this.$services.user.deleteUserAds(params);
+        await this.$services.user.deleteUserAds(params, this.getAuthToken());
         await this.getAdsList();
       } catch (error) {
         console.log(error);
@@ -116,7 +120,7 @@ export default {
         active: 1,
       };
       try {
-        await this.$services.user.toPublishOrInactiveUserAds(params);
+        await this.$services.user.toPublishOrInactiveUserAds(params, this.getAuthToken());
         await this.getAdsList();
       } catch (error) {
         console.log(error);
@@ -128,7 +132,7 @@ export default {
         active: 0,
       };
       try {
-        await this.$services.user.toPublishOrInactiveUserAds(params);
+        await this.$services.user.toPublishOrInactiveUserAds(params, this.getAuthToken());
         await this.getAdsList();
       } catch (error) {
         console.log(error);
