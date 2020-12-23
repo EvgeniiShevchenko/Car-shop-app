@@ -338,6 +338,12 @@ export default {
     addBookmarks(bookmarksId) {
       try {
         this.$axios.$post(`auth/one_car/wishlist/${bookmarksId}`, { method: 'POST' });
+        this.catalogList.map((car) => {
+          if (car.unique_id === bookmarksId) {
+            car.is_wishlist = +!car.is_wishlist;
+          }
+          return car;
+        });
       } catch (error) {
         console.error(error);
       }
@@ -426,7 +432,14 @@ export default {
 
       setTimeout(async () => {
         try {
-          const { data } = await this.$axios.$get(`catalog/main${this.getQueryString()}`, { method: 'GET' });
+          let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
+          const { data } = token
+            ? await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              })
+            : await this.$axios.$get(`catalog/main${this.getQueryString()}`);
           const { products, subscription } = data;
 
           this.catalogList = products.data;
@@ -746,17 +759,14 @@ export default {
   },
   async fetch() {
     this.initializationData();
-    const token = this.getAuthToken() ? this.getAuthToken() : '';
-    let data;
-    if (token) {
-      data = await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }).data;
-    } else {
-      data = await this.$axios.$get(`catalog/main${this.getQueryString()}`).data;
-    }
+    let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
+    const { data } = token
+      ? await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        })
+      : await this.$axios.$get(`catalog/main${this.getQueryString()}`);
     const { products, car_order, subscription } = data;
 
     this.catalogList = products.data;

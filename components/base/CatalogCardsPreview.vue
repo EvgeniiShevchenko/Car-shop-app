@@ -49,10 +49,19 @@
               <use xlink:href="~assets/images/sprites/catalog.svg#icon-Libra" />
             </svg>
           </button>
-          <button class="favorites-btn" type="button" @click.prevent.stop="$emit('add-bookmarks', collection.unique_id)">
+          <button v-if="!collection.is_wishlist && this.$cookies.get('accessToken')" class="favorites-btn" type="button" @click.prevent.stop="$emit('add-bookmarks', collection.unique_id)">
             <svg class="favorites-icon">
               <use xlink:href="~assets/images/sprites/catalog.svg#icon-star" />
             </svg>
+          </button>
+          <button
+            v-if="collection.is_wishlist && this.$cookies.get('accessToken')"
+            class="favorites-btn"
+            style="width: 20px; height: 20px"
+            type="button"
+            @click.prevent.stop="$emit('add-bookmarks', collection.unique_id)"
+          >
+            <v-icon color="#51a9f2">mdi-star</v-icon>
           </button>
         </div>
       </div>

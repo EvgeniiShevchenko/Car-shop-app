@@ -22,6 +22,7 @@ module.exports = {
     '@nuxtjs/style-resources',
     '@nuxtjs/dotenv',
     '@nuxtjs/axios',
+    'cookie-universal-nuxt',
     [
       'nuxt-i18n',
       {

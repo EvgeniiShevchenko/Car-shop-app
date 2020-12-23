@@ -19,7 +19,7 @@
         <ul v-if="list.wishlists && list.wishlists.data && list.wishlists.data.length" class="catalog-list">
           <li class="mt-3" :key="product.id" v-for="product of list.wishlists.data">
             <v-checkbox color="#4CAD33" :ripple="false" hide-details class="check-box" v-model="selectedAds" :value="product.id"></v-checkbox>
-            <catalog-cards-preview :collection="product" :extends_view="true" :isMobile="isMobile" class="catalog-item" />
+            <catalog-cards-preview :collection="product" :extends_view="true" :isMobile="isMobile" class="catalog-item" @add-bookmarks="addBookmarks" />
           </li>
         </ul>
       </div>
@@ -81,6 +81,14 @@ export default {
         this.selectedAds = [];
       } catch (error) {
         console.log(error);
+      }
+    },
+    async addBookmarks(bookmarksId) {
+      try {
+        await this.$axios.$post(`auth/one_car/wishlist/${bookmarksId}`);
+        await this.getAdsList();
+      } catch (error) {
+        console.error(error);
       }
     },
     getCurrentPageNews(currentPage) {
