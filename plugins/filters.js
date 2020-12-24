@@ -6,6 +6,7 @@ Vue.filter('convertDateToFormatMM', (date) => {
 });
 
 Vue.filter('convertDateToFormatDDMMYYYY', (date) => {
+  console.log('🚀 ~ file: filters.js ~ line 9 ~ Vue.filter ~ date', date);
   return moment(date).format('DD.MM.YYYY');
 });
 

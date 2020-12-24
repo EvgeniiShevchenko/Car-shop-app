@@ -122,7 +122,7 @@
               </li>
             </ul>
           </div>
-          <ul class="catalog-list">
+          <ul class="catalog-list" v-if="catalogList.length">
             <li class="mt-3" :key="index" v-for="(item, index) in catalogList">
               <CatalogCardsPreview
                 class="catalog-item"
@@ -136,7 +136,8 @@
               <CatalogFeedback class="mobile-feedback" v-if="index === 6 && isMobile" @send-rating="sendRating($event)" />
             </li>
           </ul>
-          <div class="pagination-wrapper">
+          <div class="catalog-empty" v-else>Результатов не найдено</div>
+          <div class="pagination-wrapper" v-if="catalogList.length">
             <PaginationBar :page="page" :visibleNumber="paginationVisible" @request-data="requestPageData($event)" :amount="amountPages" @input="requestPageData($event)" />
           </div>
         </v-col>
@@ -223,6 +224,7 @@ export default {
       );
 
       if (!paternIgnore.test(mutation.type)) {
+        console.log('🚀 ~ file: _catalog.vue ~ line 227 ~ this.unsubscribe=this.$store.subscribe ~ mutation.type', mutation.type);
         this.setQueryParams();
         this.$nextTick(() => {
           this.requestPageData();
@@ -467,6 +469,31 @@ export default {
     },
 
     handlerResetFilterParam(params, id, index) {
+      const setCurrency = async (currencyId) => {
+        console.log('🚀 ~ file: _catalog.vue ~ line 472 ~ setCurrency ~ currencyId', currencyId);
+        try {
+          const { data } = await this.$axios.$get(`filters/prices?currency=${currencyId}`, { method: 'GET' });
+          const { min, max } = data;
+
+          this.setFixedMinPrice(min);
+          this.setFixedMaxPrice(max);
+          this.setPriceMin(min);
+          this.setPriceMax(max);
+
+          // this.$nextTick(() => {
+          //   this.setQueryParams();
+          //   // this.requestPageData();
+          // });
+          setTimeout(() => {
+            this.setQueryParams();
+          }, 1000);
+
+          // this.updateSlaider = !this.updateSlaider;
+        } catch (error) {
+          console.error(error);
+        }
+      };
+
       switch (params[0]) {
         case 'car_type_id':
           this.resetFilterType();
@@ -515,6 +542,13 @@ export default {
         case 'drive_unit_id':
           this.deleteDriveUnit(id);
           this.deletePropertyNameFromLocalStorage('drive_unit_id', index);
+          break;
+
+        case 'currency_id':
+          console.log('🚀 ~ file: _catalog.vue ~ line 551 ~ handlerResetFilterParam ~ currency_id', params[1]);
+          params[3]();
+          this.deleteFilterParamNameInLocalStorage(['currency_id']);
+          setCurrency(this.defaultValues.currency);
           break;
 
         default:
@@ -703,6 +737,8 @@ export default {
       setFilterLocation: 'filter/setFilterLocation',
       setPriceMax: 'filter/setPriceMax',
       setPriceMin: 'filter/setPriceMin',
+      setFixedMinPrice: 'filter/setFilterPriceRangeMin',
+      setFixedMaxPrice: 'filter/setFilterPriceRangeMax',
       setFilterProductionYearFrom: 'filter/setFilterProductionYearFrom',
       setFilterProductionYearTo: 'filter/setFilterProductionYearTo',
       setVinCode: 'filter/setVinCode',
@@ -1119,7 +1155,8 @@ export default {
         }
       }
 
-      .pagination-wrapper {
+      .catalog-empty {
+        text-align: center;
       }
     }
   }
