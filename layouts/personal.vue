@@ -141,10 +141,6 @@ export default {
     };
   },
   mixins: [getAuthToken],
-  mounted() {
-    this.getUserInfo();
-    this.getRouteHistory();
-  },
   computed: {
     getCurentYear() {
       return moment().format('YYYY');
@@ -211,7 +207,11 @@ export default {
     ...mapActions({ setLogin: 'setLogin' }),
   },
   mounted() {
+    this.getUserInfo();
+    this.getRouteHistory();
+
     if (this.getAuthToken()) {
+      console.log('🚀 ~ file: personal.vue ~ line 214 ~ mounted ~ this.getAuthToken()', this.getAuthToken());
       this.$axios.setToken(this.getAuthToken(), 'Bearer');
       this.setLogin(true);
     } else {

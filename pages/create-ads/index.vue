@@ -179,7 +179,7 @@
             <AccordionHeader :number="5" title="Дополнительные характеристики" />
           </template>
           <template slot="content">
-            <CreateAdsAdditional @change="additionalcollection = $event" />
+            <CreateAdsAdditional @change="additionalcollection = $event" :transportType="type" v-if="!isEmpty(!!type)" />
           </template>
         </AcordionSingle>
         <div class="agree">

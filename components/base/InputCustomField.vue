@@ -1,6 +1,6 @@
 <template>
   <div :class="`custom-input ${errorList.has(inputName) ? 'is-error' : ''}`">
-    <label :class="`input-label ${isRequiredMark ? 'is-required' : ''}`" for="">{{ label }}</label>
+    <label :class="`input-label ${isRequiredMark ? 'is-required' : ''}`" v-if="isLabel">{{ label }}</label>
     <div class="input-wrapper">
       <input class="input" v-if="isMask" :type="type" v-model="fieldValue" v-mask="patern" :placeholder="placeholder" @input="changeField" @focus="$emit('focus-field', inputName)" />
       <input class="input" v-else :type="type" :value="value" :placeholder="placeholder" @input="changeField" @focus="$emit('focus-field', inputName)" />
@@ -48,6 +48,10 @@ export default {
       type: String,
       default: 'Label',
     },
+    isLabel: {
+      type: Boolean,
+      default: true,
+    },
     placeholder: {
       type: String,
       default: '',
@@ -82,6 +86,9 @@ export default {
 <style lang="scss" scoped>
 .custom-input {
   .input-label {
+    display: inline-block;
+    margin-bottom: 6px;
+
     font-size: 15px;
     line-height: 17px;
     color: #4a4d5c;
@@ -100,8 +107,6 @@ export default {
     display: flex;
     justify-content: center;
     align-items: center;
-
-    margin-top: 6px;
 
     .input {
       @extend .input-text-classic;

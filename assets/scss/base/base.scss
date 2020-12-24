@@ -169,6 +169,24 @@ h4 {
   }
 }
 
+.button-outline-classic {
+  height: 36px;
+  padding: 0 20px;
+
+  border-radius: 2px;
+  border: 1px solid #4A4D5C;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 15px;
+  color: #4A4D5C;
+
+  &:hover {
+    background: #F2F7FA;
+  }
+
+}
+
 html {
   overflow-y: auto;
 }

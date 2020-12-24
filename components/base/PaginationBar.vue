@@ -44,14 +44,6 @@ export default {
     },
   },
   props: {
-    isDisabledNext: {
-      type: Boolean,
-      default: false,
-    },
-    isDisabledPrev: {
-      type: Boolean,
-      default: false,
-    },
     page: {
       type: Number,
       default: 1,

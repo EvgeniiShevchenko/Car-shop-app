@@ -9,6 +9,8 @@
         :hide-details="true"
         :value="value"
         :label="label"
+        :multiple="multiple"
+        :chips="chips"
         :loading="loading"
         :return-object="payload"
         :menu-props="{ auto: false, offsetY: true }"
@@ -59,12 +61,20 @@ export default {
       type: Array,
       required: true,
     },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    chips: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       default: 'Default',
     },
     value: {
-      type: [String, Boolean, Number],
+      type: [String, Boolean, Number, Array],
     },
     isPrepend: {
       type: Boolean,
