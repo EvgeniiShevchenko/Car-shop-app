@@ -29,7 +29,7 @@
         <SelectBtn class="select" :options="amountDoorsList" :value="additionalParams.amountDoors" label="Выбрать" :payload="true" @change="selectAmountDoors($event)" />
       </v-col>
       <v-col class="fuel-consumption-wrapper col-12 col-sm-6 pr-0 pr-sm-4" :order="$vuetify.breakpoint.xs ? 4 : ''">
-        <label class="fuel-consumption-label">Расход топлива</label>
+        <label class="select-label">Расход топлива</label>
         <div class="consumption-fields-group">
           <input class="fuel-consumption-field" type="number" :value="additionalParams.consumptionCity" placeholder="Город" @input="changeConsumptionCity" />
           <input class="fuel-consumption-field ml-0 ml-sm-4" type="number" :value="additionalParams.consumptionRoad" placeholder="Трасса" @input="changeConsumptionRoad" />
@@ -37,7 +37,7 @@
         </div>
       </v-col>
       <v-col class="select-wrapper col-12 col-sm-6 pl-0 pl-sm-4" :order="$vuetify.breakpoint.xs ? 8 : ''">
-        <label class="fuel-consumption-label">Цвет</label>
+        <label class="select-label">Цвет</label>
         <div class="color-wrapper">
           <SelectBtn class="select" :options="colorsList" :value="additionalParams.color" label="Выбрать" :payload="true" @change="selectColor($event)" />
           <CheckBox class="check-box" :value="additionalParams.isMetallic" label="Металлик" @change="setColorMetallic" :isLabel="true" />
@@ -377,6 +377,7 @@ export default {
 
       .select-label {
         display: inline-block;
+        color: #4a4d5c;
       }
 
       .select {
@@ -421,7 +422,9 @@ export default {
     .fuel-consumption-wrapper {
       margin-top: 12px;
 
-      .fuel-consumption-label {
+      .select-label {
+        display: inline-block;
+        color: #4a4d5c;
       }
 
       .consumption-fields-group {

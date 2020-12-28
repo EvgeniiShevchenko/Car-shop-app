@@ -1297,6 +1297,10 @@ export default {
           border: 1px solid #8fa5b0;
           background: #ffffff;
 
+          &::placeholder {
+            color: #8fa5b0;
+          }
+
           &:focus {
             border: 1px solid #51a9f2;
           }
@@ -1386,6 +1390,7 @@ export default {
 
       .modification-label {
         display: block;
+        color: #4a4d5c !important;
       }
 
       .modification-input {
