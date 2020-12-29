@@ -198,7 +198,7 @@ export default {
     },
     async getUserInfo() {
       try {
-        this.userInfo = (await this.$services.user.getUserData()).data.user;
+        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
       } catch (error) {
         console.log(error);
       }
@@ -211,7 +211,6 @@ export default {
     this.getRouteHistory();
 
     if (this.getAuthToken()) {
-      console.log('🚀 ~ file: personal.vue ~ line 214 ~ mounted ~ this.getAuthToken()', this.getAuthToken());
       this.$axios.setToken(this.getAuthToken(), 'Bearer');
       this.setLogin(true);
     } else {

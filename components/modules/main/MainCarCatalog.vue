@@ -1,6 +1,6 @@
 <template>
   <div class="catalog-wrapper row no-gutters">
-    <section :class="`catalog row no-gutters col-md-12 col-lg-10 ${$vuetify.breakpoint.mdAndDown ? 'is-margin-72' : ''}`">
+    <section :class="`catalog row no-gutters col-md-12 col-lg-10  ${$vuetify.breakpoint.mdAndDown ? 'is-margin-72' : ''}`">
       <div class="catalog-box">
         <h3 class="catalog-title">Каталог автомобилей</h3>
         <SelectBtn class="catalog-options" :options="transportType" label="выбрать тип" :payload="true" @change="selectOptions($event)" v-if="$vuetify.breakpoint.smAndDown" />
@@ -14,9 +14,9 @@
         </ul>
       </div>
       <div class="sort-marks">
-        <div class="sort" ref="sort">
+        <div class="sort">
           <h3 class="sort-marks-title">Быстрая сортировка марок</h3>
-          <ul :class="`sort-marks-list ${cyrillicList.length ? 'is-margin-10' : ''}`" ref="firstMarksList" v-if="latinlList.length">
+          <ul :class="`sort-marks-list ${cyrillicList.length ? 'is-margin-10' : ''}`" ref="firstMarksList">
             <li class="sort-list-item" :key="index" v-for="(item, index) in latinlList">
               <button :class="`sort-item-btn ${activeSortTab === item ? 'is-select' : ''}`" type="button" @click="handlerSortSelect(item)">{{ item }}</button>
             </li>
@@ -141,19 +141,17 @@ export default {
     },
 
     setAmountSortColumns() {
+      const parentWrapper = document.querySelector('.sort');
       const container = this.$refs.firstMarksList;
-      const width = Number(container.offsetWidth);
-      const columnAmount = Math.ceil((width - 15) / (this.columnWidth + this.gap));
+      const columnAmount = Math.ceil((this.containerWidth - 15) / (this.columnWidth + this.gap));
 
+      parentWrapper.style.maxWidth = this.containerWidth + 'px';
       container.style.gridTemplateColumns = `repeat(${columnAmount}, 1fr)`;
       this.$refs.secondMarksList.style.gridTemplateColumns = `repeat(${columnAmount}, 1fr)`;
     },
 
     findCarouselWidth() {
-      const targetElement = this.$refs.sort;
-      const width = targetElement.offsetWidth;
-
-      this.$refs.slider.style.width = width + 'px';
+      this.$refs.slider.style.maxWidth = this.containerWidth + 'px';
     },
 
     async handlerSortSelect(sortKey) {
@@ -195,12 +193,17 @@ export default {
         this.carBrandList = data.marks;
       })();
 
-      this.$nextTick(() => {
-        if (this.$vuetify.breakpoint.xs) this.columnWidth = 32;
+      setTimeout(() => {
+        const container = document.querySelector('.sort-marks');
+        this.containerWidth = Number(container.offsetWidth);
 
+        this.setAmountSortColumns();
         this.findCarouselWidth();
         this.defineCarouselRange();
-        this.setAmountSortColumns();
+      }, 1000);
+
+      this.$nextTick(() => {
+        if (this.$vuetify.breakpoint.xs) this.columnWidth = 32;
       });
 
       window.addEventListener('resize', () => {
@@ -240,6 +243,7 @@ export default {
     display: grid;
     grid-template-columns: max(268px) 1fr;
     grid-template-rows: 1fr;
+    gap: 0 32px;
 
     padding-right: 14px;
 
@@ -273,11 +277,13 @@ export default {
 
         width: 100%;
         height: min-content;
+        max-height: 456px;
 
         border-radius: 8px;
         background: #f2f7fa;
 
         transition: transform 1s ease;
+        overflow-y: auto;
 
         & li:first-child {
           margin-top: 0;
@@ -318,11 +324,11 @@ export default {
     .sort-marks {
       display: flex;
       flex-direction: column;
-      padding-left: 32px;
 
       grid-column: 1 span;
 
       .sort {
+        max-width: 200px;
         border-bottom: 1px solid rgba(34, 35, 41, 0.1);
         margin-bottom: 28px;
       }
@@ -424,7 +430,7 @@ export default {
       }
 
       .carousel-wrapper {
-        width: 500px;
+        max-width: 200px;
         height: 100%;
 
         ::v-deep .carousel {
@@ -523,6 +529,7 @@ export default {
 @include widescreen {
   .catalog-wrapper .catalog {
     margin-bottom: 72px;
+    padding-right: 0;
 
     .sort-marks {
       justify-content: space-between;
@@ -579,6 +586,7 @@ export default {
 
     .catalog {
       margin-bottom: 25px;
+      grid-template-columns: max(200px) 1fr;
 
       .catalog-box {
         .catalog-title {

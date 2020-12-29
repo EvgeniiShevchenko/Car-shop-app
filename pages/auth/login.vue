@@ -40,6 +40,8 @@ import CheckBox from '~/components/base/CheckBox.vue';
 // mixins
 import isEmpty from '~/mixins/isEmpty.js';
 
+const Cookie = process.client ? require('js-cookie') : undefined;
+
 export default {
   name: 'login',
   mixins: [isEmpty],
@@ -93,7 +95,8 @@ export default {
       try {
         const { data } = await this.$services.auth.getLoginToken(serverData);
         localStorage.setItem('token', data.token);
-        this.$axios.setToken(data.token);
+        this.$cookies.set('accessToken', data.token);
+        this.$axios.setToken(data.token, 'Bearer');
         this.$router.push('/personal/settings');
       } catch (error) {
         console.error(error);

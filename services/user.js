@@ -11,21 +11,21 @@ export default class UserService extends ApiService {
   getUserData(token) {
     return this.axios.$get(`/auth/client/personal`, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
     });
   }
   saveUserData(data, token) {
     return this.axios.$put(`/auth/client/change`, data, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
     });
   }
   ChangeUserPassword(data, token) {
     return this.axios.$put(`/auth/client/changePassword`, data, {
       headers: {
-        Authorization: `eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
     });
   }
@@ -35,41 +35,41 @@ export default class UserService extends ApiService {
   getAboutUsInfo() {
     return this.axios.$get(`/about`);
   }
-  getUserAds(params) {
+  getUserAds(params, token) {
     return this.axios.$get(`/auth/client/products`, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
       params,
     });
   }
-  deleteUserAds(params) {
+  deleteUserAds(params, token) {
     return this.axios.delete(`/auth/client/products`, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
       params,
     });
   }
-  toPublishOrInactiveUserAds(payload) {
+  toPublishOrInactiveUserAds(payload, token) {
     return this.axios.$post(`/auth/client/products/published`, qs.stringify(payload), {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
     });
   }
-  getUserFavorite(params) {
+  getUserFavorite(params, token) {
     return this.axios.$get(`/auth/client/favorite`, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
       params,
     });
   }
-  deleteUserFavorite(params) {
+  deleteUserFavorite(params, token) {
     return this.axios.delete(`/auth/client/favoriteDelete`, {
       headers: {
-        Authorization: `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiMjE2MDljZDE2Y2I2ODhiZjhkNjAyNTA0OThmM2FjODA1NWJiNDBiZThlZTI2ZTJhNjkxNDkyZWMwOTZjMzEyZTM2ZDAzNzUzMmNiY2M3MDEiLCJpYXQiOjE2MDgyNzg3OTIsIm5iZiI6MTYwODI3ODc5MiwiZXhwIjoxNjM5ODE0NzkyLCJzdWIiOiI2Iiwic2NvcGVzIjpbXX0.P_SOhptJ63jF15mP7qbpIYmmZllKYFD3tbfWCrkW6uulJE2MNOyRqO6K4WjykXqzPNoqzlnRp_KXrWv8ES8po1JNBtzPa08c8D6fpJ-jnDlWD503_CJ1fn78pwQMTNRZKftIEKBhoI4JbVBEUzS01uYXT6gAoF1efUu2tbwi61jGr2GwnRrjhOfbJINc6L0qvm54mkSchCB9L0H3jEg2U7T48VhlzEqduHb_CJUh1zRDPlllUvFvEoOgSEEK02j_8bDMkXawwF66LljNKQJ8Oam5dYGZZSegOc55xeQCx6EYkRPtUSZd6QZxcFsa2KtOExMmRLy-LD8OCGSs9BdwY-OhgW_pPvMRsp5f_-JT8Y6VVyIe8uf4S5Up41JfiAqXXizuf_TDsUHiu40tYduYiyWPOUsKt9geFw5Wtooz9cg6OQQml9Do73ezX6vKZAII7_HUc6XjbLUfRihgB4VTn2tn5Krir0AoBft84qnSGCOfG9OEh1V948sgy4yapTZ7XXwQcIQRKu_-b7hpCzlWfR5207qhxFLS3k5o_Ic-aFxKcuq4WITly523l6FxRVu7hvK_FKV5r5tYAd50b1lOEc8ICWWV3gdfiOdcuQfJKB_wVwkdUZq7Gp2vQGl5gitQO75QvDuYdpzTgQFFTbduQi6AeHym2UqsQ5Ejo8wjKYQ`,
+        Authorization: `Bearer ${token}`,
       },
       params,
     });

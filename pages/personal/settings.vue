@@ -113,13 +113,17 @@
 </template>
 
 <script>
+//Components
 import CheckBox from '@/components/base/CheckBox';
 import ChangePasswordModal from '@/components/modules/personal/ChangePasswordModal';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'settings',
   layout: 'personal',
   components: { CheckBox, ChangePasswordModal },
+  mixins: [getAuthToken],
   data() {
     return {
       valid: true,
@@ -159,7 +163,7 @@ export default {
         this.userInfo.viber = !!this.userInfo.viber;
         this.userInfo.telegram = !!this.userInfo.viber;
         this.userInfo.is_chat = !!this.userInfo.viber;
-        await this.$services.user.saveUserData(this.userInfo);
+        await this.$services.user.saveUserData(this.userInfo, this.getAuthToken());
         this.isSucceeded = true;
       } catch (error) {
         this.isSucceeded = false;
@@ -168,7 +172,7 @@ export default {
     },
     async getUserInfo() {
       try {
-        this.userInfo = (await this.$services.user.getUserData()).data.user;
+        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
         this.avatarUrl = this.userInfo.image;
       } catch (error) {
         console.log(error);

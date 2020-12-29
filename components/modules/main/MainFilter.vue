@@ -28,7 +28,7 @@
           :isPrepend="isEmpty(!!type)"
           :isReset="!isEmpty(!!brand)"
           label="Выбрать"
-          prependTitle="Выбырите сначало тип"
+          prependTitle="Выберите сначало тип"
           @change="selectBrand($event)"
           @focus="checkExistType($event)"
           @reset="resetBrandField"
@@ -43,7 +43,7 @@
           :isPrepend="isEmpty(!!brand)"
           :isReset="!isEmpty(!!model)"
           label="Выбрать"
-          prependTitle="Выбырите марку"
+          prependTitle="Выберите марку"
           @change="selectModel($event)"
           @focus="checkExistBrand($event)"
           @reset="resetModelField"
@@ -57,7 +57,7 @@
           :isPrepend="isEmpty(model)"
           :isReset="!isEmpty(createYear)"
           label="Выбрать"
-          prependTitle="Выбырите сначало модель"
+          prependTitle="Выберите сначало модель"
           @change="selectCreateYear($event)"
           @reset="resetCreateYearField"
         />
@@ -75,7 +75,7 @@
           :isPrepend="className === 'calculator' ? isEmpty(model) : isNull(createYear)"
           :isReset="!isEmpty(carcase)"
           label="Выбрать"
-          :prependTitle="`${className === 'calculator' ? 'Выбырите сначало модель' : 'Выбирите сначало год'}`"
+          :prependTitle="`${className === 'calculator' ? 'Выберите сначало модель' : 'Выберите сначало год'}`"
           @change="selectCarcase($event)"
           @reset="resetCarcaseField"
         />
@@ -118,7 +118,7 @@
           :payload="true"
           :isReset="!isEmpty(city)"
           :isPrepend="isEmpty(location)"
-          prependTitle="Выбырите регион"
+          prependTitle="Выберите регион"
           label="Выбрать"
           @change="selectCity($event)"
           @reset="resetCity"
@@ -140,7 +140,7 @@
                 :isPrepend="isEmpty(!!model)"
                 :isReset="!isEmpty(!!fromYear)"
                 label="от"
-                prependTitle="Выбырите модель"
+                prependTitle="Выберите модель"
                 @change="selectYearFrom($event)"
                 @focus="checkExistModel($event)"
                 @reset="resetFieldFrom"
@@ -152,7 +152,7 @@
                 :isPrepend="isEmpty(!!model)"
                 :isReset="!isEmpty(!!toYear)"
                 label="до"
-                prependTitle="Выбырите модель"
+                prependTitle="Выберите модель"
                 @change="selectYearTo($event)"
                 @focus="checkExistModel($event)"
                 @reset="resetFieldTo"
@@ -307,6 +307,14 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="state-number-wrapper mt-3" v-if="className === 'main'">
+        <CheckBox class="check-box mr-4" :value="isVinCode" label="Проверенный VIN-код" @change="selectVinCode" />
+        <CheckBox class="check-box" :value="isStateNumber" :isLabel="true" @change="selectStateNumber">
+          <template slot="label">
+            <p class="state-number-label">UA<span class="number-label-text">Гос. номер</span></p>
+          </template>
+        </CheckBox>
       </div>
       <div class="search-btn-wrapper">
         <n-link class="extend-search-link" to="/search">Расширенный поиск</n-link>
@@ -938,6 +946,7 @@ export default {
       }
 
       this.setCurrency(currency.value);
+      this.saveFilterParamNameInLocalStorage('currency_id', currency.text);
     },
 
     handlerDragSlider(value) {
@@ -1213,6 +1222,34 @@ export default {
 
       width: 100%;
       box-shadow: 0 2px 0 -1px rgba(34, 35, 41, 0.1);
+
+      .state-number-label {
+        display: flex;
+        align-items: center;
+
+        margin-bottom: 0;
+        padding: 0 1px 0 4px;
+
+        height: 24px;
+
+        border-radius: 2px;
+        background: #d6e1e7;
+        font-size: 13px;
+        line-height: 16px;
+
+        .number-label-text {
+          padding: 3px 8px;
+          margin-left: 4px;
+
+          background: #ffffff;
+          font-size: 13px;
+          line-height: 16px;
+        }
+      }
+    }
+
+    .state-number-wrapper {
+      display: flex;
 
       .state-number-label {
         display: flex;

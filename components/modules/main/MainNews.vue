@@ -12,11 +12,11 @@
     </ul>
     <CarouselSingleLine class="carousel-wrapper" originId="main-news" :key="reloadSlider" :config="carouselConfig" :collection="newsCollection" lazyLoad="ondemand">
       <template slot="default" slot-scope="{ slotScope: item }">
-        <n-link class="news-list-item" :to="`/news/${item.slug}`">
-          <img class="item-preview" :src="item.image" alt="" />
-          <time class="date-publication">{{ item.created_at }}</time>
+        <n-link class="news-list-item" :to="`/news/${item.alias}`">
+          <img class="item-preview" :src="item.mainImage" />
+          <time class="date-publication">{{ item.created_at.split(' ')[0] }}</time>
           <VClamp autoresize :max-lines="2" tag="span">
-            {{ item.name }}
+            {{ item.title }}
           </VClamp>
         </n-link>
       </template>
@@ -125,19 +125,10 @@ export default {
     this.category = news_tags.tags[0].map((item) => {
       return {
         id: item.id,
-        value: item.name[this.locales],
+        value: item.name,
       };
     });
-
-    try {
-      (async () => {
-        const { data } = await this.$axios.$get(`main/getNewsHome?tag_id=${this.newsByDefault}`, { method: 'GET' });
-
-        this.newsCollection = data.data;
-      })();
-    } catch (error) {
-      console.error(error);
-    }
+    this.newsCollection = news_tags.news.data;
   },
   props: {
     mainData: {

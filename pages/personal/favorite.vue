@@ -19,7 +19,7 @@
         <ul v-if="list.wishlists && list.wishlists.data && list.wishlists.data.length" class="catalog-list">
           <li class="mt-3" :key="product.id" v-for="product of list.wishlists.data">
             <v-checkbox color="#4CAD33" :ripple="false" hide-details class="check-box" v-model="selectedAds" :value="product.id"></v-checkbox>
-            <catalog-cards-preview :collection="product" :extends_view="true" :isMobile="isMobile" class="catalog-item" />
+            <catalog-cards-preview :collection="product" :extends_view="true" :isMobile="isMobile" class="catalog-item" @add-bookmarks="addBookmarks" />
           </li>
         </ul>
       </div>
@@ -38,13 +38,17 @@
 </template>
 
 <script>
+//Components
 import PaginationBar from '@/components/base/PaginationBar';
 import CatalogCardsPreview from '@/components/base/CatalogCardsPreview';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Favorite',
   layout: 'personal',
   components: { PaginationBar, CatalogCardsPreview },
+  mixins: [getAuthToken],
   data() {
     return {
       search: '',
@@ -70,13 +74,21 @@ export default {
   methods: {
     async getAdsList() {
       try {
-        this.list = (await this.$services.user.getUserFavorite(this.params)).data;
+        this.list = (await this.$services.user.getUserFavorite(this.params, this.getAuthToken())).data;
         this.pagination.current_page = this.list.wishlists.current_page;
         this.pagination.last_page = this.list.wishlists.last_page;
         this.isSelectedAll = false;
         this.selectedAds = [];
       } catch (error) {
         console.log(error);
+      }
+    },
+    async addBookmarks(bookmarksId) {
+      try {
+        await this.$axios.$post(`auth/one_car/wishlist/${bookmarksId}`);
+        await this.getAdsList();
+      } catch (error) {
+        console.error(error);
       }
     },
     getCurrentPageNews(currentPage) {
@@ -97,7 +109,7 @@ export default {
         let params = {
           ids: this.selectedAds,
         };
-        await this.$services.user.deleteUserFavorite(params);
+        await this.$services.user.deleteUserFavorite(params, this.getAuthToken());
         await this.getAdsList();
       } catch (error) {
         console.log(error);
