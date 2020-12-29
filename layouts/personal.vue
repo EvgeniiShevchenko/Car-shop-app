@@ -141,16 +141,6 @@ export default {
     };
   },
   mixins: [getAuthToken],
-  mounted() {
-    this.getUserInfo();
-    this.getRouteHistory();
-    if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken(), 'Bearer');
-      this.setLogin(true);
-    } else {
-      this.setLogin(false);
-    }
-  },
   computed: {
     getCurentYear() {
       return moment().format('YYYY');
@@ -215,6 +205,17 @@ export default {
     },
 
     ...mapActions({ setLogin: 'setLogin' }),
+  },
+  mounted() {
+    this.getUserInfo();
+    this.getRouteHistory();
+
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
   watch: {
     $route() {
