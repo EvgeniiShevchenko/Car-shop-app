@@ -182,7 +182,7 @@
               <AccordionHeader :number="5" title="Дополнительные характеристики" />
             </template>
             <template slot="content">
-              <!-- <CreateAdsAdditional @change="additionalcollection = $event" /> -->
+              <CreateAdsAdditional @change="additionalcollection = $event" />
             </template>
           </AcordionSingle>
           <div class="agree">
@@ -409,7 +409,6 @@ export default {
     },
 
     showAlert({ error, message }) {
-      console.log('🚀 ~ file: index.vue ~ line 412 ~ showAlert ~ showAlert', message);
       this.$root.$emit('show-popup', { error: error, message: message, timer: 2000 });
     },
   },
@@ -429,7 +428,7 @@ export default {
     (async () => {
       try {
         const { data } = await this.$services.createAds.getAdditionalDraft();
-        console.log('🚀 ~ file: index.vue ~ line 372 ~ data', data);
+        console.log('🚀 ~ file: index.vue ~ line 431 ~ data', data);
       } catch (error) {
         console.error(error);
       }
