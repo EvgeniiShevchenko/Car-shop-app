@@ -28,14 +28,19 @@ export default {
 
       this.$nextTick(() => {
         const tooltipNode = this.$refs.tooltip;
-        const x = event.pageX;
+        const x = Number(event.pageX);
         const screenWidth = window.screen.width;
-        const targetWidth = tooltipNode.offsetWidth;
+        const targetWidth = Number(tooltipNode.offsetWidth);
 
         if (screenWidth - x < targetWidth) {
           this.$refs.tooltip.style.transform = `translateX(calc(${27}px - 100%))`;
 
           if (!this.$refs.triangle.classList.contains('is-triangle-left')) this.$refs.triangle.classList.add('is-triangle-left');
+
+          if (x - targetWidth < 0) {
+            this.$refs.tooltip.style.left = `50%`;
+            this.$refs.tooltip.style.transform = `translateX(-50%)`;
+          }
 
           return;
         }

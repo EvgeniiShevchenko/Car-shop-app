@@ -39,7 +39,7 @@ export default {
         previewsContainer: false,
         maxFilesize: 10,
         acceptedFiles: '.jpeg,.jpg,.png,.pdf',
-        maxFiles: 100,
+        maxFiles: 99,
       },
       previewList: [],
       mainImageIndex: null,
@@ -61,6 +61,18 @@ export default {
     },
 
     addedFile(dropItem) {
+      if (dropItem.size < this.minSize) {
+        this.$emit('min-size', { error: true, message: 'Фото меньше 50Кб' });
+
+        return;
+      }
+
+      if (dropItem.size > this.maxSize) {
+        this.$emit('min-size', { error: true, message: 'Фото больше 100Кб' });
+
+        return;
+      }
+
       this.previewList = [...this.previewList, dropItem];
     },
 
@@ -71,6 +83,16 @@ export default {
 
     selectMain(indexItem) {
       this.mainImageIndex = this.mainImageIndex === indexItem ? null : indexItem;
+    },
+  },
+  props: {
+    minSize: {
+      type: Number,
+      default: 50000,
+    },
+    maxSize: {
+      type: Number,
+      default: 100000,
     },
   },
   components: {
