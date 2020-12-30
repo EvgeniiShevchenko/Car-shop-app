@@ -1,23 +1,6 @@
 <template>
   <main class="main container">
     <div class="row no-gutters">
-      <div class="history-routing col-12">
-        <n-link class="routing-home-link" to="/">
-          <svg class="home-link-icon">
-            <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-home" />
-          </svg>
-        </n-link>
-        <ul class="routing-list">
-          <li class="routing-item">
-            <n-link class="routing-item-link" to="catalog">
-              <svg class="routing-link-icon">
-                <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-arrow" />
-              </svg>
-              {{ getPagePathName }}
-            </n-link>
-          </li>
-        </ul>
-      </div>
       <h1 class="catalog-title col-11">{{ getPageTitle }}</h1>
       <CatalogSubscrible
         class="subscrible-wrapper"
@@ -30,9 +13,9 @@
       <div class="mobile-btn-wrapper col-12" v-if="$vuetify.breakpoint.smAndDown">
         <SelectBtn
           class="mobile-sort-btn"
+          label="Сортировка"
           :options="sortParams[1]"
           :value="sort"
-          label="Сортировка"
           :payload="true"
           :isReset="!!sort.length"
           @change="sortCardsParam($event)"
@@ -79,7 +62,7 @@
                   <button class="item-select-btn" type="button">
                     <span>{{ !$isServer ? getFilterParamTitle(item[0]) : '' }}</span>
                   </button>
-                  <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item)" v-if="!/is_ukraine|is_cleared/.test(item[0])">
+                  <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item)" v-if="/is_ukraine|is_cleared/.test(item[0]) && /1|2|3/.test(String(states)) ? false : true">
                     <svg class="manager-btn-icon">
                       <use xlink:href="~assets/images/sprites/catalog.svg#clear-parametr" />
                     </svg>
@@ -112,13 +95,19 @@
               <li class="sort-item" :key="index" v-for="(item, index) in sortParams.titlesList">
                 <SelectBtn
                   :options="sortParams[index]"
-                  :value="index === 0 ? amountCardOnPage : index === 1 ? sort : publicationTime"
+                  :value="index === 0 ? amountCardOnPage : publicationTime"
+                  v-if="index !== 1"
                   :isPrependInput="true"
                   :payload="true"
                   :prependInputTitle="item"
                   className="prepend"
-                  @change="index === 0 ? setAmountCardOnPage($event) : index === 1 ? sortCardsParam($event) : selectSubmissionTime($event)"
+                  @change="index === 0 ? setAmountCardOnPage($event) : selectSubmissionTime($event)"
                 />
+                <Tooltip v-else :isHover="true" :text="sortParams[index].find((item) => item.value === sort).text">
+                  <template slot="activator">
+                    <SelectBtn :options="sortParams[index]" :value="sort" :isPrependInput="true" :payload="true" :prependInputTitle="item" className="prepend" @change="sortCardsParam($event)" />
+                  </template>
+                </Tooltip>
               </li>
             </ul>
           </div>
@@ -133,6 +122,7 @@
                 @add-bookmarks="addBookmarks"
                 @add-comparison="addToCompare"
               />
+              <div class="catalog-advertising mt-4" v-if="(index + 1) % 3 === 0"></div>
               <CatalogFeedback class="mobile-feedback" v-if="index === 6 && isMobile" @send-rating="sendRating($event)" />
             </li>
           </ul>
@@ -176,6 +166,7 @@ import PaginationBar from '~/components/base/PaginationBar.vue';
 import CatalogCardsPreview from '~/components/base/CatalogCardsPreview.vue';
 import PopUpSubmit from '~/components/base/PopUpSubmit.vue';
 import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
+import Tooltip from '~/components/base/Tooltip.vue';
 // helpers
 import sortList from '~/helpers/sortList.js';
 import publicationTimeList from '~/helpers/publicationTimeList.js';
@@ -209,12 +200,13 @@ export default {
       amountCardOnPage: '10',
       sortParams: {
         titlesList: ['Показывать по:', 'Сортировка:', 'Период подачи:'],
-        0: ['10', '20', '30', '40'],
+        0: ['10', '30', '50', '100'],
         1: sortList,
         2: publicationTimeList,
       },
       isMobileFilter: false,
       isMobile: false,
+      isPreviousHome: false,
     };
   },
   created() {
@@ -224,7 +216,6 @@ export default {
       );
 
       if (!paternIgnore.test(mutation.type)) {
-        console.log('🚀 ~ file: _catalog.vue ~ line 227 ~ this.unsubscribe=this.$store.subscribe ~ mutation.type', mutation.type);
         this.setQueryParams();
         this.$nextTick(() => {
           this.requestPageData();
@@ -273,13 +264,13 @@ export default {
         ['transmission_id', this.transmission, true, this.resetTransmission],
         ['fuel_id', this.fuel, true, this.resetFuel],
         ['drive_unit_id', this.driveUnit, true, this.resetDriveUnit],
-        ['is_not_go', !this.isNull(this.broken), !this.isNull(this.broken), this.resetBroken],
-        ['is_broken', !this.isNull(this.damage), !this.isNull(this.damage), this.resetDamage],
-        ['is_cleared', this.customsCleared, true, this.resetCustomsCleared],
-        ['is_ukraine', this.abroad, !!this.abroad, this.resetAbroad],
+        ['is_not_go', this.broken, !this.isNull(this.broken), this.resetBroken],
+        ['is_broken', this.damage, !this.isNull(this.damage), this.resetDamage],
+        ['is_cleared', this.customsCleared, /0/.test(String(this.states)), this.resetCustomsCleared],
+        ['is_ukraine', this.abroad, /0/.test(String(this.states)), this.resetAbroad],
         ['car_comfort_id', this.additionalSettings, true, this.resetAdditionalSettings],
-        ['sort', this.sort, true, this.resetSort],
-        ['date', this.publicationTime, true, this.resetPublicationTime],
+        ['sort', this.sort, this.sort !== 'data_asc', this.resetSort],
+        ['date', this.publicationTime, this.publicationTime !== 'all', this.resetPublicationTime],
         ['paginate', amountCardOnPage, false],
         ['page', currentPage, false],
       ];
@@ -287,6 +278,7 @@ export default {
       return filterParams.filter((item) => {
         if (item[0] === 'is_cleared' && item[1] === false) return true;
         if (item[0] === 'is_ukraine' && item[1] === false) return true;
+        if (item[0] === 'is_not_go' && item[1] === false) return true;
 
         return !this.isEmpty(item[1]);
       });
@@ -402,6 +394,10 @@ export default {
     selectFilterTab(tabIndex) {
       this.setFilterStates(String(tabIndex));
       this.setCatalogFilterDefaultParams(Number(this.states));
+
+      if (tabIndex !== 0) {
+        this.saveFilterParamNameInLocalStorage('status', this.getStatusName(tabIndex));
+      }
     },
 
     sendRating(appraisal) {
@@ -483,7 +479,6 @@ export default {
 
     handlerResetFilterParam(params, id, index) {
       const setCurrency = async (currencyId) => {
-        console.log('🚀 ~ file: _catalog.vue ~ line 472 ~ setCurrency ~ currencyId', currencyId);
         try {
           const { data } = await this.$axios.$get(`filters/prices?currency=${currencyId}`, { method: 'GET' });
           const { min, max } = data;
@@ -493,15 +488,9 @@ export default {
           this.setPriceMin(min);
           this.setPriceMax(max);
 
-          // this.$nextTick(() => {
-          //   this.setQueryParams();
-          //   // this.requestPageData();
-          // });
           setTimeout(() => {
             this.setQueryParams();
           }, 1000);
-
-          // this.updateSlaider = !this.updateSlaider;
         } catch (error) {
           console.error(error);
         }
@@ -558,7 +547,6 @@ export default {
           break;
 
         case 'currency_id':
-          console.log('🚀 ~ file: _catalog.vue ~ line 551 ~ handlerResetFilterParam ~ currency_id', params[1]);
           params[3]();
           this.deleteFilterParamNameInLocalStorage(['currency_id']);
           setCurrency(this.defaultValues.currency);
@@ -631,7 +619,21 @@ export default {
       for (let item of queryParams) {
         switch (item[0]) {
           case 'status':
-            initialChangeOptions = this.setCatalogFilterDefaultParams(Number(item[1]), initialChangeOptions);
+            if (this.isPreviousHome && this.isEmpty(Number(item[1]))) {
+              if (initialChangeOptions) {
+                initialChangeOptions['customsCleared'] = true;
+                initialChangeOptions['abroad'] = true;
+              } else {
+                this.setAbroad(true);
+                this.setCustomsCleared(true);
+              }
+
+              this.saveFilterParamNameInLocalStorage('is_ukraine', 'Авто в Украине');
+              this.saveFilterParamNameInLocalStorage('is_cleared', 'Растаможенные');
+            } else {
+              initialChangeOptions = this.setCatalogFilterDefaultParams(Number(item[1]), initialChangeOptions);
+            }
+
             initialChangeOptions['states'] = Number(item[1]);
             break;
           case 'car_type_id':
@@ -712,12 +714,6 @@ export default {
       this.initialFilterParams(initialChangeOptions);
     },
 
-    initialLocalStore() {
-      this.saveFilterParamNameInLocalStorage('is_ukraine', this.abroad ? 'Авто в Украине' : 'Авто не в Украине');
-      this.saveFilterParamNameInLocalStorage('is_cleared', this.customsCleared ? 'Растаможенные' : 'Нерастаможенные');
-      Number(this.states) !== 0 ? this.saveFilterParamNameInLocalStorage('status', 'Под пригон автомобили') : this.deleteFilterParamNameInLocalStorage(['status']);
-    },
-
     ...mapActions({
       resetFilterStates: 'filter/resetFilterStates',
       resetFilterType: 'filter/resetFilterType',
@@ -779,39 +775,47 @@ export default {
       setFilterLocation: 'filter/setFilterLocation',
       resetFilterLocation: 'filter/resetFilterLocation',
       initialFilterParams: 'filter/initialFilterParams',
+      resetFilterAll: 'filter/resetFilterAll',
     }),
   },
   mounted() {
-    if (this.$vuetify.breakpoint.xs) this.paginationVisible = 3;
+    this.isMobile = this.$vuetify.breakpoint.xs;
 
-    this.initialLocalStore();
+    if (this.$vuetify.breakpoint.xs) this.paginationVisible = 3;
+    if (/^\/$/.test(this.prevRoute)) {
+      this.isPreviousHome = true;
+    }
 
     this.$nextTick(() => {
-      this.isMobile = this.$vuetify.breakpoint.xs;
-      setTimeout(() => {
+      this.initializationData();
+      setTimeout(async () => {
         this.setQueryParams();
+
+        let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
+        const { data } = token
+          ? await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            })
+          : await this.$axios.$get(`catalog/main${this.getQueryString()}`);
+        const { products, car_order, subscription } = data;
+
+        this.catalogList = products.data;
+        this.carOrderList = car_order;
+        this.amountPages = products.last_page;
+        this.searchResult = subscription;
       }, 0);
     });
   },
-  async fetch() {
-    this.initializationData();
-    let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
-    const { data } = token
-      ? await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-      : await this.$axios.$get(`catalog/main${this.getQueryString()}`);
-    const { products, car_order, subscription } = data;
-
-    this.catalogList = products.data;
-    this.carOrderList = car_order;
-    this.amountPages = products.last_page;
-    this.searchResult = subscription;
+  beforeRouteEnter(to, from, next) {
+    next((vm) => {
+      vm.prevRoute = from.fullPath;
+    });
   },
   beforeDestroy() {
     this.unsubscribe();
+    this.resetFilterAll();
   },
   components: {
     SelectBtn,
@@ -825,6 +829,7 @@ export default {
     MainFilter,
     CatalogFilterMainTab,
     PopUpSuccess,
+    Tooltip,
   },
 };
 </script>
@@ -835,44 +840,6 @@ export default {
   margin-top: 25px;
 
   flex: 1;
-
-  .history-routing {
-    display: flex;
-    align-items: center;
-
-    .routing-home-link {
-      font-size: 4px;
-
-      .home-link-icon {
-        width: 14px;
-        height: 14px;
-      }
-    }
-
-    .routing-list {
-      .routing-item {
-        display: flex;
-        align-items: center;
-        margin-left: 15px;
-
-        .routing-item-link {
-          display: flex;
-          align-items: center;
-
-          font-size: 13px;
-          line-height: 16px;
-          color: #b1c4cd;
-
-          .routing-link-icon {
-            margin-right: 13px;
-
-            width: 4px;
-            height: 8px;
-          }
-        }
-      }
-    }
-  }
 
   .catalog-title {
     margin-top: 24px;
@@ -887,6 +854,7 @@ export default {
   }
 
   .mobile-btn-wrapper {
+    position: relative;
     display: flex;
     margin-top: 20px;
 
@@ -1170,6 +1138,14 @@ export default {
           }
         }
 
+        .catalog-advertising {
+          height: 90px;
+          max-width: calc(100% - 140px);
+          width: 100%;
+          margin: 0 auto;
+          background: #c4c4c4;
+        }
+
         .mobile-feedback {
           margin-top: 16px;
         }
@@ -1298,10 +1274,6 @@ export default {
 
 @include sm {
   .main {
-    .history-routing {
-      display: none;
-    }
-
     .content-wrapper {
       .filter-wrapper {
         display: none;

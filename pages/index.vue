@@ -40,9 +40,6 @@ export default {
       mainData: {},
     };
   },
-  mounted() {
-    console.log('🚀 ~ file: index.vue ~ line 43 ~ mounted ~ mounted', this.mainData);
-  },
   components: {
     MainFilter,
     AdsCardsList,
