@@ -12,6 +12,8 @@
         :loading="loading"
         :return-object="payload"
         :menu-props="{ auto: false, offsetY: true }"
+        :multiple="multiple"
+        :chips="chips"
         v-on="$listeners"
         background-color="#ffffff"
         outlined
@@ -61,12 +63,20 @@ export default {
       type: Array,
       required: true,
     },
+    multiple: {
+      type: Boolean,
+      default: false,
+    },
+    chips: {
+      type: Boolean,
+      default: false,
+    },
     label: {
       type: String,
       default: '',
     },
     value: {
-      type: [String, Number, Boolean],
+      type: [String, Number, Boolean, Array],
     },
     isPrepend: {
       type: Boolean,

@@ -110,6 +110,12 @@
         </div>
       </div>
     </footer>
+    <transition name="fade">
+      <div class="popup-wrapper" v-if="popUpShow">
+        <PopUpSuccess class="popup-inner-wrapper" v-if="!error" :title="message" />
+        <v-alert class="popup-inner-wrapper" v-else type="error"> {{ message }} </v-alert>
+      </div>
+    </transition>
   </v-app>
 </template>
 
@@ -120,6 +126,7 @@ import moment from 'moment';
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
+import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
 // mixins
 import getAuthToken from '~/mixins/getAuthToken.js';
 
@@ -130,16 +137,15 @@ export default {
     return {
       pages: pages,
       collection: [],
+      popUpShow: false,
+      message: '',
+      error: false,
     };
   },
-  mounted() {
-    this.getRouteHistory();
-    if (this.getAuthToken()) {
-      this.$axios.setToken(this.getAuthToken(), 'Bearer');
-      this.setLogin(true);
-    } else {
-      this.setLogin(false);
-    }
+  watch: {
+    $route() {
+      this.getRouteHistory();
+    },
   },
   computed: {
     getCurentYear() {
@@ -159,10 +165,6 @@ export default {
           return '1192px';
       }
     },
-  },
-  components: {
-    BreadCrumbs,
-    MainHeaderMenu,
   },
   methods: {
     getRouteHistory() {
@@ -186,6 +188,7 @@ export default {
       }
       this.collection = breadCrumbs;
     },
+
     getStatus(status) {
       switch (status) {
         case 'Б/у автомобили':
@@ -215,23 +218,62 @@ export default {
       ];
     },
 
+    showPopUp({ error, message, timer = 1000 }) {
+      this.message = message;
+      this.popUpShow = true;
+      this.error = error;
+
+      setTimeout(() => {
+        this.popUpShow = false;
+        this.error = false;
+      }, timer);
+    },
+
     ...mapActions({ setLogin: 'setLogin' }),
   },
-  watch: {
-    $route() {
-      this.getRouteHistory();
-    },
+  mounted() {
+    this.getRouteHistory();
+
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
+
+    this.$root.$on('show-popup', this.showPopUp);
+  },
+  components: {
+    BreadCrumbs,
+    MainHeaderMenu,
+    PopUpSuccess,
   },
 };
 </script>
 
 <style lang="scss">
 .layout {
+  position: relative;
   @include init-font;
   display: flex;
   flex-direction: column;
 
   height: 100vh;
+
+  .popup-wrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+
+    .popup-inner-wrapper {
+      width: max-content;
+      margin: 0 auto;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+    }
+  }
 
   .header {
     background: #f2f7fa;

@@ -80,6 +80,22 @@ export default class UserService extends ApiService {
       params,
     });
   }
+
+  getUserSubscriptions() {
+    return this.axios.$get(`auth/client/newsletter`);
+  }
+
+  deleteUserSubscriptions(subscriptionsId) {
+    return this.axios.$delete(`auth/client/newsletter/${subscriptionsId}`);
+  }
+
+  addUserSubscriptions(body) {
+    return this.axios.$post(`auth/client/newsletter`, body);
+  }
+
+  getUserSubscription(subscriptionId) {
+    return this.axios.$get(`auth/client/newsletter/${subscriptionId}`);
+  }
   orderCheckAuto(payload, token) {
     return this.axios.post(`auth/one_car/order`, qs.stringify(payload), {
       headers: {

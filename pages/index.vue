@@ -40,6 +40,9 @@ export default {
       mainData: {},
     };
   },
+  mounted() {
+    console.log('🚀 ~ file: index.vue ~ line 43 ~ mounted ~ mounted', this.mainData);
+  },
   components: {
     MainFilter,
     AdsCardsList,
@@ -85,6 +88,7 @@ export default {
   }
 
   .banner-block {
+    margin-top: 32px;
     margin-bottom: 72px;
     min-height: 90px;
     background: #d3d3d3;

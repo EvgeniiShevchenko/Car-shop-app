@@ -1,5 +1,5 @@
 <template>
-  <v-checkbox class="check-box" :value="value" :label="label" :color="background" :disabled="isDisabled" :ripple="false" hide-details v-on="$listeners">
+  <v-checkbox class="check-box" v-model="status" :label="label" :color="background" :disabled="isDisabled" :ripple="false" hide-details v-on="$listeners">
     <template slot="label" v-if="isLabel">
       <slot name="label" />
     </template>
@@ -9,10 +9,20 @@
 <script>
 export default {
   name: 'CheckBox',
+  data() {
+    return {
+      status: this.value,
+    };
+  },
+  watch: {
+    value() {
+      this.status = this.value;
+    },
+  },
   props: {
     value: {
-      type: [Boolean, Array],
-      required: false,
+      type: [Boolean, Array, Object],
+      default: null,
     },
     isLabel: {
       type: Boolean,
