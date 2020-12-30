@@ -6,7 +6,17 @@ Vue.filter('convertDateToFormatMM', (date) => {
 });
 
 Vue.filter('convertDateToFormatDDMMYYYY', (date) => {
+  console.log('🚀 ~ file: filters.js ~ line 9 ~ Vue.filter ~ date', date);
   return moment(date).format('DD.MM.YYYY');
+});
+
+Vue.filter('convertNewsDate', (date) => {
+  return moment(date, 'DD.MM.YYYY hh:mm').format('DD.MM.YYYY');
+});
+
+Vue.filter('convertEngineCapacity', (value) => {
+  value = value / 1000;
+  return value.toFixed(1);
 });
 
 Vue.filter('beforeNowInPastFromDate', (date) => {

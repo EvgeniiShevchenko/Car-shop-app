@@ -3,15 +3,18 @@
     <div class="outer-wrap">
       <h1 class="mt-3">О нас</h1>
       <main-comunity class="mt-8" :communityInfo="info.community" />
-      <div v-if="info.static_info" v-html="info.static_info.description"></div>
-      <horizontal-banner class="banner" />
+      <div class="col-md-8 pr-md-3 col-xl-8 pr-xl-3">
+        <div v-if="info.static_info" v-html="info.static_info.description"></div>
+      </div>
+      <div class="col-md-8 pr-md-3 col-xl-8 pr-xl-3">
+        <horizontal-banner class="banner" />
+      </div>
     </div>
   </main>
 </template>
 
 <script>
 //Components
-
 import MainComunity from '@/components/modules/main/MainComunity';
 import HorizontalBanner from '@/components/modules/banners/HorizontalBanner';
 
@@ -30,11 +33,10 @@ export default {
     async getInfo() {
       try {
         this.info = (await this.$services.user.getAboutUsInfo()).data;
-        console.log('info', this.info)
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    },
   },
 };
 </script>
@@ -44,6 +46,10 @@ export default {
   .banner {
     margin-top: 52px;
     margin-bottom: 72px;
+  }
+  ::v-deep h3 {
+    color: #222329;
+    font-size: 20px;
   }
 }
 </style>

@@ -199,8 +199,8 @@ export default {
       this.modelVersionList = [{ id: 0, name: 'Все' }, ...fuels];
       this.sentenceList = sentence;
       this.collection = data.priceMonitoring;
-      this.productsDefaultList = this.initialProductsFuelList(products_fuels);
-      this.productsList = this.initialProductsFuelList(products_fuels);
+      this.productsDefaultList = products_fuels.data;
+      this.productsList = [...products_fuels.data];
       this.shownProductsList = this.productsList.splice(0, 8);
 
       this.initialMonitoringPriceChart(price_monitoring);

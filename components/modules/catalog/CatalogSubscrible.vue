@@ -8,7 +8,7 @@
           <p class="item-value">{{ searchResult[index] }}</p>
         </li>
       </ul>
-      <p class="general-info">Получайте свежие предложения в удобный мессенджер или по электронной пойчте:</p>
+      <p class="general-info">Получайте свежие предложения в удобный мессенджер или по электронной почте:</p>
       <p class="mobile-label" v-if="className === 'mobile'">Подписаться на поиск:</p>
       <ul class="subscribe-social-list">
         <li class="subscribe-social-item" @click="$emit('social-subscrible', 'telegram')">
@@ -30,7 +30,7 @@
       </ul>
       <form class="subscribe-form" method="GET" v-if="isShowEmail">
         <label class="subscribe-label" for="">Ваш email:</label>
-        <input :class="`subscribe-field ${error.name ? 'is-error' : ''}`" v-model="email" type="email" autocomplete="on" @focus="focusSubscribeField" />
+        <input :class="`subscribe-field ${error.name ? 'is-error' : ''}`" v-model="email" type="email" autocomplete="on" placeholder="mail@mail.com" @focus="focusSubscribeField" />
         <p class="error-text" v-if="error.name">{{ error.message }}</p>
         <button class="subscribe-btn" type="button" @click="subscrible">Подписаться</button>
       </form>
@@ -214,6 +214,8 @@ export default {
   }
 
   .subscribe-form {
+    margin-top: 12px;
+
     .subscribe-label {
       font-size: 15px;
       line-height: 17px;
@@ -229,6 +231,10 @@ export default {
 
       border-radius: 2px;
       border: 1px solid #8fa5b0;
+
+      &::placeholder {
+        color: #8fa5b0;
+      }
 
       &:focus {
         border: 1px solid #51a9f2;

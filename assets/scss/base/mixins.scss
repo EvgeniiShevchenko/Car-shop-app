@@ -57,3 +57,9 @@
     @content;
   }
 }
+
+@mixin small {
+  @media only screen and (max-width: $smallScreen) {
+    @content;
+  }
+}

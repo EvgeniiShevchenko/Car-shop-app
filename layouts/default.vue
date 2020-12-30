@@ -16,7 +16,7 @@
               <use xlink:href="~assets/images/sprites/main.svg#icon-user" />
             </svg>
             <div v-if="$vuetify.breakpoint.mdAndUp">
-              <nuxt-link class="authorization-link" to="/login">Авторизация</nuxt-link>
+              <nuxt-link class="authorization-link" to="/auth/login">Авторизация</nuxt-link>
               <div class="personal-cabinet-wrapper">
                 <nuxt-link class="personal-cabinet-link" to="#">Личный кабинет</nuxt-link>
                 <ul class="personal-cabinet-list">
@@ -110,26 +110,37 @@
         </div>
       </div>
     </footer>
+    <transition name="fade">
+      <div class="popup-wrapper" v-if="popUpShow">
+        <PopUpSuccess class="popup-inner-wrapper" v-if="!error" :title="message" />
+        <v-alert class="popup-inner-wrapper" v-else type="error"> {{ message }} </v-alert>
+      </div>
+    </transition>
   </v-app>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 import moment from 'moment';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
+import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Default',
+  mixins: [getAuthToken],
   data() {
     return {
       pages: pages,
       collection: [],
+      popUpShow: false,
+      message: '',
+      error: false,
     };
-  },
-  mounted() {
-    this.getRouteHistory();
   },
   computed: {
     getCurentYear() {
@@ -150,10 +161,6 @@ export default {
       }
     },
   },
-  components: {
-    BreadCrumbs,
-    MainHeaderMenu,
-  },
   methods: {
     getRouteHistory() {
       const { path } = this.$route;
@@ -173,6 +180,7 @@ export default {
       });
       this.collection = breadCrumbs;
     },
+
     getStatus(status) {
       switch (status) {
         case 'Б/у автомобили':
@@ -185,22 +193,63 @@ export default {
           return 0;
       }
     },
-  },
-  watch: {
-    $route() {
-      this.getRouteHistory();
+
+    showPopUp({ error, message, timer = 1000 }) {
+      this.message = message;
+      this.popUpShow = true;
+      this.error = error;
+
+      setTimeout(() => {
+        this.popUpShow = false;
+        this.error = false;
+      }, timer);
     },
+
+    ...mapActions({ setLogin: 'setLogin' }),
+  },
+  mounted() {
+    this.getRouteHistory();
+
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
+
+    this.$root.$on('show-popup', this.showPopUp);
+  },
+  components: {
+    BreadCrumbs,
+    MainHeaderMenu,
+    PopUpSuccess,
   },
 };
 </script>
 
 <style lang="scss">
 .layout {
+  position: relative;
   @include init-font;
   display: flex;
   flex-direction: column;
 
   height: 100vh;
+
+  .popup-wrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+
+    .popup-inner-wrapper {
+      width: max-content;
+      margin: 0 auto;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
+    }
+  }
 
   .header {
     background: #f2f7fa;

@@ -5,7 +5,7 @@
       <v-container>
         <v-row class="content_container" no-gutters>
           <v-col v-if="description" class="pa-0" lg="6" md="6" sm="12" xs="12">
-            <v-flex class="pa-0" v-html="description"> </v-flex>
+            <v-flex class="pa-0 description" v-html="description"> </v-flex>
           </v-col>
           <v-col class="pa-0" lg="5" md="5" sm="8" xs="12">
             <v-flex class="pa-0">
@@ -92,10 +92,14 @@ export default {
       }
     },
     getFieldRules(field) {
-      if (field.required && field.alias !== 'email') {
+      if (field.required && field.alias !== 'email' && field.alias !== 'name') {
         return [(v) => !!v || `Это поле является обязательным`];
       } else if (field.alias === 'email') {
         return field.required ? [(v) => !!v || 'E-mail is required', (v) => /.+@.+\..+/.test(v) || 'Email должен содержать @'] : [(v) => !v || /.+@.+\..+/.test(v) || 'Email должен содержать @'];
+      } else if (field.alias === 'name') {
+        return field.required
+          ? [(v) => !!v || 'Это обязательное поле', (v) => /^[a-zа-яё]+$/i.test(v) || 'Имя должно содержать только буквы']
+          : [(v) => !v || /^[a-zа-яё]+$/i.test(v) || 'Имя должно содержать только буквы'];
       } else {
         return [];
       }
@@ -113,12 +117,14 @@ export default {
     max-width: 100%;
     padding: 0;
     margin-bottom: 72px;
+    .description {
+      color: #222329;
+    }
     .content_container {
       justify-content: space-between;
       ::v-deep textarea {
+        min-height: 50px;
         height: 82px;
-        font-size: 15px;
-        line-height: 110%;
         @include xs {
           height: 230px;
         }

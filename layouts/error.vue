@@ -47,7 +47,7 @@
             <li><a href="/">Обзоры</a></li>
           </ul>
         </div>
-        <div>
+        <div v-if="isAuth">
           <p>Личный профиль</p>
           <ul>
             <li><a href="/">Основная информация </a></li>
@@ -69,9 +69,12 @@
 <script>
 // components
 import AdsCardsList from '~/components/base/AdsCardsList.vue';
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   layout: 'empty',
+  mixins: [getAuthToken],
   props: {
     error: {
       type: Object,
@@ -89,11 +92,13 @@ export default {
       pageNotFound: 'Not Found',
       otherError: 'An error occurred',
       latestAds: [],
+      isAuth: false,
     };
   },
   async mounted() {
     try {
       this.latestAds = (await this.$services.ads.getLatestAdsFor404()).data;
+      this.isAuth = !!localStorage.token;
     } catch (error) {
       console.log(error);
     }
@@ -110,15 +115,20 @@ export default {
     margin-bottom: 60px;
   }
   ul {
+    padding: 0;
     li {
       text-align: left;
-      list-style-type: disc;
+    }
+    li:before {
+      content: '•';
+      margin-right: 6px;
     }
   }
   p {
     font-style: normal;
     text-align: left;
     font-weight: 500;
+    color: #222329;
   }
   &-navigation {
     padding: 0 44px 24px 44px;
@@ -140,7 +150,7 @@ export default {
       font-size: 18px;
       line-height: 110%;
       margin-bottom: 10px;
-      padding-left: 8px;
+      color: #4a4d5c;
     }
     ul {
       li {
@@ -184,6 +194,9 @@ export default {
       }
     }
     &_container {
+      ul {
+        padding-left: 5px;
+      }
       @include sm {
         margin-top: 20px;
       }

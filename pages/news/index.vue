@@ -15,13 +15,7 @@
         <news-list :list="list.items" />
       </div>
       <div class="pagination-wrapper px-4">
-        <pagination-bar
-          :page="list.pagination.current_page"
-          :visibleNumber="paginationVisible"
-          @request-data="getCurrentPageNews($event)"
-          :amount="list.pagination.total_pages"
-          @input="getCurrentPageNews($event)"
-        />
+        <pagination-bar :page="list.pagination.current_page" :visibleNumber="6" @request-data="getCurrentPageNews($event)" :amount="list.pagination.total_pages" @input="getCurrentPageNews($event)" />
       </div>
     </div>
   </main>

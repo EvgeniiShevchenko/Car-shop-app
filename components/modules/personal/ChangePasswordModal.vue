@@ -67,8 +67,12 @@
 </template>
 
 <script>
+//Mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
+
 export default {
   name: 'ChangePasswordModal',
+  mixins: [getAuthToken],
   data() {
     return {
       isModalOpen: false,
@@ -87,6 +91,7 @@ export default {
   methods: {
     open() {
       this.isModalOpen = true;
+      this.isSucceeded = null;
       this.user = {
         password_old: '',
         password: '',
@@ -99,7 +104,7 @@ export default {
     async submit() {
       if (!this.$refs.form.validate()) return;
       try {
-        await this.$services.user.ChangeUserPassword(this.user);
+        await this.$services.user.ChangeUserPassword(this.user, this.getAuthToken());
         this.isSucceeded = true;
       } catch (error) {
         this.isSucceeded = false;

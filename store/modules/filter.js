@@ -280,6 +280,9 @@ export default {
     resetFilterCity(state) {
       state.filter.city = null;
     },
+    resetFilterAll(state) {
+      state.filter = getDefaultState().filter;
+    },
   },
 
   actions: {
@@ -489,6 +492,9 @@ export default {
     },
     resetFilterCity({ commit }, payload) {
       commit('resetFilterCity', payload);
+    },
+    resetFilterAll({ commit }) {
+      commit('resetFilterAll');
     },
   },
 };

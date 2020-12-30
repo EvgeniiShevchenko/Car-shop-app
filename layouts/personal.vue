@@ -122,11 +122,14 @@
 
 <script>
 import moment from 'moment';
+import { mapActions } from 'vuex';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
 import ProfileNavigation from '@/components/modules/personal/ProfileNavigation';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'Personal',
@@ -137,10 +140,7 @@ export default {
       userInfo: {},
     };
   },
-  mounted() {
-    this.getUserInfo();
-    this.getRouteHistory();
-  },
+  mixins: [getAuthToken],
   computed: {
     getCurentYear() {
       return moment().format('YYYY');
@@ -198,11 +198,24 @@ export default {
     },
     async getUserInfo() {
       try {
-        this.userInfo = (await this.$services.user.getUserData()).data.user;
+        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
       } catch (error) {
         console.log(error);
       }
     },
+
+    ...mapActions({ setLogin: 'setLogin' }),
+  },
+  mounted() {
+    this.getUserInfo();
+    this.getRouteHistory();
+
+    if (this.getAuthToken()) {
+      this.$axios.setToken(this.getAuthToken(), 'Bearer');
+      this.setLogin(true);
+    } else {
+      this.setLogin(false);
+    }
   },
   watch: {
     $route() {
@@ -212,8 +225,14 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .layout {
+  .outer-wrap {
+    width: 100%;
+  }
+  .profile_nav {
+    margin-bottom: 70px;
+  }
   @include init-font;
   display: flex;
   flex-direction: column;
@@ -222,6 +241,9 @@ export default {
   @include desktop {
     .profile_nav {
       display: none;
+    }
+    .content {
+      padding: 0 !important;
     }
     .outer-wrap {
       width: 100%;

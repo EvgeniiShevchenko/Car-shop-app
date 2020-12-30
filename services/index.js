@@ -4,6 +4,8 @@ import CalculatorService from './calculator';
 import CreateAdsService from './create-ads';
 import NewsService from './news';
 import UserService from './user';
+import AuthService from './auth';
+import FilterService from './filter';
 
 export default (context) => {
   return {
@@ -13,5 +15,7 @@ export default (context) => {
     user: new UserService(context),
     calculator: new CalculatorService(context),
     createAds: new CreateAdsService(context),
+    auth: new AuthService(context),
+    filter: new FilterService(context),
   };
 };

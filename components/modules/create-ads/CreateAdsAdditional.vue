@@ -29,7 +29,7 @@
         <SelectBtn class="select" :options="amountDoorsList" :value="additionalParams.amountDoors" label="Выбрать" :payload="true" @change="selectAmountDoors($event)" />
       </v-col>
       <v-col class="fuel-consumption-wrapper col-12 col-sm-6 pr-0 pr-sm-4" :order="$vuetify.breakpoint.xs ? 4 : ''">
-        <label class="fuel-consumption-label">Расход топлива</label>
+        <label class="select-label">Расход топлива</label>
         <div class="consumption-fields-group">
           <input class="fuel-consumption-field" type="number" :value="additionalParams.consumptionCity" placeholder="Город" @input="changeConsumptionCity" />
           <input class="fuel-consumption-field ml-0 ml-sm-4" type="number" :value="additionalParams.consumptionRoad" placeholder="Трасса" @input="changeConsumptionRoad" />
@@ -37,103 +37,26 @@
         </div>
       </v-col>
       <v-col class="select-wrapper col-12 col-sm-6 pl-0 pl-sm-4" :order="$vuetify.breakpoint.xs ? 8 : ''">
-        <label class="fuel-consumption-label">Цвет</label>
+        <label class="select-label">Цвет</label>
         <div class="color-wrapper">
           <SelectBtn class="select" :options="colorsList" :value="additionalParams.color" label="Выбрать" :payload="true" @change="selectColor($event)" />
           <CheckBox class="check-box" :value="additionalParams.isMetallic" label="Металлик" @change="setColorMetallic" :isLabel="true" />
         </div>
       </v-col>
     </div>
-    <div :class="`additional-option-wrapper ${mobileAdditionalShow === 1 ? 'is-mobile' : ''}`">
-      <h3 class="additional-option-title" v-if="$vuetify.breakpoint.smAndUp">Состояние машины</h3>
-      <button class="additional-mobile-btn" type="button" @click="selectAdditional(1)">
-        <svg class="additional-btn-icon">
-          <use xlink:href="~assets/images/sprites/global.svg#arrow-w-7" />
-        </svg>
-        Состояние машины
-      </button>
-      <CheckBoxGroup
-        class="check-box is-states"
-        v-show="$vuetify.breakpoint.smAndUp"
-        :value="additionalParams.carStates"
-        :collection="carStatesList"
-        @change="selectCarStates"
-        :isFixAlign="true"
-        :amountEmptyStirng="carStatesList.length"
-      />
-    </div>
-    <div :class="`additional-option-wrapper mt-0 mt-sm-4 ${mobileAdditionalShow === 2 ? 'is-mobile' : ''}`">
-      <h3 class="additional-option-title" v-if="$vuetify.breakpoint.smAndUp">Дополнительные опции</h3>
-      <button class="additional-mobile-btn" type="button" @click="selectAdditional(2)">
-        <svg class="additional-btn-icon">
-          <use xlink:href="~assets/images/sprites/global.svg#arrow-w-7" />
-        </svg>
-        Дополнительные опции
-      </button>
-      <CheckBoxGroup
-        class="check-box is-comfort"
-        v-show="$vuetify.breakpoint.smAndUp"
-        :value="additionalParams.carComfort"
-        :collection="carComfortList"
-        @change="selectCarComfort"
-        :isFixAlign="true"
-        :amountEmptyStirng="carComfortList.length"
-      />
-    </div>
-    <div :class="`additional-option-wrapper mt-0 mt-sm-4 ${mobileAdditionalShow === 3 ? 'is-mobile' : ''}`">
-      <h3 class="additional-option-title" v-if="$vuetify.breakpoint.smAndUp">Мультимедиа</h3>
-      <button class="additional-mobile-btn" type="button" @click="selectAdditional(3)">
-        <svg class="additional-btn-icon">
-          <use xlink:href="~assets/images/sprites/global.svg#arrow-w-7" />
-        </svg>
-        Мультимедиа
-      </button>
-      <CheckBoxGroup
-        class="check-box is-multimedia"
-        v-show="$vuetify.breakpoint.smAndUp"
-        :value="additionalParams.carMultimedia"
-        :collection="carMultimediaList"
-        @change="selectCarMultimedia"
-        :isFixAlign="true"
-        :amountEmptyStirng="carMultimediaList.length"
-      />
-    </div>
-    <div :class="`additional-option-wrapper mt-0 mt-sm-4 ${mobileAdditionalShow === 4 ? 'is-mobile' : ''}`">
-      <h3 class="additional-option-title" v-if="$vuetify.breakpoint.smAndUp">Безопасность</h3>
-      <button class="additional-mobile-btn" type="button" @click="selectAdditional(4)">
-        <svg class="additional-btn-icon">
-          <use xlink:href="~assets/images/sprites/global.svg#arrow-w-7" />
-        </svg>
-        Безопасность
-      </button>
-      <CheckBoxGroup
-        class="check-box is-security"
-        v-show="$vuetify.breakpoint.smAndUp"
-        :value="additionalParams.carSecurity"
-        :collection="carSecurityList"
-        @change="selectCarSecurity"
-        :isFixAlign="true"
-        :amountEmptyStirng="carSecurityList.length"
-      />
-    </div>
-    <div :class="`additional-option-wrapper mt-0 mt-sm-4 ${mobileAdditionalShow === 5 ? 'is-mobile' : ''}`">
-      <h3 class="additional-option-title" v-if="$vuetify.breakpoint.smAndUp">Другое</h3>
-      <button class="additional-mobile-btn" type="button" @click="selectAdditional(5)">
-        <svg class="additional-btn-icon">
-          <use xlink:href="~assets/images/sprites/global.svg#arrow-w-7" />
-        </svg>
-        Другое
-      </button>
-      <CheckBoxGroup
-        class="check-box"
-        :value="additionalParams.carAnother"
-        v-show="$vuetify.breakpoint.smAndUp"
-        :collection="carAnotherList"
-        @change="selectCarAnother"
-        :isFixAlign="true"
-        :amountEmptyStirng="carAnotherList.length"
-      />
-    </div>
+    <CarAdditionalStats
+      :carType="transportType"
+      :carStates="additionalParams.carStates"
+      :carComfort="additionalParams.carComfort"
+      :carMultimedia="additionalParams.carMultimedia"
+      :carSecurity="additionalParams.carSecurity"
+      :carAnother="additionalParams.carAnother"
+      @change-states="selectCarStates"
+      @change-comfort="selectCarComfort"
+      @change-multimedia="selectCarMultimedia"
+      @change-security="selectCarSecurity"
+      @change-another="selectCarAnother"
+    />
   </div>
 </template>
 
@@ -142,12 +65,13 @@ import SelectBtn from '~/components/base/SelectBtn.vue';
 import AutocompleteBtn from '~/components/base/AutocompleteBtn.vue';
 import CheckBox from '~/components/base/CheckBox.vue';
 import CheckBoxGroup from '~/components/base/CheckBoxGroup.vue';
+import CarAdditionalStats from '~/components/base/CarAdditionalStats.vue';
 // mixins
-import transformObjectInArrayForSelect from '~/mixins/transformObjectInArrayForSelect.js';
+import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 
 export default {
   name: 'CreateAdsAdditional',
-  mixins: [transformObjectInArrayForSelect],
+  mixins: [transformArrayForSelectBtn],
   data() {
     return {
       transmissionList: [],
@@ -157,11 +81,6 @@ export default {
       fuelList: [],
       amountDoorsList: [],
       colorsList: [],
-      carStatesList: [],
-      carComfortList: [],
-      carMultimediaList: [],
-      carSecurityList: [],
-      carAnotherList: [],
       additionalParams: {
         transmission: '',
         engineCapacity: '',
@@ -181,7 +100,6 @@ export default {
         consumptionRoad: null,
         consumptionCommon: null,
       },
-      mobileAdditionalShow: null,
     };
   },
   watch: {
@@ -193,17 +111,6 @@ export default {
     },
   },
   methods: {
-    selectAdditional(additionalShowId) {
-      if (additionalShowId === this.mobileAdditionalShow) {
-        this.mobileAdditionalShow = null;
-        document.body.classList.remove('hide-scroll-bar');
-        return;
-      }
-
-      this.mobileAdditionalShow = additionalShowId;
-      document.body.classList.add('hide-scroll-bar');
-    },
-
     selecTtransmission({ text, value }) {
       this.additionalParams.transmission = value;
     },
@@ -226,6 +133,10 @@ export default {
 
     selectColor({ text, value }) {
       this.additionalParams.color = value;
+    },
+
+    selectAmountDoors({ text, value }) {
+      this.additionalParams.amountDoors = value;
     },
 
     setColorMetallic(selectStatus) {
@@ -273,72 +184,29 @@ export default {
       try {
         const { transmissions, fuels, driveUnits, doors, engineCapacities, colors } = (await this.$services.createAds.getAdditionalCharacteristic()).data;
 
-        this.transmissionList = this.transformObjectInArrayForSelect(transmissions);
-        this.engineCapacityList = this.transformObjectInArrayForSelect(engineCapacities);
-        this.driveUnitsList = this.transformObjectInArrayForSelect(driveUnits);
-        this.fuelList = this.transformObjectInArrayForSelect(fuels);
-        this.amountDoorsList = this.transformObjectInArrayForSelect(doors);
-        this.colorsList = colors.map((item) => ({ text: item.name, value: item.id }));
+        this.transmissionList = this.transformArrayForSelectBtn(transmissions);
+        this.engineCapacityList = this.transformArrayForSelectBtn(engineCapacities);
+        this.driveUnitsList = this.transformArrayForSelectBtn(driveUnits);
+        this.fuelList = this.transformArrayForSelectBtn(fuels);
+        this.amountDoorsList = this.transformArrayForSelectBtn(doors);
+        this.colorsList = this.transformArrayForSelectBtn(colors);
       } catch (error) {
         console.error(error);
       }
     })();
-
-    await (async () => {
-      try {
-        const { carCondition } = (await this.$services.createAds.getAdditionalCarCondition()).data;
-
-        this.carStatesList = this.transformObjectInArrayForSelect(carCondition);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    await (async () => {
-      try {
-        const { carComfort } = (await this.$services.createAds.getAdditionalComfortCondition()).data;
-
-        this.carComfortList = this.transformObjectInArrayForSelect(carComfort);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    await (async () => {
-      try {
-        const { carMultimedia } = (await this.$services.createAds.getAdditionalMultimediaCondition()).data;
-
-        this.carMultimediaList = this.transformObjectInArrayForSelect(carMultimedia);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    await (async () => {
-      try {
-        const { carSecurity } = (await this.$services.createAds.getAdditionalSecurityCondition()).data;
-
-        this.carSecurityList = this.transformObjectInArrayForSelect(carSecurity);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
-
-    await (async () => {
-      try {
-        const { carAnother } = (await this.$services.createAds.getAdditionalAnotherCondition()).data;
-
-        this.carAnotherList = this.transformObjectInArrayForSelect(carAnother);
-      } catch (error) {
-        console.error(error);
-      }
-    })();
+  },
+  props: {
+    transportType: {
+      type: [String, Number],
+      required: true,
+    },
   },
   components: {
     SelectBtn,
     CheckBox,
     CheckBoxGroup,
     AutocompleteBtn,
+    CarAdditionalStats,
   },
 };
 </script>
@@ -373,6 +241,7 @@ export default {
 
       .select-label {
         display: inline-block;
+        color: #4a4d5c;
       }
 
       .select {
@@ -417,7 +286,9 @@ export default {
     .fuel-consumption-wrapper {
       margin-top: 12px;
 
-      .fuel-consumption-label {
+      .select-label {
+        display: inline-block;
+        color: #4a4d5c;
       }
 
       .consumption-fields-group {
@@ -435,107 +306,6 @@ export default {
       }
     }
   }
-
-  .additional-option-wrapper {
-    margin-top: 20px;
-
-    .additional-option-title {
-      @extend .title-l;
-    }
-
-    .additional-mobile-btn {
-      display: none;
-      align-items: center;
-      justify-content: left;
-
-      padding: 11px 0;
-      width: 100%;
-      box-shadow: 0 -1px 0 0 rgba(34, 35, 41, 0.1);
-
-      .additional-btn-icon {
-        display: none;
-        margin: 0 9px;
-        width: 7px;
-        height: 12px;
-        transform: rotate(180deg);
-      }
-    }
-
-    .check-box {
-      margin-top: 16px;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: wrap;
-      gap: 12px 10px;
-
-      max-height: 135px;
-
-      & ::v-deep .check-box-item {
-        margin-top: 0;
-        max-width: calc((100% - 36px) / 4);
-        width: 100%;
-
-        .v-label {
-          display: inline-block;
-
-          width: 100%;
-
-          text-overflow: ellipsis;
-          overflow-x: hidden;
-          white-space: nowrap;
-        }
-      }
-    }
-
-    .is-comfort {
-      max-height: 560px;
-    }
-
-    .is-multimedia {
-      max-height: 1300px;
-    }
-
-    .is-security {
-      max-height: 360px;
-    }
-  }
-
-  .is-mobile {
-    position: fixed;
-
-    top: 0;
-    left: 0;
-    padding: 11px 16px;
-    margin-top: 0;
-
-    width: 100%;
-    height: 100vh;
-
-    background: #ffffff;
-    overflow-y: auto;
-  }
-}
-
-@include sm {
-  .additional .additional-option-wrapper {
-    .check-box {
-      ::v-deep .check-box-item {
-        max-width: calc((100% - 24px) / 3);
-      }
-    }
-
-    .is-comfort {
-      max-height: 750px;
-    }
-
-    .is-multimedia {
-      max-height: 1700px;
-    }
-
-    .is-security {
-      max-height: 500px;
-    }
-  }
 }
 
 @include xs {
@@ -543,63 +313,6 @@ export default {
     .additional-general .fuel-consumption-wrapper .consumption-fields-group {
       flex-wrap: wrap;
       gap: 16px 0;
-    }
-
-    .additional-option-wrapper {
-      .additional-option-title {
-        display: none;
-      }
-
-      .additional-mobile-btn {
-        display: flex;
-      }
-
-      .check-box {
-        display: none;
-      }
-
-      .check-box {
-        ::v-deep .check-box-item {
-          max-width: calc((100% - 12px) / 2);
-        }
-      }
-
-      .is-states {
-        max-height: 250px;
-      }
-
-      .is-comfort {
-        max-height: 1100px;
-      }
-
-      .is-multimedia {
-        max-height: 2500px;
-      }
-
-      .is-security {
-        max-height: 750px;
-      }
-    }
-
-    .is-mobile {
-      .additional-mobile-btn {
-        padding: 2px 0 11px 0;
-        box-shadow: 0 1px 0 0 rgba(34, 35, 41, 0.1);
-
-        .additional-btn-icon {
-          display: block;
-        }
-      }
-
-      .check-box {
-        display: flex !important;
-        flex-wrap: nowrap;
-        margin-top: 24px;
-
-        ::v-deep .check-box-item {
-          max-width: max-content;
-        }
-      }
     }
   }
 }

@@ -1,7 +1,7 @@
 <template>
   <section :class="`${className} row no-gutters`">
     <h2 class="card-title">{{ title }}</h2>
-    <ul class="card-list col-md-12 col-lg-10 pr-lg-3">
+    <ul class="card-list col-md-12 col-lg-10 pr-lg-1">
       <li :key="index" v-for="(item, index) in collection">
         <CatalogCardsPreview class="card-list-item" :collection="item" />
       </li>
@@ -63,9 +63,14 @@ export default {
 .advertising {
   min-height: 90px;
   max-height: 100%;
+  max-width: 160px;
+  margin-left: auto;
 
   background: #d3d3d3;
   background-position-x: -16px;
+  @media (max-width: 1264px) {
+    max-width: 1024px;
+  }
 }
 
 .mobile {

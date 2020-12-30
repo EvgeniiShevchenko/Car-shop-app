@@ -71,7 +71,7 @@ h4 {
   color: #70848E;
 }
 
-.send_btn {
+button.send_btn {
   border-radius: 2px;
   background-color: #4CAD33 !important;
   padding: 0 27px !important;
@@ -150,4 +150,97 @@ h4 {
   font-weight: 500;
   font-size: 15px;
   line-height: 110%;
+}
+
+.accept-green-btn {
+  height: 43px;
+  width: 100%;
+
+  background: #4CAD33;
+  border-radius: 2px;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 15px;
+  color: #FFFFFF;
+
+  &:hover {
+    background: #2CA00D;
+  }
+}
+
+.button-outline-classic {
+  height: 36px;
+  padding: 0 20px;
+
+  border-radius: 2px;
+  border: 1px solid #4A4D5C;
+
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 15px;
+  color: #4A4D5C;
+
+  &:hover {
+    background: #F2F7FA;
+  }
+
+}
+
+html {
+  overflow-y: auto;
+}
+
+.check-box {
+  margin-top: 0;
+  padding-top: 0;
+
+  ::v-deep .v-input__control {
+    .v-input--selection-controls__input {
+      .v-icon {
+        background: #ffffff;
+        font-size: 30px;
+      }
+
+      .mdi-checkbox-blank-outline::before {
+        content: '';
+        width: 22px;
+        height: 22px;
+        border-radius: 2px;
+        border: 1px solid #8fa5b0;
+        box-sizing: content-box;
+      }
+    }
+
+    .v-label {
+      font-size: 15px;
+      line-height: 17px;
+      color: #4a4d5c;
+    }
+  }
+}
+
+.v-form {
+  ::v-deep textarea {
+    font-size: 15px;
+    line-height: 110%;
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  span {
+    color: #4a4d5c;
+  }
+  ::v-deep input {
+    color: #4a4d5c !important;
+    font-weight: 500;
+  }
+  ::v-deep fieldset {
+    color: #8fa5b0 !important;
+  }
+  ::v-deep input::placeholder {
+    font-weight: 400;
+  }
+  ::v-deep textarea::placeholder {
+    font-weight: 400;
+  }
 }

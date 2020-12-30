@@ -32,7 +32,7 @@ module.exports = {
       },
     ],
     'no-console': 'warn',
-    'no-debugger': 'warn',
+    'no-debugger': 'off',
     'no-alert': 'warn',
     'no-unused-vars': 'warn',
     'no-await-in-loop': 0,
