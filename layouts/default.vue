@@ -16,7 +16,7 @@
               <use xlink:href="~assets/images/sprites/main.svg#icon-user" />
             </svg>
             <div v-if="$vuetify.breakpoint.mdAndUp">
-              <nuxt-link class="authorization-link" to="/login">Авторизация</nuxt-link>
+              <nuxt-link class="authorization-link" to="/auth/login">Авторизация</nuxt-link>
               <div class="personal-cabinet-wrapper">
                 <nuxt-link class="personal-cabinet-link" to="#">Личный кабинет</nuxt-link>
                 <ul class="personal-cabinet-list">
@@ -141,11 +141,6 @@ export default {
       message: '',
       error: false,
     };
-  },
-  watch: {
-    $route() {
-      this.getRouteHistory();
-    },
   },
   computed: {
     getCurentYear() {
