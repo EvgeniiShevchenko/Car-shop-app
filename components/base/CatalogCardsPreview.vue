@@ -43,7 +43,9 @@
           {{ collection.currency_default || collection.currencyDefault }} {{ collection.price }}
           <span class="old-price">{{ collection.currencyDefault }} {{ collection.old_price }}</span>
         </p>
-        <n-link class="search-model" to="/catalog?status=0&car_type_id=1&car_mark_id=1&fuel_id=1">Смотреть {{ collection.count }} авто</n-link>
+        <n-link class="search-model" :to="`/catalog?status=0&car_type_id=${this.collection.car_type_id}&car_mark_id=${this.collection.car_mark_id}&fuel_id=${this.collection.fuel_id}`"
+          >Смотреть {{ collection.count }} авто</n-link
+        >
         <div class="servises-btn-wrapper" v-if="extends_view">
           <button :class="`libra-btn ${compareList.has(collection.unique_id) ? 'is-compare' : ''}`" v-if="!isMobile" type="button" @click.prevent.stop="$emit('add-comparison', collection.unique_id)">
             <svg class="libra-icon">
@@ -77,8 +79,20 @@
 </template>
 
 <script>
+// mixins
+import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
+
 export default {
   name: 'CatalogCardsPreview',
+  mixins: [saveFilterParamNameInLocalStorage],
+  methods: {
+    setFuelToLocalStorage() {
+      // this.saveFilterParamNameInLocalStorage('fuel_id', [`${this.collection.fuel_id}`]);
+      // this.saveFilterParamNameInLocalStorage('car_type_id', `${this.collection.car_type_id}`);
+      // this.saveFilterParamNameInLocalStorage('car_mark_id', `${this.collection.car_mark_id}`);
+      this.$router.push({ path: `/catalog?status=0&car_type_id=${this.collection.car_type_id}&car_mark_id=${this.collection.car_mark_id}&fuel_id=${this.collection.fuel_id}` });
+    },
+  },
   props: {
     collection: {
       type: [Object, String],

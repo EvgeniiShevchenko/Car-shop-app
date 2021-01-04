@@ -47,12 +47,12 @@
               <use xlink:href="~assets/images/sprites/main.svg#icon-select-mark" />
             </svg>
           </n-link>
-          <MainFilter class="mt-6" className="catalog" @show-results="hideFilterMobile" :results="searchResult" />
+          <MainFilter class="mt-6" className="catalog" @show-results="hideFilterMobile" :results="searchResult" @reload-tags="reloadTagsKey = !reloadTagsKey" />
           <CatalogFeedback class="mt-6" @send-rating="sendRating($event)" v-show="!isMobileFilter" />
         </v-col>
         <v-col class="general col-12 col-md-9 pl-md-3" v-show="!isMobileFilter">
           <div class="filter-manager">
-            <ul class="manager-list">
+            <ul class="manager-list" :key="reloadTagsKey">
               <li
                 :class="`manager-item ${getQueryParams.length - 1 === index ? 'is-margin-right-0' : ''} ${typeof item[1] === 'object' ? 'is-group' : ''}`"
                 :key="index"
@@ -60,7 +60,7 @@
               >
                 <div class="manager-item-single" v-if="typeof item[1] !== 'object'">
                   <button class="item-select-btn" type="button">
-                    <span>{{ !$isServer ? getFilterParamTitle(item[0]) : '' }}</span>
+                    <span>{{ !$isServer ? getFilterKeyFromLocalStorage(item[0]) : '' }}</span>
                   </button>
                   <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item)" v-if="/is_ukraine|is_cleared/.test(item[0]) && /1|2|3/.test(String(states)) ? false : true">
                     <svg class="manager-btn-icon">
@@ -71,7 +71,7 @@
                 <ul class="manager-item-group" v-else>
                   <li class="manager-group-item" :key="index" v-for="(param, index) in item[1]">
                     <button class="item-select-btn" type="button">
-                      <span>{{ !$isServer ? getFilterParamTitle(item[0], 'hello')[index] : '' }}</span>
+                      <span>{{ !$isServer ? getFilterKeyFromLocalStorage(item[0])[index] : '' }}</span>
                     </button>
                     <button class="item-reset-btn" type="button" @click="handlerResetFilterParam(item, param, index)">
                       <svg class="manager-btn-icon">
@@ -102,6 +102,7 @@
                   :prependInputTitle="item"
                   className="prepend"
                   @change="index === 0 ? setAmountCardOnPage($event) : selectSubmissionTime($event)"
+                  @initial="initialFieldSelect(index === 0 ? 'page' : 'date', $event)"
                 />
                 <Tooltip v-else :isHover="true" :text="sortParams[index].find((item) => item.value === sort).text">
                   <template slot="activator">
@@ -178,10 +179,22 @@ import getStatusName from '~/mixins/getStatusName.js';
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
 import setCatalogFilterDefaultParams from '~/mixins/setCatalogFilterDefaultParams.js';
+import getFilterKeyFromLocalStorage from '~/mixins/getFilterKeyFromLocalStorage.js';
+import resetFilterParamsInLocalStorage from '~/mixins/resetFilterParamsInLocalStorage.js';
 
 export default {
   name: 'Index',
-  mixins: [isEmpty, deleteFilterParamNameInLocalStorage, saveFilterParamNameInLocalStorage, isNull, stringReplaceAll, setCatalogFilterDefaultParams, getStatusName],
+  mixins: [
+    isEmpty,
+    deleteFilterParamNameInLocalStorage,
+    saveFilterParamNameInLocalStorage,
+    isNull,
+    stringReplaceAll,
+    setCatalogFilterDefaultParams,
+    getStatusName,
+    getFilterKeyFromLocalStorage,
+    resetFilterParamsInLocalStorage,
+  ],
   data() {
     return {
       filterParams: [],
@@ -207,6 +220,7 @@ export default {
       isMobileFilter: false,
       isMobile: false,
       isPreviousHome: false,
+      reloadTagsKey: false,
     };
   },
   created() {
@@ -216,7 +230,6 @@ export default {
       );
 
       if (!paternIgnore.test(mutation.type)) {
-        this.setQueryParams();
         this.$nextTick(() => {
           this.requestPageData();
         });
@@ -279,6 +292,7 @@ export default {
         if (item[0] === 'is_cleared' && item[1] === false) return true;
         if (item[0] === 'is_ukraine' && item[1] === false) return true;
         if (item[0] === 'is_not_go' && item[1] === false) return true;
+        if (item[0] === 'status') return true;
 
         return !this.isEmpty(item[1]);
       });
@@ -314,6 +328,12 @@ export default {
     }),
   },
   methods: {
+    initialFieldSelect(key, options) {
+      if (!this.isNull(options[0].value) && typeof options[0].value !== 'object') {
+        this.saveFilterParamNameInLocalStorage(key, options[0].text);
+      }
+    },
+
     compareAds() {
       console.log('compareAds -> compareAds');
     },
@@ -381,14 +401,6 @@ export default {
       }
 
       localStorage.setItem('filterParamsName', JSON.stringify({ ...filterParamNames, [keyName]: filterParamNames[keyName].filter((item, index) => index !== propertyName) }));
-    },
-
-    getFilterParamTitle(key, test) {
-      if (localStorage.getItem('filterParamsName') === null) return localStorage.setItem('filterParamsName', JSON.stringify({}));
-
-      const filterParamTitles = JSON.parse(localStorage.getItem('filterParamsName'));
-
-      return filterParamTitles[key];
     },
 
     selectFilterTab(tabIndex) {
@@ -615,7 +627,6 @@ export default {
       for (let item in this.$route.query) {
         if (this.$route.query[item]) queryParams.push([item, this.$route.query[item]]);
       }
-
       for (let item of queryParams) {
         switch (item[0]) {
           case 'status':
@@ -679,6 +690,7 @@ export default {
             initialChangeOptions['transmission'] = item[1].split(',').map((item) => Number(item));
             break;
           case 'fuel_id':
+            this.saveFilterParamNameInLocalStorage('fuel_id', []);
             initialChangeOptions['fuel'] = item[1].split(',').map((item) => Number(item));
             break;
           case 'drive_unit_id':
@@ -786,11 +798,9 @@ export default {
       this.isPreviousHome = true;
     }
 
+    this.initializationData();
     this.$nextTick(() => {
-      this.initializationData();
       setTimeout(async () => {
-        this.setQueryParams();
-
         let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
         const { data } = token
           ? await this.$axios.$get(`catalog/main${this.getQueryString()}`, {
@@ -803,7 +813,7 @@ export default {
 
         this.catalogList = products.data;
         this.carOrderList = car_order;
-        this.amountPages = products.last_page;
+        this.amountPages = products.pagination.total_page;
         this.searchResult = subscription;
       }, 0);
     });
@@ -816,6 +826,7 @@ export default {
   beforeDestroy() {
     this.unsubscribe();
     this.resetFilterAll();
+    this.resetFilterParamsInLocalStorage();
   },
   components: {
     SelectBtn,

@@ -17,6 +17,11 @@
         v-on="$listeners"
         background-color="#ffffff"
         outlined
+        :value-comparator="
+          (a, b) => {
+            return a === b ? compareValue(a, b) : false;
+          }
+        "
       >
         <template slot="append">
           <svg class="select-mark">
@@ -55,8 +60,18 @@ export default {
         lineHeight: '17px',
         color: '#8fa5b0',
       },
-      searchInput: '',
     };
+  },
+  methods: {
+    compareValue(a, b) {
+      this.$nextTick(() => {
+        if (!!this.$refs.mySelect) {
+          this.$emit('initial', this.$refs.mySelect.selectedItems);
+        }
+      });
+
+      return true;
+    },
   },
   props: {
     options: {

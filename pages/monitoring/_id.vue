@@ -36,7 +36,7 @@
             <button :class="`versions-item-btn ${modelVersionSelect === item.id ? 'is-select' : ''}`" type="button" @click="handlerSelectVersion(item)">{{ item.name }}</button>
           </li>
         </ul>
-        <AdsCardsList class="products" :collection="shownProductsList" className="mobile" />
+        <AdsCardsList class="products" v-if="shownProductsList.length" :collection="shownProductsList" className="mobile" />
         <button class="versions-more-btn" type="button" @click="showMoreAds">
           Еще модели Volkswagen
           <svg class="more-btn-icon">
@@ -67,7 +67,7 @@
           </div>
           <SelectBtn class="select-currency" className="prepend" :options="currenciesList" :payload="true" :value="currencyDefault" @change="selectCurrency($event)" />
         </div>
-        <AdsCardsList class="sentence" :collection="sentenceList" className="mobile" />
+        <AdsCardsList class="sentence" v-if="sentenceList.length" :collection="sentenceList" className="mobile" />
       </section>
       <n-link
         class="search-total-wrapper"
@@ -106,11 +106,10 @@ import CurrencyRate from '~/components/base/CurrencyRate.vue';
 import getStatusName from '~/mixins/getStatusName.js';
 import getUniqueAdsNumber from '~/mixins/getUniqueAdsNumber.js';
 import initialMonitoringPriceChart from '~/mixins/initialMonitoringPriceChart.js';
-import initialProductsFuelList from '~/mixins/initialProductsFuelList.js';
 
 export default {
   name: 'Monitoring',
-  mixins: [getStatusName, getUniqueAdsNumber, initialMonitoringPriceChart, initialProductsFuelList],
+  mixins: [getStatusName, getUniqueAdsNumber, initialMonitoringPriceChart],
   data() {
     return {
       modelVersionList: [],
@@ -190,7 +189,6 @@ export default {
   async fetch() {
     try {
       const { data } = await this.$services.monitoring.getMonitoringPriceList(this.getUniqueAdsNumber());
-      console.log('🚀 ~ file: _id.vue ~ line 191 ~ fetch ~ data', data);
       const { fuels, sentence, select_currencies, products_fuels, price_monitoring } = data.priceMonitoring;
 
       this.currenciesList = select_currencies.map((item) => {
@@ -199,8 +197,8 @@ export default {
       this.modelVersionList = [{ id: 0, name: 'Все' }, ...fuels];
       this.sentenceList = sentence;
       this.collection = data.priceMonitoring;
-      this.productsDefaultList = products_fuels.data;
-      this.productsList = [...products_fuels.data];
+      this.productsDefaultList = products_fuels;
+      this.productsList = [...products_fuels];
       this.shownProductsList = this.productsList.splice(0, 8);
 
       this.initialMonitoringPriceChart(price_monitoring);

@@ -1,7 +1,21 @@
 <template>
   <ul class="check-box-list">
     <li class="check-box-item" :key="index" v-for="(item, index) in isOverflow ? showList : collection">
-      <v-checkbox class="check-box" :input-value="value" :value="item.value" :label="item.text" :color="background" :ripple="false" hide-details v-on="$listeners">
+      <v-checkbox
+        class="check-box"
+        :input-value="value"
+        :value="item.value"
+        :label="item.text"
+        :color="background"
+        :ripple="false"
+        hide-details
+        v-on="$listeners"
+        :value-comparator="
+          (a, b) => {
+            return a === b ? compareValue(item.text) : false;
+          }
+        "
+      >
         <template slot="label" v-if="isLabel">
           <slot name="label" />
         </template>
@@ -24,6 +38,12 @@ export default {
     };
   },
   methods: {
+    compareValue(optionName) {
+      this.$emit('initial', optionName);
+
+      return true;
+    },
+
     showMore() {
       if (this.isShow) {
         this.showList = this.collection.slice(0, this.amountShow);
