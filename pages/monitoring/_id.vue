@@ -22,12 +22,13 @@
         </div>
         <CurrencyRate :collection="collection" v-if="productsDefaultList.length" />
       </div>
-      <section class="liner-chart-wrapper">
+      <section class="liner-chart-wrapper" v-if="isChart">
         <h2 class="chart-title">Динмика изменения цен на {{ collection.name }}</h2>
         <div class="liner-chart">
           <LineChart class="chart" v-if="loaded" :chartData="chart.data" :chartLabels="chart.labels" :maintainAspectRatio="false" :responsive="true" cssClasses="chart-wrapper" />
         </div>
       </section>
+      <v-alert class="error-message" v-else color="red" type="error" dismissible> Статистика недоступна </v-alert>
       <div class="model-versions">
         <h3 class="versions-title">Цены на модели Volkswagen по видам топлива</h3>
         <ul class="versions-list">
@@ -35,7 +36,7 @@
             <button :class="`versions-item-btn ${modelVersionSelect === item.id ? 'is-select' : ''}`" type="button" @click="handlerSelectVersion(item)">{{ item.name }}</button>
           </li>
         </ul>
-        <AdsCardsList class="products" :collection="shownProductsList" className="mobile" />
+        <AdsCardsList class="products" v-if="shownProductsList.length" :collection="shownProductsList" className="mobile" />
         <button class="versions-more-btn" type="button" @click="showMoreAds">
           Еще модели Volkswagen
           <svg class="more-btn-icon">
@@ -49,7 +50,7 @@
           <div class="rating-search-result">
             <n-link
               class="search-result-btn"
-              :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}`"
+              :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}&date=hour`"
               role="button"
             >
               За час
@@ -57,7 +58,7 @@
             </n-link>
             <n-link
               class="search-result-btn"
-              :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}`"
+              :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}&date=today`"
               type="button"
             >
               За день
@@ -66,11 +67,11 @@
           </div>
           <SelectBtn class="select-currency" className="prepend" :options="currenciesList" :payload="true" :value="currencyDefault" @change="selectCurrency($event)" />
         </div>
-        <AdsCardsList class="sentence" :collection="sentenceList" className="mobile" />
+        <AdsCardsList class="sentence" v-if="sentenceList.length" :collection="sentenceList" className="mobile" />
       </section>
       <n-link
         class="search-total-wrapper"
-        :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}`"
+        :to="`/catalog?status=0&car_type_id=${collection.car_type_id}&car_mark_id=${collection.car_mark_id}&car_model_id=${collection.car_model_id}&currency_id=${currencyDefault}&date=all`"
         tag="div"
       >
         <h3 class="search-total-title">Предложений о продаже {{ collection.name }}</h3>
@@ -104,12 +105,11 @@ import CurrencyRate from '~/components/base/CurrencyRate.vue';
 // mixins
 import getStatusName from '~/mixins/getStatusName.js';
 import getUniqueAdsNumber from '~/mixins/getUniqueAdsNumber.js';
-// mocks
-import monitoringList from '~/static/mocks/monitoringPriceList.json';
+import initialMonitoringPriceChart from '~/mixins/initialMonitoringPriceChart.js';
 
 export default {
   name: 'Monitoring',
-  mixins: [getStatusName, getUniqueAdsNumber],
+  mixins: [getStatusName, getUniqueAdsNumber, initialMonitoringPriceChart],
   data() {
     return {
       modelVersionList: [],
@@ -122,6 +122,7 @@ export default {
       currencyDefault: 2,
       collection: {},
       loaded: false,
+      isChart: false,
       chart: {
         labels: [],
         data: [],
@@ -155,7 +156,7 @@ export default {
       }
     },
 
-    async handlerSelectVersion({ id }) {
+    async handlerSelectVersion({ id, name }) {
       try {
         if (!id) {
           this.productsList = [...this.productsDefaultList];
@@ -165,7 +166,7 @@ export default {
           return;
         }
 
-        this.productsList = (await this.$services.monitoring.getFuelProductsList(this.getUniqueAdsNumber(), id)).data.products;
+        this.productsList = this.productsDefaultList.filter((item) => item.fuel === name);
 
         this.shownProductsList = this.productsList.splice(0, 8);
         this.modelVersionSelect = id;
@@ -188,7 +189,7 @@ export default {
   async fetch() {
     try {
       const { data } = await this.$services.monitoring.getMonitoringPriceList(this.getUniqueAdsNumber());
-      const { fuels, sentence, select_currencies, products_fuels } = data.priceMonitoring;
+      const { fuels, sentence, select_currencies, products_fuels, price_monitoring } = data.priceMonitoring;
 
       this.currenciesList = select_currencies.map((item) => {
         return { text: item.name, value: item.id, meta: item };
@@ -196,21 +197,12 @@ export default {
       this.modelVersionList = [{ id: 0, name: 'Все' }, ...fuels];
       this.sentenceList = sentence;
       this.collection = data.priceMonitoring;
-      this.productsDefaultList = products_fuels.data;
-      this.productsList = [...products_fuels.data];
+      this.productsDefaultList = products_fuels;
+      this.productsList = [...products_fuels];
       this.shownProductsList = this.productsList.splice(0, 8);
-      let labels = [];
-      let firstLine = [];
-      let secondLine = [];
 
-      for (let item of monitoringList) {
-        labels = [...labels, item.date];
-        firstLine = [...firstLine, item.maxPrice];
-        secondLine = [...secondLine, item.minPrice];
-      }
-
-      this.chart.labels = labels;
-      this.chart.data = { firstLine, secondLine };
+      this.initialMonitoringPriceChart(price_monitoring);
+      this.isChart = !!price_monitoring.length;
       this.loaded = true;
     } catch (error) {
       console.error(error);
@@ -343,6 +335,16 @@ export default {
     }
   }
 
+  .error-message {
+    margin-top: 20px;
+    width: 100%;
+
+    font-size: 15px;
+    font-weight: 500;
+    line-height: 15px;
+    color: #ffffff;
+  }
+
   .model-versions {
     margin-top: 56px;
     width: 100%;
@@ -402,6 +404,21 @@ export default {
 
     .products {
       margin-top: 24px;
+
+      ::v-deep .card-list {
+        .catalog-card .general {
+          .item-title {
+            max-height: 40px;
+            min-height: 40px;
+          }
+
+          .price-wrapper {
+            .search-model {
+              display: block;
+            }
+          }
+        }
+      }
     }
 
     .versions-more-btn {

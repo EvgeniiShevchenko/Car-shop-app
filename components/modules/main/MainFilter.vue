@@ -17,7 +17,16 @@
       </div>
       <div class="category-car col-12 mb-3">
         <label class="filter-param-label">Тип транспорта</label>
-        <AutocompleteBtn :options="categoryList" :value="type" label="Выбрать" :payload="true" :isReset="!isEmpty(!!type)" @change="selectCategory($event)" @reset="resetTypeField" />
+        <AutocompleteBtn
+          :options="categoryList"
+          :value="type"
+          label="Выбрать"
+          :payload="true"
+          :isReset="!isEmpty(!!type)"
+          @change="selectCategory($event)"
+          @reset="resetTypeField"
+          @update:search-input="initialFieldSelect('car_type_id', $event)"
+        />
       </div>
       <div class="brend-car col-sm-6 pr-sm-4 mb-3 col-lg-6 pr-lg-4">
         <label class="filter-param-label">Марка</label>
@@ -32,6 +41,7 @@
           @change="selectBrand($event)"
           @focus="checkExistType($event)"
           @reset="resetBrandField"
+          @update:search-input="initialFieldSelect('car_mark_id', $event)"
         />
       </div>
       <div class="model-car col-sm-6 pl-sm-4 mb-3 col-lg-6 pl-lg-4">
@@ -47,6 +57,7 @@
           @change="selectModel($event)"
           @focus="checkExistBrand($event)"
           @reset="resetModelField"
+          @update:search-input="initialFieldSelect('car_model_id', $event)"
         />
       </div>
       <div class="year-begin" v-if="className === 'create-ads'">
@@ -177,7 +188,7 @@
       </AcordionSingle>
       <AcordionSingle class="acordion-fuel" v-if="className === 'catalog' && fuelList.length" :isOpen="0" className="simple" title="Топливо">
         <template slot="content">
-          <CheckBoxGroup :value="fuel" :collection="fuelList" :isOverflow="true" :amountShow="6" @change="selectFuel" />
+          <CheckBoxGroup :value="fuel" :collection="fuelList" :isOverflow="true" :amountShow="6" @change="selectFuel" @initial="initialGroupCheckBox('fuel_id', $event)" />
         </template>
       </AcordionSingle>
       <AcordionSingle class="acordion-drive-unit" v-if="className === 'catalog' && driveUnitList.length" :isOpen="0" className="simple" title="Тип привода">
@@ -187,7 +198,7 @@
       </AcordionSingle>
       <AcordionSingle class="acordion-customs-cleared" v-if="className === 'catalog' && Number(states) !== 2" :isOpen="0" className="simple" title="Растаможенные">
         <template slot="content">
-          <ul class="customs-cleared-list" :key="reloadCustom">
+          <ul class="customs-cleared-list">
             <li class="customs-cleared-item">
               <CheckBox
                 class="check-box"
@@ -279,7 +290,7 @@
         </li>
         <li>
           <label class="filter-param-label">Период подачи</label>
-          <SelectBtn
+          <AutocompleteBtn
             class="filter-select-field"
             :options="publicationTimeList"
             :value="publicationTime"
@@ -371,12 +382,13 @@ import publicationTimeList from '~/helpers/publicationTimeList.js';
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
 import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
+import getFilterKeyFromLocalStorage from '~/mixins/getFilterKeyFromLocalStorage.js';
 import isNull from '~/mixins/isNull.js';
 import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
   name: 'MainFilter',
-  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformArrayForSelectBtn, isNull, isEmpty],
+  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformArrayForSelectBtn, isNull, isEmpty, getFilterKeyFromLocalStorage],
   data() {
     return {
       statesList: ['Все', 'Б/у', 'Новые', this.$i18n.t('под-пригон')],
@@ -461,20 +473,42 @@ export default {
     }),
   },
   methods: {
+    initialGroupCheckBox(key, option) {
+      if (!this.isEmpty(!!this.getFilterKeyFromLocalStorage(key))) {
+        const filterActiveOptions = this.getFilterKeyFromLocalStorage(key);
+        const findSameOption = filterActiveOptions.find((item) => item === option);
+
+        if (!!findSameOption === false) {
+          this.saveFilterParamNameInLocalStorage(key, [...filterActiveOptions, option]);
+          this.$emit('reload-tags');
+        }
+      }
+    },
+
+    initialFieldSelect(key, options) {
+      if (!this.isNull(options) && typeof options !== 'object') {
+        this.saveFilterParamNameInLocalStorage(key, options);
+      }
+    },
+
     selectСustomsCleared(selectOption) {
       this.setCustomsCleared(selectOption);
+      this.saveFilterParamNameInLocalStorage('is_cleared', selectOption === true ? 'Растаможенные' : 'Нерастаможенные');
     },
 
     resetСustomsCleared() {
       this.resetCustomsCleared();
+      this.deleteFilterParamNameInLocalStorage(['is_cleared']);
     },
 
     selectAbroad(selectOption) {
       this.setAbroad(selectOption);
+      this.saveFilterParamNameInLocalStorage('is_ukraine', selectOption === true ? 'Авто в Украине' : 'Авто не в Украине');
     },
 
     resetAbroad() {
       this.resetAbroad();
+      this.deleteFilterParamNameInLocalStorage(['is_ukraine']);
     },
 
     sendFilterData() {
