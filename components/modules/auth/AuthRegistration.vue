@@ -37,7 +37,7 @@
       <InputCustomField
         class="registration-field"
         inputName="email"
-        label="Емейл"
+        label="Email"
         type="email"
         :value="email"
         :errorList="error.locations"
@@ -45,7 +45,7 @@
         @focus-field="handlerFocus"
         @change-field="changeEmail"
       />
-      <SelectBtn class="select-field" :options="statusList" label="Выбрать" :value="status" :payload="true" :isReset="status !== 1" @change="selectStatus($event)" @reset="resetStatus" />
+      <SelectField class="select-field" label="Статус" :collection="statusList" :defaultValue="status" :isReset="status !== 1" @change="selectStatus($event)" @reset-field="resetStatus" />
     </div>
     <div v-else>
       <InputCustomField
@@ -86,15 +86,15 @@
 import InputCustomField from '~/components/base/InputCustomField.vue';
 import CheckBox from '~/components/base/CheckBox.vue';
 import SelectBtn from '~/components/base/SelectBtn.vue';
+import SelectField from '~/components/base/SelectField.vue';
 // mixins
 import isEmpty from '~/mixins/isEmpty.js';
 import validationRegistrationFields from '~/mixins/validationRegistrationFields.js';
 import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
 
 export default {
-  name: 'registration',
+  name: 'AuthRegistration',
   mixins: [isEmpty, validationRegistrationFields, transformArrayForSelectBtn],
-  layout: 'auth',
   data() {
     return {
       firstName: '',
@@ -212,12 +212,15 @@ export default {
     InputCustomField,
     CheckBox,
     SelectBtn,
+    SelectField,
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .registration {
+  width: 100%;
+
   & .registration-field:first-child {
     margin-top: 0;
   }

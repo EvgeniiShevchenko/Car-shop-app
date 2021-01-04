@@ -63,9 +63,6 @@ export default {
       this.$emit('reset-field', this.defaultValue);
     },
   },
-  mounted() {
-    console.log('🚀 ~ file: SelectField.vue ~ line 18 ~ mounted ~ mounted', this.collection);
-  },
   props: {
     defaultValue: {
       type: [String, Number, Object, Array],
