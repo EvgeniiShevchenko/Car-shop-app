@@ -1143,12 +1143,11 @@ export default {
         if (this.className !== 'catalog') {
           this.setPriceMin(min);
           this.setPriceMax(max);
+          this.setFixedMinPrice(min);
+          this.setFixedMaxPrice(max);
         } else {
           this.initialFilterPriceRange({ minPrice: min, maxPrice: max });
         }
-
-        this.setFixedMinPrice(min);
-        this.setFixedMaxPrice(max);
       })();
     } catch (error) {
       console.log(error);

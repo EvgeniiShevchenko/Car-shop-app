@@ -271,8 +271,8 @@ export default {
       state.filter = { ...state.filter, ...payload };
     },
     initialFilterPriceRange(state, { minPrice, maxPrice }) {
-      state.filter.priceMax = maxPrice;
-      state.filter.priceMin = minPrice;
+      state.defaultValues.priceRange.max = maxPrice;
+      state.defaultValues.priceRange.min = minPrice;
     },
     setFilterCity(state, payload) {
       state.filter.city = payload;
