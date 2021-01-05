@@ -17,7 +17,7 @@
           :options="sortParams[1]"
           :value="sort"
           :payload="true"
-          :isReset="!!sort.length"
+          :isReset="sort !== 'data_asc'"
           @change="sortCardsParam($event)"
           @reset="resetFieldSort"
         />
@@ -266,7 +266,7 @@ export default {
         ['car_model_id', this.model, true, this.resetFilterModel],
         ['price_min', this.priceMin, priceRange.min !== this.priceMin, this.resetPriceMin],
         ['price_max', this.priceMax, priceRange.max !== this.priceMax, this.resetPriceMax],
-        ['location_id', this.location, true, this.resetFilterLocation],
+        ['region_id', this.location, true, this.resetFilterLocation],
         ['currency_id', this.currency, defaultCurrency !== this.currency, this.resetFilterCurrency],
         ['year_from', this.productionYearFrom, true, this.resetFilterProductionYearFrom],
         ['year_to', this.productionYearTo, true, this.resetFilterProductionYearTo],
@@ -453,7 +453,7 @@ export default {
           const { products, subscription } = data;
 
           this.catalogList = products.data;
-          this.amountPages = products.last_page;
+          this.amountPages = products.pagination.total_pages;
           this.searchResult = subscription;
         } catch (error) {
           console.error(error);
@@ -656,7 +656,7 @@ export default {
           case 'car_model_id':
             initialChangeOptions['model'] = Number(item[1]);
             break;
-          case 'location_id':
+          case 'region_id':
             initialChangeOptions['location'] = Number(item[1]);
             break;
           case 'price_min':
@@ -788,18 +788,20 @@ export default {
       resetFilterLocation: 'filter/resetFilterLocation',
       initialFilterParams: 'filter/initialFilterParams',
       resetFilterAll: 'filter/resetFilterAll',
+      resetFilterCollections: 'filter/resetFilterCollections',
     }),
   },
   mounted() {
-    this.isMobile = this.$vuetify.breakpoint.xs;
-
     if (this.$vuetify.breakpoint.xs) this.paginationVisible = 3;
     if (/^\/$/.test(this.prevRoute)) {
       this.isPreviousHome = true;
     }
 
     this.initializationData();
+
     this.$nextTick(() => {
+      this.isMobile = this.$vuetify.breakpoint.xs;
+
       setTimeout(async () => {
         let token = this.$cookies.get('accessToken') ? this.$cookies.get('accessToken') : '';
         const { data } = token
@@ -813,7 +815,7 @@ export default {
 
         this.catalogList = products.data;
         this.carOrderList = car_order;
-        this.amountPages = products.pagination.total_page;
+        this.amountPages = products.pagination.total_pages;
         this.searchResult = subscription;
       }, 0);
     });
@@ -826,6 +828,7 @@ export default {
   beforeDestroy() {
     this.unsubscribe();
     this.resetFilterAll();
+    this.resetFilterCollections();
     this.resetFilterParamsInLocalStorage();
   },
   components: {
@@ -1438,6 +1441,25 @@ export default {
             }
           }
         }
+      }
+    }
+
+    .mobile-btn-wrapper {
+      flex-wrap: wrap;
+      gap: 20px 16px;
+
+      .mobile-sort-btn {
+        height: max-content;
+
+        ::v-deep .select-inner-wrapper {
+          .v-select__selection {
+            max-width: 200px;
+          }
+        }
+      }
+
+      .mobile-filter-btn {
+        margin-left: 0;
       }
     }
   }

@@ -658,7 +658,7 @@ export default {
 
     resetFieldLocation() {
       this.resetLocation();
-      this.deleteFilterParamNameInLocalStorage(['location_id']);
+      this.deleteFilterParamNameInLocalStorage(['region_id']);
 
       if (/calculator|createAds/.test(this.className)) {
         this.resetFilterCity();
@@ -962,7 +962,7 @@ export default {
     },
 
     async selectLocation({ text, value }) {
-      this.saveFilterParamNameInLocalStorage('location_id', text);
+      this.saveFilterParamNameInLocalStorage('region_id', text);
       this.setLocation(value);
 
       if (/calculator|create-ads/.test(this.className)) {
@@ -1135,7 +1135,11 @@ export default {
 
         this.setCategoryList(this.transformArrayForSelectBtn(data.types));
       })();
+    } catch (error) {
+      console.error(error);
+    }
 
+    try {
       (async () => {
         const { data } = await this.$axios.$get(`filters/prices`, { method: 'GET' });
         const { min, max } = data;
@@ -1156,12 +1160,13 @@ export default {
     (async () => {
       const { data } = await this.$axios.$get(`filters/currencies`, { method: 'GET' });
 
-      this.currencyList = this.transformArrayForSelectBtn(data.currencies);
-
       this.setDefaultCurrency(data.current_default.id);
 
       if (this.className !== 'catalog') {
         this.setCurrency(data.current_default.id);
+        this.currencyList = this.transformArrayForSelectBtn(data.currencies);
+      } else {
+        this.currencyList = data.currencies.map((item) => ({ text: item.symbol, value: item.id }));
       }
     })();
 
@@ -1230,6 +1235,16 @@ export default {
           } catch (error) {
             console.error(error);
           }
+        }
+      }
+
+      if (this.location) {
+        try {
+          const { data } = await this.$axios.$get(`filters/regions`, { method: 'GET' });
+
+          this.locationsList = this.transformArrayForSelectBtn(data.regions);
+        } catch (error) {
+          console.error(error);
         }
       }
 

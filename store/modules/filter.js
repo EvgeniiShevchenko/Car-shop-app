@@ -283,6 +283,9 @@ export default {
     resetFilterAll(state) {
       state.filter = getDefaultState().filter;
     },
+    resetFilterCollections(state) {
+      state.collections = { ...getDefaultState().collections, categoryList: state.collections.categoryList };
+    },
   },
 
   actions: {
@@ -495,6 +498,9 @@ export default {
     },
     resetFilterAll({ commit }) {
       commit('resetFilterAll');
+    },
+    resetFilterCollections({ commit }) {
+      commit('resetFilterCollections');
     },
   },
 };
