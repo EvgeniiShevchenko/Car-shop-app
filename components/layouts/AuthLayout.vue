@@ -153,6 +153,8 @@ export default {
   display: flex;
   z-index: 1000;
 
+  background: rgba(0, 0, 0, 0.4);
+
   .title-xxxl {
     @include init-title(#222329, 32px, 500, 35px);
   }
