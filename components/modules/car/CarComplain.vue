@@ -53,7 +53,7 @@ export default {
     async sendComplain() {
       const serverData = {
         user_id: this.collection.user.id,
-        product_id: this.collection.unique_id,
+        product_id: this.collection.id,
         text: this.message,
       };
 
@@ -65,7 +65,7 @@ export default {
 
       try {
         await this.$services.car.sendCarComplainMessage(serverData);
-        this.$root.$emit('show-popup', { error: false, message: 'Спасибо за ваше уведомление. Мы рассмотрим его в ближайшее время и предпримем все необходимые меры.', timer: 2000 });
+        this.$root.$emit('show-popup', { error: false, message: 'Спасибо за ваше уведомление. Мы рассмотрим его в ближайшее время и предпримем все необходимые меры.', timer: 4000 });
 
         this.message = '';
       } catch (error) {
