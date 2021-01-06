@@ -42,6 +42,7 @@
           </ul>
         </nav>
         <CarDetail v-if="activeTabId === 1" :collection="collection" />
+        <CarComplain v-show="activeTabId === 4" :collection="collection" />
       </div>
       <div class="body-advertising offset-1 col-10 offset-1"></div>
       <AdsCardsList class="similar-ads" title="Похожие объявления" :collection="similarList" />
@@ -50,12 +51,14 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import AdsCardsList from '~/components/base/AdsCardsList.vue';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
 import CarDetail from '~/components/modules/car/CarDetail.vue';
 import CarPreviewStats from '~/components/modules/car/CarPreviewStats.vue';
+import CarComplain from '~/components/modules/car/CarComplain.vue';
 // mixins
 import getStatusName from '~/mixins/getStatusName.js';
 
@@ -114,6 +117,8 @@ export default {
     showMore() {
       this.isShowCarouselList = !this.isShowCarouselList;
     },
+
+    ...mapActions({ setActiveModalWindowName: 'setActiveModalWindowName', setModalWindowMeta: 'setModalWindowMeta' }),
   },
   mounted() {
     this.getRouteHistory;
@@ -135,6 +140,7 @@ export default {
     CarDetail,
     CarPreviewStats,
     BreadCrumbs,
+    CarComplain,
   },
 };
 </script>

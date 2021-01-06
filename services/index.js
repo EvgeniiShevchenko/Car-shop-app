@@ -6,6 +6,7 @@ import NewsService from './news';
 import UserService from './user';
 import AuthService from './auth';
 import FilterService from './filter';
+import CarService from './car';
 
 export default (context) => {
   return {
@@ -17,5 +18,6 @@ export default (context) => {
     createAds: new CreateAdsService(context),
     auth: new AuthService(context),
     filter: new FilterService(context),
+    car: new CarService(context),
   };
 };

@@ -2,16 +2,22 @@
   <div class="auth">
     <div class="auth-inner-wrapper">
       <form class="auth-form row no-guter" method="POST">
-        <h1 class="auth-title" v-if="activeModalWindowName !== 'password'">
-          {{ activeModalWindowName === 'login' ? 'Вход в личный кабинет' : activeModalWindowName === 'registration' ? 'Регистрация' : 'Восстановление пароля' }}
-        </h1>
-        <h1 class="auth-title" v-else>Изменение пароля</h1>
+        <div class="col-12" v-if="isNull(modalWindowMeta)">
+          <h1 class="auth-title" v-if="activeModalWindowName !== 'password'">
+            {{ activeModalWindowName === 'login' ? 'Вход в личный кабинет' : activeModalWindowName === 'registration' ? 'Регистрация' : 'Восстановление пароля' }}
+          </h1>
+          <h1 class="auth-title" v-else>Изменение пароля</h1>
+        </div>
+        <div class="col-12" v-else>
+          <h1 class="auth-title">{{ modalWindowMeta.title }}</h1>
+        </div>
         <AuthLogin v-if="activeModalWindowName === 'login'" />
         <AuthPassword v-if="activeModalWindowName === 'password'" />
         <AuthRecovery v-if="activeModalWindowName === 'recovery'" />
         <AuthRegistration v-if="activeModalWindowName === 'registration'" />
+        <CarAsk v-if="activeModalWindowName === 'car-ask'" />
         <div class="auth-footer mt-6" v-if="activeModalWindowName !== 'password'">
-          <div v-if="activeModalWindowName !== 'recovery'">
+          <div v-if="!/recovery|car-ask/.test(activeModalWindowName)">
             <p class="or">или</p>
             <button class="google-auth-btn mt-6" type="button" @click="AuthProvider('google')">
               <svg class="google-btn-icon">
@@ -36,7 +42,7 @@
           <div class="back-login-wrapper mt-6" v-if="activeModalWindowName === 'recovery'">
             <div class="back-login">Вспомнили пароль?<button class="back-login-link" type="button" @click="switchModals('login')">Вернуться к логину</button></div>
           </div>
-          <n-link class="agree-link" v-if="activeModalWindowName !== 'recovery'" to="agree">Соглашение об использовании сайта</n-link>
+          <n-link class="agree-link" v-if="!/recovery|car-ask/.test(activeModalWindowName)" to="agree">Соглашение об использовании сайта</n-link>
         </div>
         <button class="close-btn" type="button" @click="closeModal">
           <svg class="close-btn-icon">
@@ -55,18 +61,20 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-// mixins
-import getAuthToken from '~/mixins/getAuthToken.js';
 // components
 import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
 import AuthLogin from '~/components/modules/auth/AuthLogin.vue';
 import AuthPassword from '~/components/modules/auth/AuthPassword.vue';
 import AuthRecovery from '~/components/modules/auth/AuthRecovery.vue';
 import AuthRegistration from '~/components/modules/auth/AuthRegistration.vue';
+import CarAsk from '~/components/modules/car/CarAsk.vue';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
+import isNull from '~/mixins/isNull.js';
 
 export default {
   name: 'AuthLayout',
-  mixins: [getAuthToken],
+  mixins: [getAuthToken, isNull],
   data() {
     return {
       popUpShow: false,
@@ -74,7 +82,7 @@ export default {
     };
   },
   computed: {
-    ...mapState({ activeModalWindowName: (state) => state.activeModalWindowName }),
+    ...mapState({ activeModalWindowName: (state) => state.activeModalWindowName, modalWindowMeta: (state) => state.modalWindowMeta }),
   },
   methods: {
     switchModals(flag) {
@@ -136,6 +144,7 @@ export default {
     AuthPassword,
     AuthRecovery,
     AuthRegistration,
+    CarAsk,
   },
 };
 </script>
