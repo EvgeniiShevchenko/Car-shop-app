@@ -4,6 +4,9 @@
       <h1 class="advertising-title col-12">Добавление нового объявления</h1>
       <div class="advertising-form-wrapper col-md-12 col-lg-10 pr-md-0 pr-lg-4">
         <p class="advertising-subtitle">
+          <svg class="advertising-info-icon">
+            <use xlink:href="~assets/images/sprites/global.svg#info-default-w-16" />
+          </svg>
           При добавлении нового объявления, пожалуйста, указывайте корректную информацию о вашем транспортном средстве. Это поможет быстрее совершить прожажу на нашей площадке.
         </p>
         <form class="advertising-form">
@@ -70,7 +73,7 @@
                 <CheckBox class="check-box" :value="isCustomsCleared" label="комментарий" @change="setCustomsCleared" :isLabel="true">
                   <template slot="label">
                     <p class="check-box-label">
-                      автомобиль не расстаможен
+                      автомобиль не растаможен
                       <svg class="check-box-label-icon">
                         <use xlink:href="~assets/images/sprites/global.svg#info-default-w-16" />
                       </svg>
@@ -177,12 +180,12 @@
               <p class="description-hint">Доступно символов: {{ maxDescriptionLength }}</p>
             </template>
           </AcordionSingle>
-          <AcordionSingle class="additional-wrapper is-accordion" className="simple" :isCustomizingMark="true" :sizeMark="30" colorMark="#1768AC" :isOpen="0">
+          <AcordionSingle class="additional-wrapper is-accordion" v-if="!!type" className="simple" :isCustomizingMark="true" :sizeMark="30" colorMark="#1768AC" :isOpen="0">
             <template slot="header">
               <AccordionHeader :number="5" title="Дополнительные характеристики" />
             </template>
             <template slot="content">
-              <CreateAdsAdditional @change="additionalcollection = $event" />
+              <CreateAdsAdditional :transportType="type" @change="additionalcollection = $event" />
             </template>
           </AcordionSingle>
           <div class="agree">
@@ -195,7 +198,9 @@
           <button class="add-advertising-btn" type="button" @click="createAds">Разместить объявление</button>
         </form>
       </div>
-      <div class="advertising-block-wrapper col-md-12 col-lg-2 pl-md-0 pl-lg-4"></div>
+      <div class="advertising-block-wrapper col-md-12 col-lg-2 pl-md-0 pl-lg-4">
+        <div class="advertising-block-inner-wrapper"></div>
+      </div>
     </div>
   </main>
 </template>
@@ -478,7 +483,17 @@ export default {
       margin-top: 32px;
 
       .advertising-subtitle {
+        display: flex;
+        max-width: 692px;
         @extend .title-m;
+
+        .advertising-info-icon {
+          margin-right: 10px;
+
+          min-width: 18px;
+          width: 18px;
+          height: 18px;
+        }
       }
 
       .advertising-form {
@@ -896,8 +911,14 @@ export default {
 
     .advertising-block-wrapper {
       margin-top: 32px;
-      background: #c4c4c4;
       max-height: 600px;
+      width: 100%;
+
+      .advertising-block-inner-wrapper {
+        background: #c4c4c4;
+        width: 100%;
+        height: 100%;
+      }
     }
   }
 }

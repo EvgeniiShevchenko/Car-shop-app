@@ -73,6 +73,12 @@ export default {
         return;
       }
 
+      if (this.previewList.length >= 100) {
+        this.$emit('min-size', { error: true, message: 'Допутимое число фотографий не более 100шт' });
+
+        return;
+      }
+
       this.previewList = [...this.previewList, dropItem];
     },
 

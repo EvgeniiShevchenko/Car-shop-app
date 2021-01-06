@@ -1,8 +1,8 @@
 import ApiService from './api';
 
 export default class CreateAdsService extends ApiService {
-  getAdditionalCharacteristic() {
-    return this.axios.$get(`filters/characteristic`);
+  getAdditionalCharacteristic(transportType) {
+    return this.axios.$get(`filters/characteristic?type=${transportType}`);
   }
 
   getAdditionalCarCondition(transportType = 1) {
