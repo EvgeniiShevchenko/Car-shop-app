@@ -24,9 +24,8 @@ import InputCustomField from '~/components//base/InputCustomField.vue';
 import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
-  name: 'recovery',
+  name: 'AuthRecovery',
   mixins: [isEmpty],
-  layout: 'auth',
   data() {
     return {
       recovery: '',
@@ -90,6 +89,8 @@ export default {
 
 <style lang="scss" scoped>
 .recovery {
+  width: 100%;
+
   & .recovery-field:first-child {
     margin-top: 0;
   }
