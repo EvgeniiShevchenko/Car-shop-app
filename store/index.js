@@ -10,6 +10,7 @@ const getDefaultState = () => {
     locales: 'ru',
     isLogin: false,
     activeModalWindowName: '',
+    modalWindowMeta: null,
   };
 };
 
@@ -26,6 +27,12 @@ const store = () =>
       resetActiveModalWindowName(state) {
         state.activeModalWindowName = '';
       },
+      setModalWindowMeta(state, payload) {
+        state.modalWindowMeta = payload;
+      },
+      resetModalWindowMeta(state) {
+        state.modalWindowMeta = null;
+      },
     },
     actions: {
       setLogin({ commit }, payload) {
@@ -36,6 +43,12 @@ const store = () =>
       },
       resetActiveModalWindowName({ commit }) {
         commit('resetActiveModalWindowName');
+      },
+      setModalWindowMeta({ commit }, payload) {
+        commit('setModalWindowMeta', payload);
+      },
+      resetModalWindowMeta({ commit }) {
+        commit('resetModalWindowMeta');
       },
     },
     modules: {
