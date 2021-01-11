@@ -72,12 +72,7 @@
               <div class="check-box-wrapper">
                 <CheckBox class="check-box" :value="isCustomsCleared" label="комментарий" @change="setCustomsCleared" :isLabel="true">
                   <template slot="label">
-                    <p class="check-box-label">
-                      автомобиль не растаможен
-                      <svg class="check-box-label-icon">
-                        <use xlink:href="~assets/images/sprites/global.svg#info-default-w-16" />
-                      </svg>
-                    </p>
+                    <p class="check-box-label">автомобиль не растаможен</p>
                   </template>
                 </CheckBox>
                 <div class="current-location" v-if="isCustomsCleared">
