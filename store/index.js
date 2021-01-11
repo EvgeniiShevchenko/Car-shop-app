@@ -11,6 +11,7 @@ const getDefaultState = () => {
     isLogin: false,
     activeModalWindowName: '',
     modalWindowMeta: null,
+    currentCarName: '',
   };
 };
 
@@ -33,6 +34,9 @@ const store = () =>
       resetModalWindowMeta(state) {
         state.modalWindowMeta = null;
       },
+      setCurrentCarName(state, payload) {
+        state.currentCarName = payload;
+      },
     },
     actions: {
       setLogin({ commit }, payload) {
@@ -49,6 +53,9 @@ const store = () =>
       },
       resetModalWindowMeta({ commit }) {
         commit('resetModalWindowMeta');
+      },
+      setCurrentCarName({ commit }, payload) {
+        commit('setCurrentCarName', payload);
       },
     },
     modules: {

@@ -24,27 +24,27 @@
         <div>
           <p>Главная</p>
           <ul>
-            <li><a href="/">Контакты</a></li>
+            <li><a href="/contacts">Контакты</a></li>
           </ul>
         </div>
         <div>
           <p>Каталог</p>
           <ul>
-            <li><a href="/">Все</a></li>
-            <li><a href="/">Новые</a></li>
-            <li><a href="/catalog">Б/y</a></li>
-            <li><a href="/">Под пригон</a></li>
+            <li><a href="/catalog">Все</a></li>
+            <li><a href="/catalog?status=2">Новые</a></li>
+            <li><a href="/catalog?status=1">Б/y</a></li>
+            <li><a href="/catalog?status=3">Под пригон</a></li>
           </ul>
         </div>
         <div>
           <p>Новости</p>
           <ul>
-            <li><a href="/">Автомобильные новости</a></li>
-            <li><a href="/">Тест-драйвы</a></li>
-            <li><a href="/">Журнал</a></li>
-            <li><a href="/">Как подготовить авто к зиме</a></li>
-            <li><a href="/">Акции</a></li>
-            <li><a href="/">Обзоры</a></li>
+            <li><a href="/news">Автомобильные новости</a></li>
+            <li><a href="/news">Тест-драйвы</a></li>
+            <li><a href="/news">Журнал</a></li>
+            <li><a href="/news">Как подготовить авто к зиме</a></li>
+            <li><a href="/news">Акции</a></li>
+            <li><a href="/news">Обзоры</a></li>
           </ul>
         </div>
         <div v-if="isAuth">
@@ -73,7 +73,7 @@ import AdsCardsList from '~/components/base/AdsCardsList.vue';
 import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
-  layout: 'empty',
+  layout: 'withoutBreadCrumbs',
   mixins: [getAuthToken],
   props: {
     error: {
@@ -100,6 +100,7 @@ export default {
       this.latestAds = (await this.$services.ads.getLatestAdsFor404()).data;
       this.isAuth = !!localStorage.token;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log(error);
     }
   },
@@ -111,6 +112,10 @@ export default {
 
 <style lang="scss" scoped>
 .error-page {
+  padding-top: 50px;
+  @media (max-width: 960px) {
+    padding-top: 12px;
+  }
   &-ads_card {
     margin-bottom: 60px;
   }

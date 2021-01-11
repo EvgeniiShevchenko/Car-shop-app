@@ -124,10 +124,11 @@ export default {
     this.getRouteHistory;
     this.similarList = [...Array(8).keys()].map((item) => this.collection.similar[0]);
   },
-  async asyncData({ params, $axios }) {
+  async asyncData({ params, $axios, store }) {
     try {
       const { data } = await $axios.$get(`auth/one_car/products/${params.id}`, { method: 'GET' });
       const { product } = data;
+      store.dispatch('setCurrentCarName', product.name);
 
       return { collection: { ...product } };
     } catch (error) {

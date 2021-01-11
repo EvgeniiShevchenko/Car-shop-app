@@ -1,4 +1,5 @@
 import ApiService from './api';
+import qs from 'qs';
 
 export default class AuthService extends ApiService {
   getRegistrationToken(serverData) {
@@ -19,5 +20,9 @@ export default class AuthService extends ApiService {
 
   setNewPassword(body) {
     return this.axios.$post(`auth/password/reset`, body);
+  }
+
+  LogOut(payload) {
+    return this.axios.$post(`auth/logout`, qs.stringify(payload));
   }
 }

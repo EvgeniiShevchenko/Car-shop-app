@@ -22,7 +22,10 @@
 
         <v-list nav dense class="px-0 py-3 nav_list">
           <v-list-item v-for="item of navItems" :key="item.title" link :class="isActive(item.link) ? 'active_link' : ''">
-            <a :href="item.link"
+            <a v-if="item.link !== 'logOut'" :href="item.link"
+              ><v-list-item-title>{{ item.title }}</v-list-item-title></a
+            >
+            <a v-else @click="logOut"
               ><v-list-item-title>{{ item.title }}</v-list-item-title></a
             >
           </v-list-item>
@@ -34,6 +37,7 @@
 
 <script>
 import pages from '../../../entities/pages';
+import { mapActions } from 'vuex';
 
 export default {
   name: 'ProfileNavigation',
@@ -86,14 +90,28 @@ export default {
         },
         {
           title: 'Выход',
-          link: '/',
+          link: 'logOut',
         },
       ],
     };
   },
   methods: {
+    ...mapActions({ setLogin: 'setLogin' }),
     isActive(link) {
       return this.$route.path === link;
+    },
+    async logOut() {
+      const payload = { token: this.$cookies.get('accessToken') };
+      try {
+        await this.$services.auth.LogOut(payload);
+        localStorage.setItem('token', '');
+        this.$cookies.set('accessToken', '');
+        this.setLogin(false);
+        await this.$router.push('/');
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.log(e);
+      }
     },
   },
 };

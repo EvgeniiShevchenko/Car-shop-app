@@ -1,5 +1,5 @@
 <template>
-  <div class="main container mt-3 pb-0">
+  <div v-if="breadCrumbs && breadCrumbs.length" class="main container mt-3 pb-0">
     <div class="outer-wrap">
       <nav class="breadcrumb" aria-label="breadcrumbs">
         <n-link class="routing-home-link" to="/">
@@ -8,7 +8,7 @@
           </svg>
         </n-link>
         <ul class="routing-list pa-0">
-          <li :class="`routing-item ${collection.length === index + 1 ? 'is-active' : ''}`" :key="index" v-for="(item, index) in collection">
+          <li :class="`routing-item ${breadCrumbs.length === index + 1 ? 'is-active' : ''}`" :key="index" v-for="(item, index) in breadCrumbs">
             <n-link class="routing-item-link" :to="item.path">
               <svg class="routing-link-icon">
                 <use xlink:href="~assets/images/sprites/global.svg#bread-crumbs-arrow" />
@@ -23,13 +23,84 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import pages from '@/entities/pages';
+
 export default {
   name: 'BreadCrumbs',
-  props: {
-    collection: {
-      type: Array,
-      required: true,
-      default: () => [],
+  data() {
+    return {
+      pages: pages,
+      breadCrumbs: [],
+    };
+  },
+  mounted() {
+    this.getRouteHistory();
+  },
+  computed: {
+    ...mapState(['currentCarName']),
+  },
+  methods: {
+    getRouteHistory() {
+      const { path } = this.$route;
+      let breadCrumbs = [];
+      const pathArray = path.split('/').filter((path) => !!path);
+      let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
+      pathArray.forEach((item) => {
+        let path, name;
+
+        if (item === 'catalog' || item === 'auto') {
+          path = `/catalog?status=${this.getStatus(status)}`;
+          name = status ? status : 'Все автомобили';
+        } else {
+          path = `/${item}`;
+          name = this.pages[item] ? this.pages[item] : item;
+        }
+        breadCrumbs.push({ path, name });
+      });
+
+      if (pathArray[0] === 'check') {
+        breadCrumbs = this.getPathForCheck(pathArray, status);
+      }
+
+      if (pathArray[0] === 'auto') {
+        breadCrumbs[breadCrumbs.length - 1].name = this.currentCarName;
+      }
+
+      this.breadCrumbs = breadCrumbs;
+    },
+    getStatus(status) {
+      switch (status) {
+        case 'Б/у автомобили':
+          return 1;
+        case 'Новые автомобили':
+          return 2;
+        case 'Под пригон автомобили':
+          return 3;
+        default:
+          return 0;
+      }
+    },
+    getPathForCheck(pathArray, status) {
+      return [
+        {
+          path: `/catalog?status=${this.getStatus(status)}`,
+          name: status ? status : 'Все автомобили',
+        },
+        {
+          path: `/auto/${pathArray[1]}`,
+          name: this.currentCarName,
+        },
+        {
+          path: `/check/${pathArray[1]}`,
+          name: 'Проверка авто',
+        },
+      ];
+    },
+  },
+  watch: {
+    $route() {
+      this.getRouteHistory();
     },
   },
 };

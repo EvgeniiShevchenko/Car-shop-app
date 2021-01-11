@@ -112,22 +112,25 @@
           </v-form>
         </v-flex>
       </v-layout>
+      <get-car-check-modal ref="getCarCheckModal" />
     </div>
   </main>
 </template>
 
 <script>
+import { mapActions } from 'vuex';
 //Components
 import CatalogCardsPreview from '@/components/base/CatalogCardsPreview';
 import SquareBanner from '@/components/modules/banners/SquareBanner';
+import GetCarCheckModal from '@/components/modules/car/GetCarCheckModal';
 //Mixins
 import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
   name: 'CheckAuto',
-  components: { CatalogCardsPreview, SquareBanner },
+  components: { CatalogCardsPreview, SquareBanner, GetCarCheckModal },
   mixins: [getAuthToken],
-  async asyncData({ params, $services }) {
+  async asyncData({ params, $services, store }) {
     try {
       const checkInfo = (await $services.ads.getCheckByAuto(params.id)).data.data;
       checkInfo.check.map((check) => {
@@ -140,6 +143,7 @@ export default {
         });
         return check;
       });
+      store.dispatch('setCurrentCarName', checkInfo.product.name);
       return { checkInfo };
     } catch (error) {
       // eslint-disable-next-line no-console
@@ -161,8 +165,10 @@ export default {
     this.getPeriods();
   },
   methods: {
+    ...mapActions({ setActiveModalWindowName: 'setActiveModalWindowName' }),
     async send() {
       if (!this.$refs.form.validate()) return;
+
       try {
         const payload = {
           time_rain_id: this.contacts.time,
@@ -187,30 +193,39 @@ export default {
       }
     },
     async orderCheck(obj, index, id) {
+      if (!this.$cookies.get('accessToken')) {
+        this.setActiveModalWindowName('login');
+        return;
+      }
       let payload = {
         product_id: this.checkInfo.product.id,
         package_id: id,
       };
+
       if (obj.type === 'checkbox' && obj.services && obj.services.length)
         payload.service_id = obj.services.map((item) => {
           return item.id;
         });
+
       if (obj.type === 'checkbox' && (!obj.services || !obj.services.length)) return;
-      console.log(payload, 'payload');
+
       try {
-        await this.$services.user.orderCheckAuto(payload, this.getAuthToken());
+        const response = (await this.$services.user.orderCheckAuto(payload, this.$cookies.get('accessToken'))).data.data;
+        this.$refs.getCarCheckModal.open(response.order.price, response.order.currency);
       } catch (error) {
         console.log(error);
       }
     },
     addService(obj, i, index) {
       let isAdd = this.checkInfo.check[i].packages[index].services.find((item) => item.id === obj.service_id);
+
       if (isAdd) {
         const itemIndex = this.checkInfo.check[i].packages[index].services.findIndex((item) => item.id === obj.service_id);
         this.checkInfo.check[i].packages[index].services.splice(itemIndex, 1);
       } else {
         this.checkInfo.check[i].packages[index].services.push({ id: obj.service_id, price: obj.service_price });
       }
+
       this.checkInfo.check[i].packages[index].total = this.checkInfo.check[i].packages[index].services.reduce((sum, current) => {
         return sum + current.price;
       }, 0);
@@ -403,8 +418,8 @@ export default {
       }
       &-info {
         background-color: #f2f7fa;
-        padding: 32px 132px 32px 32px;
-        height: fit-content;
+        padding: 62px 132px 32px 32px;
+        height: 333px;
         @include sm {
           padding: 16px 12px;
         }
@@ -427,6 +442,7 @@ export default {
         }
         .v-list {
           padding: 0;
+          height: fit-content;
           @include xs {
             flex-direction: column;
             .v-avatar {
@@ -436,6 +452,7 @@ export default {
           }
           &-item {
             padding: 0;
+            height: fit-content;
             .profile {
               span {
                 display: block;
