@@ -1,14 +1,23 @@
 <template>
-  <v-app class="auth">
-    <div class="auth-wrapper container">
+  <div class="auth">
+    <div class="auth-inner-wrapper">
       <form class="auth-form row no-guter" method="POST">
-        <h1 class="auth-title" v-if="getRouteName !== 'password'">
-          {{ getRouteName === 'login' ? 'Вход в личный кабинет' : getRouteName === 'registration' ? 'Регистрация' : 'Восстановление пароля' }}
-        </h1>
-        <h1 class="auth-title" v-else>Изменение пароля</h1>
-        <nuxt class="content" />
-        <div class="footer mt-6" v-if="getRouteName !== 'password'">
-          <div v-if="getRouteName !== 'recovery'">
+        <div class="col-12" v-if="isNull(modalWindowMeta)">
+          <h1 class="auth-title" v-if="activeModalWindowName !== 'password'">
+            {{ activeModalWindowName === 'login' ? 'Вход в личный кабинет' : activeModalWindowName === 'registration' ? 'Регистрация' : 'Восстановление пароля' }}
+          </h1>
+          <h1 class="auth-title" v-else>Изменение пароля</h1>
+        </div>
+        <div class="col-12" v-else>
+          <h1 class="auth-title">{{ modalWindowMeta.title }}</h1>
+        </div>
+        <AuthLogin v-if="activeModalWindowName === 'login'" />
+        <AuthPassword v-if="activeModalWindowName === 'password'" />
+        <AuthRecovery v-if="activeModalWindowName === 'recovery'" />
+        <AuthRegistration v-if="activeModalWindowName === 'registration'" />
+        <CarAsk v-if="activeModalWindowName === 'car-ask'" />
+        <div class="auth-footer mt-6" v-if="activeModalWindowName !== 'password'">
+          <div v-if="!/recovery|car-ask/.test(activeModalWindowName)">
             <p class="or">или</p>
             <button class="google-auth-btn mt-6" type="button" @click="AuthProvider('google')">
               <svg class="google-btn-icon">
@@ -23,44 +32,49 @@
               Войти через Facebook
             </button>
           </div>
-          <div class="reqistration-links-wrapper mt-6" v-if="getRouteName === 'login'">
-            <p class="create-account">Нет аккаунта?<n-link class="create-account-link" to="/auth/registration">Перейти к регистрации</n-link></p>
-            <p class="recovery-password">Забыли пароль?<n-link class="recovery-password-link" to="/auth/recovery">Восстановить пароль</n-link></p>
+          <div class="reqistration-links-wrapper mt-6" v-if="activeModalWindowName === 'login'">
+            <div class="create-account">Нет аккаунта?<button class="create-account-link" type="button" @click="switchModals('registration')">Перейти к регистрации</button></div>
+            <div class="recovery-password">Забыли пароль?<button class="recovery-password-link" type="button" @click="switchModals('recovery')">Восстановить пароль</button></div>
           </div>
-          <div class="login-wrapper mt-6" v-if="getRouteName === 'registration'">
-            <p class="login">Уже зарегистрированы?<n-link class="login-link" to="/auth/login">Перейти к логину</n-link></p>
+          <div class="login-wrapper mt-6" v-if="activeModalWindowName === 'registration'">
+            <div class="login">Уже зарегистрированы?<button class="login-link" type="button" @click="switchModals('login')">Перейти к логину</button></div>
           </div>
-          <div class="back-login-wrapper mt-6" v-if="getRouteName === 'recovery'">
-            <p class="back-login">Вспомнили пароль?<n-link class="back-login-link" to="/auth/login">Вернуться к логину</n-link></p>
+          <div class="back-login-wrapper mt-6" v-if="activeModalWindowName === 'recovery'">
+            <div class="back-login">Вспомнили пароль?<button class="back-login-link" type="button" @click="switchModals('login')">Вернуться к логину</button></div>
           </div>
-          <n-link class="agree-link" v-if="getRouteName !== 'recovery'" to="agree">Соглашение об использовании сайта</n-link>
+          <n-link class="agree-link" v-if="!/recovery|car-ask/.test(activeModalWindowName)" to="agree">Соглашение об использовании сайта</n-link>
         </div>
-        <n-link class="close-btn" to="/" tag="button">
+        <button class="close-btn" type="button" @click="closeModal">
           <svg class="close-btn-icon">
             <use xlink:href="~assets/images/sprites/global.svg#close" />
           </svg>
-        </n-link>
+        </button>
       </form>
-      <transition name="fade">
-        <div class="popup-wrapper" v-if="popUpShow">
-          <PopUpSuccess class="popup-inner-wrapper" :title="message" />
-        </div>
-      </transition>
     </div>
-  </v-app>
+    <transition name="fade">
+      <div class="popup-wrapper" v-if="popUpShow">
+        <PopUpSuccess class="popup-inner-wrapper" :title="message" />
+      </div>
+    </transition>
+  </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
-// mixins
-import getRouteNameFromPath from '~/mixins/getRouteNameFromPath.js';
-import getAuthToken from '~/mixins/getAuthToken.js';
+import { mapActions, mapState } from 'vuex';
 // components
-import PopUpSuccess from '~/components/base/PopUpSuccess';
+import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
+import AuthLogin from '~/components/modules/auth/AuthLogin.vue';
+import AuthPassword from '~/components/modules/auth/AuthPassword.vue';
+import AuthRecovery from '~/components/modules/auth/AuthRecovery.vue';
+import AuthRegistration from '~/components/modules/auth/AuthRegistration.vue';
+import CarAsk from '~/components/modules/car/CarAsk.vue';
+// mixins
+import getAuthToken from '~/mixins/getAuthToken.js';
+import isNull from '~/mixins/isNull.js';
 
 export default {
-  name: 'auth',
-  mixins: [getRouteNameFromPath, getAuthToken],
+  name: 'AuthLayout',
+  mixins: [getAuthToken, isNull],
   data() {
     return {
       popUpShow: false,
@@ -68,11 +82,17 @@ export default {
     };
   },
   computed: {
-    getRouteName() {
-      return this.getRouteNameFromPath(this.$route.path);
-    },
+    ...mapState({ activeModalWindowName: (state) => state.activeModalWindowName, modalWindowMeta: (state) => state.modalWindowMeta }),
   },
   methods: {
+    switchModals(flag) {
+      this.setActiveModalWindowName(flag);
+    },
+
+    closeModal() {
+      this.resetActiveModalWindowName();
+    },
+
     showPopUp(message) {
       this.message = message;
       this.popUpShow = true;
@@ -106,7 +126,7 @@ export default {
         });
     },
 
-    ...mapActions({ setLogin: 'setLogin' }),
+    ...mapActions({ setLogin: 'setLogin', setActiveModalWindowName: 'setActiveModalWindowName', resetActiveModalWindowName: 'resetActiveModalWindowName' }),
   },
   mounted() {
     this.$root.$on('show-popup', this.showPopUp);
@@ -120,16 +140,29 @@ export default {
   },
   components: {
     PopUpSuccess,
+    AuthLogin,
+    AuthPassword,
+    AuthRecovery,
+    AuthRegistration,
+    CarAsk,
   },
 };
 </script>
 
 <style lang="scss" scoped>
 .auth {
+  position: fixed;
   @include init-font;
+  top: 0;
+  left: 0;
+
   width: 100%;
   height: 100vh;
+
   display: flex;
+  z-index: 1000;
+
+  background: rgba(0, 0, 0, 0.4);
 
   .title-xxxl {
     @include init-title(#222329, 32px, 500, 35px);
@@ -147,9 +180,12 @@ export default {
     @include init-title(#70848e, 14px, 400, 17px);
   }
 
-  .auth-wrapper {
+  .auth-inner-wrapper {
     display: flex;
+    align-items: center;
+
     height: 100%;
+    width: 100%;
 
     .auth-form {
       position: relative;
@@ -157,9 +193,13 @@ export default {
       padding: 44px 100px;
       margin: 0 auto;
 
+      max-height: 100%;
+      height: max-content;
       max-width: 568px;
       width: 100%;
-      align-self: center;
+
+      background: #ffffff;
+      overflow-y: auto;
 
       .auth-title {
         @extend .title-xxl;
@@ -170,7 +210,7 @@ export default {
         width: 100%;
       }
 
-      .footer {
+      .auth-footer {
         width: 100%;
 
         .or {
@@ -300,19 +340,19 @@ export default {
         }
       }
     }
+  }
 
-    .popup-wrapper {
-      position: absolute;
-      width: 100%;
-      height: 100%;
+  .popup-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
 
-      .popup-inner-wrapper {
-        width: max-content;
-        margin: 0 auto;
-        top: 50%;
-        transform: translateY(-50%);
-        z-index: 100;
-      }
+    .popup-inner-wrapper {
+      width: max-content;
+      margin: 0 auto;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
     }
   }
 }
@@ -324,7 +364,7 @@ export default {
       line-height: 20px;
     }
 
-    .auth-wrapper .auth-form {
+    .auth-inner-wrapper .auth-form {
       padding: 16px;
     }
   }

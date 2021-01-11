@@ -35,6 +35,12 @@ export default class UserService extends ApiService {
   getAboutUsInfo() {
     return this.axios.$get(`/about`);
   }
+  getCallPeriods() {
+    return this.axios.get(`/filters/timeRain`);
+  }
+  orderCall(payload) {
+    return this.axios.post(`/auth/one_car/check_form`, qs.stringify(payload));
+  }
   getUserAds(params, token) {
     return this.axios.$get(`/auth/client/products`, {
       headers: {
@@ -89,5 +95,21 @@ export default class UserService extends ApiService {
 
   getUserSubscription(subscriptionId) {
     return this.axios.$get(`auth/client/newsletter/${subscriptionId}`);
+  }
+
+  orderCheckAuto(payload, token) {
+    return this.axios.post(`auth/one_car/order`, qs.stringify(payload), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  }
+
+  getNewsSubscription() {
+    return this.axios.$get(`auth/client/newMail`);
+  }
+
+  setNewsSubscription(body) {
+    return this.axios.$post(`auth/client/newMail`, { ...body });
   }
 }

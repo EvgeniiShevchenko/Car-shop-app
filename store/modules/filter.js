@@ -37,8 +37,8 @@ const getDefaultState = () => {
       isStateNumber: false,
       broken: null,
       damage: null,
-      sort: '',
-      publicationTime: '',
+      sort: 'data_asc',
+      publicationTime: 'all',
       additionalSettings: null,
     },
   };
@@ -228,13 +228,13 @@ export default {
       state.filter.sort = payload;
     },
     resetSort(state) {
-      state.filter.sort = '';
+      state.filter.sort = 'data_asc';
     },
     setPublicationTime(state, payload) {
       state.filter.publicationTime = payload;
     },
     resetPublicationTime(state) {
-      state.filter.publicationTime = '';
+      state.filter.publicationTime = 'all';
     },
     resetAll(state) {
       state.filter.type = '';
@@ -258,8 +258,8 @@ export default {
       state.collections.modelList = [];
       state.collections.yearFromList = [];
       state.collections.yearToList = [];
-      state.filter.sort = '';
-      state.filter.publicationTime = '';
+      state.filter.sort = 'data_asc';
+      state.filter.publicationTime = 'all';
     },
     setAdditionalSettings(state, payload) {
       state.filter.additionalSettings = payload;
@@ -271,14 +271,20 @@ export default {
       state.filter = { ...state.filter, ...payload };
     },
     initialFilterPriceRange(state, { minPrice, maxPrice }) {
-      state.filter.priceMax = maxPrice;
-      state.filter.priceMin = minPrice;
+      state.defaultValues.priceRange.max = maxPrice;
+      state.defaultValues.priceRange.min = minPrice;
     },
     setFilterCity(state, payload) {
       state.filter.city = payload;
     },
     resetFilterCity(state) {
       state.filter.city = null;
+    },
+    resetFilterAll(state) {
+      state.filter = getDefaultState().filter;
+    },
+    resetFilterCollections(state) {
+      state.collections = { ...getDefaultState().collections, categoryList: state.collections.categoryList };
     },
   },
 
@@ -489,6 +495,12 @@ export default {
     },
     resetFilterCity({ commit }, payload) {
       commit('resetFilterCity', payload);
+    },
+    resetFilterAll({ commit }) {
+      commit('resetFilterAll');
+    },
+    resetFilterCollections({ commit }) {
+      commit('resetFilterCollections');
     },
   },
 };

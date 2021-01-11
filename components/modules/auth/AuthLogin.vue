@@ -43,9 +43,8 @@ import isEmpty from '~/mixins/isEmpty.js';
 const Cookie = process.client ? require('js-cookie') : undefined;
 
 export default {
-  name: 'login',
+  name: 'AuthLogin',
   mixins: [isEmpty],
-  layout: 'auth',
   data() {
     return {
       login: '',
@@ -128,6 +127,8 @@ export default {
 
 <style lang="scss" scoped>
 .login {
+  width: 100%;
+
   & .login-field:first-child {
     margin-top: 0;
   }

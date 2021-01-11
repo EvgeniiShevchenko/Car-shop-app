@@ -1,5 +1,5 @@
 <template>
-  <main class="main container mt-3 pb-0">
+  <div class="main container mt-3 pb-0">
     <div class="outer-wrap">
       <nav class="breadcrumb" aria-label="breadcrumbs">
         <n-link class="routing-home-link" to="/">
@@ -19,7 +19,7 @@
         </ul>
       </nav>
     </div>
-  </main>
+  </div>
 </template>
 
 <script>

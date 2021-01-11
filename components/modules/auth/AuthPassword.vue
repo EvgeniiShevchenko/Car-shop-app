@@ -54,9 +54,8 @@ import isEmpty from '~/mixins/isEmpty.js';
 import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
-  name: 'password',
+  name: 'AuthPassword',
   mixins: [isEmpty, getAuthToken],
-  layout: 'auth',
   data() {
     return {
       currentPasswordType: 'password',
@@ -147,6 +146,8 @@ export default {
 
 <style lang="scss" scoped>
 .password {
+  width: 100%;
+
   & .password-field:first-child {
     margin-top: 0;
   }

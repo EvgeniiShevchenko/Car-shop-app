@@ -25,6 +25,8 @@ export default {
 
 <style lang="scss" scoped>
 .about {
+  margin-bottom: 60px;
+
   .description-wrapper {
     display: flex;
     flex-direction: column;

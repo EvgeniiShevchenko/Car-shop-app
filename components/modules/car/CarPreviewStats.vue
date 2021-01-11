@@ -15,7 +15,7 @@
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />
           </svg>
         </n-link>
-        <n-link class="bar-check-btn" to="/auto-check" role="button">
+        <n-link class="bar-check-btn" :to="`/check/${$route.params.id}`" role="button">
           Проверка авто
           <svg class="check-btn-icon">
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />
@@ -82,7 +82,7 @@
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />
           </svg>
         </n-link>
-        <n-link class="bar-check-btn" to="/auto-check" role="button">
+        <n-link class="bar-check-btn" :to="`/check/${$route.params.id}`" role="button">
           Проверка авто
           <svg class="check-btn-icon">
             <use xlink:href="~/assets/images/sprites/global.svg#arrow-w-7" />

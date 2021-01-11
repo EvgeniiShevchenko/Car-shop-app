@@ -16,7 +16,7 @@
               <use xlink:href="~assets/images/sprites/main.svg#icon-user" />
             </svg>
             <div v-if="$vuetify.breakpoint.mdAndUp">
-              <nuxt-link class="authorization-link" to="/login">Авторизация</nuxt-link>
+              <button class="authorization-link" type="button" @click="login">Авторизация</button>
               <div class="personal-cabinet-wrapper">
                 <nuxt-link class="personal-cabinet-link" to="#">Личный кабинет</nuxt-link>
                 <ul class="personal-cabinet-list">
@@ -42,8 +42,10 @@
         </div>
       </div>
     </header>
-    <bread-crumbs v-if="collection.length && $vuetify.breakpoint.mdAndUp" :collection="collection" :style="`max-width: ${width}`" />
-    <nuxt class="content" :style="`max-width: ${width}`" />
+    <BodyLayout>
+      <bread-crumbs v-if="collection.length && $vuetify.breakpoint.mdAndUp" :collection="collection" :style="`max-width: ${width}`" />
+      <nuxt class="content" :style="`max-width: ${width}`" />
+    </BodyLayout>
     <footer class="footer">
       <div class="container footer-inner-wrapper" :style="`max-width: ${width}`">
         <div class="row no-gutters footer-general">
@@ -127,6 +129,8 @@ import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
 import pages from '../entities/pages';
 import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
 import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
+// layouts
+import BodyLayout from '~/components/layouts/BodyLayout.vue';
 // mixins
 import getAuthToken from '~/mixins/getAuthToken.js';
 
@@ -140,12 +144,8 @@ export default {
       popUpShow: false,
       message: '',
       error: false,
+      authPopUpName: '',
     };
-  },
-  watch: {
-    $route() {
-      this.getRouteHistory();
-    },
   },
   computed: {
     getCurentYear() {
@@ -167,14 +167,18 @@ export default {
     },
   },
   methods: {
+    login() {
+      this.setActiveModalWindowName('login');
+    },
+
     getRouteHistory() {
       const { path } = this.$route;
-      const breadCrumbs = [];
+      let breadCrumbs = [];
       const pathArray = path.split('/').filter((path) => !!path);
+      let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
       pathArray.forEach((item) => {
         let path, name;
         if (item === 'catalog' || item === 'auto') {
-          let status = JSON.parse(localStorage.getItem('filterParamsName')).status;
           path = `/catalog?status=${this.getStatus(status)}`;
           name = status ? status : 'Все автомобили';
         } else {
@@ -183,6 +187,9 @@ export default {
         }
         breadCrumbs.push({ path, name });
       });
+      if (pathArray[0] === 'check') {
+        breadCrumbs = this.getPathForCheck(pathArray);
+      }
       this.collection = breadCrumbs;
     },
 
@@ -198,6 +205,22 @@ export default {
           return 0;
       }
     },
+    getPathForCheck(pathArray) {
+      return [
+        {
+          path: `/catalog?status=${this.getStatus(status)}`,
+          name: status ? status : 'Все автомобили',
+        },
+        {
+          path: `/auto/${pathArray[1]}`,
+          name: pathArray[1],
+        },
+        {
+          path: `/check/${pathArray[1]}`,
+          name: 'Проверка авто',
+        },
+      ];
+    },
 
     showPopUp({ error, message, timer = 1000 }) {
       this.message = message;
@@ -210,7 +233,7 @@ export default {
       }, timer);
     },
 
-    ...mapActions({ setLogin: 'setLogin' }),
+    ...mapActions({ setLogin: 'setLogin', setActiveModalWindowName: 'setActiveModalWindowName' }),
   },
   mounted() {
     this.getRouteHistory();
@@ -228,6 +251,7 @@ export default {
     BreadCrumbs,
     MainHeaderMenu,
     PopUpSuccess,
+    BodyLayout,
   },
 };
 </script>

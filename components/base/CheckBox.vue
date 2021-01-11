@@ -1,5 +1,5 @@
 <template>
-  <v-checkbox class="check-box" v-model="status" :label="label" :color="background" :disabled="isDisabled" :ripple="false" hide-details v-on="$listeners">
+  <v-checkbox class="check-box" v-model="valueDefault" :label="label" :color="background" :disabled="isDisabled" :ripple="false" hide-details v-on="$listeners">
     <template slot="label" v-if="isLabel">
       <slot name="label" />
     </template>
@@ -11,12 +11,12 @@ export default {
   name: 'CheckBox',
   data() {
     return {
-      status: this.value,
+      valueDefault: this.value,
     };
   },
   watch: {
     value() {
-      this.status = this.value;
+      this.valueDefault = this.value;
     },
   },
   props: {

@@ -1,5 +1,7 @@
 export default [
-  { text: 'сегодня', value: 'today' },
-  { text: 'на этой неделе', value: 'week' },
-  { text: 'в этом месяце', value: 'month' },
+  { text: 'Все', value: 'all' },
+  { text: 'За час', value: 'hour' },
+  { text: 'Сегодня', value: 'today' },
+  { text: 'На этой неделе', value: 'week' },
+  { text: 'В этом месяце', value: 'month' },
 ];

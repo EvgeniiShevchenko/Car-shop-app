@@ -54,7 +54,9 @@
         </div>
       </div>
     </section>
-    <div class="catalog-advertising col-md-12 col-lg-2"></div>
+    <div class="catalog-advertising col-md-12 col-lg-2">
+      <div class="catalog-advertising-item"></div>
+    </div>
   </div>
 </template>
 
@@ -452,7 +454,6 @@ export default {
                   .carousel-item {
                     display: flex !important;
                     flex-direction: column;
-                    justify-content: flex-end;
                   }
                 }
               }
@@ -522,7 +523,12 @@ export default {
     padding-left: 34px;
     min-height: 90px;
     max-width: 100%;
-    background: #d3d3d3;
+
+    .catalog-advertising-item {
+      width: 100%;
+      height: 100%;
+      background: #d3d3d3;
+    }
   }
 }
 
@@ -541,41 +547,51 @@ export default {
   }
 }
 
-@include sm {
-  .catalog-wrapper .catalog {
-    padding-right: 0 !important;
-
-    .catalog-box {
-      margin-bottom: 20px;
-
-      .catalog-title {
-        margin-bottom: 20px;
-      }
-    }
-
-    .sidebar-list-wrapper {
-      position: relative;
-      grid-column: 1 / 2;
-      grid-row: 2 / 3;
-      transform: translateX(-100%);
-
-      .catalog-sidebar-list {
-        max-height: 450px;
-        transform-origin: top;
-        transform: scaleY(0);
-        overflow-y: auto;
-      }
-
-      .sidebar-btn {
-        display: flex;
-      }
-    }
-
-    .sort-marks {
+@include md {
+  .catalog-wrapper {
+    .catalog-advertising {
       padding-left: 0;
+    }
+  }
+}
 
-      grid-column: 1 / 3;
-      grid-row: 2 / 3;
+@include sm {
+  .catalog-wrapper {
+    .catalog {
+      padding-right: 0 !important;
+
+      .catalog-box {
+        margin-bottom: 20px;
+
+        .catalog-title {
+          margin-bottom: 20px;
+        }
+      }
+
+      .sidebar-list-wrapper {
+        position: relative;
+        grid-column: 1 / 2;
+        grid-row: 2 / 3;
+        transform: translateX(-100%);
+
+        .catalog-sidebar-list {
+          max-height: 450px;
+          transform-origin: top;
+          transform: scaleY(0);
+          overflow-y: auto;
+        }
+
+        .sidebar-btn {
+          display: flex;
+        }
+      }
+
+      .sort-marks {
+        padding-left: 0;
+
+        grid-column: 1 / 3;
+        grid-row: 2 / 3;
+      }
     }
   }
 }

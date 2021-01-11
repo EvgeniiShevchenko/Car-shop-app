@@ -17,10 +17,19 @@
       </div>
       <div class="category-car col-12 mb-3">
         <label class="filter-param-label">Тип транспорта</label>
-        <AutocompleteBtn :options="categoryList" :value="type" label="Выбрать" :payload="true" :isReset="!isEmpty(!!type)" @change="selectCategory($event)" @reset="resetTypeField" />
+        <AutocompleteBtn
+          :options="categoryList"
+          :value="type"
+          label="Выбрать"
+          :payload="true"
+          :isReset="!isEmpty(!!type)"
+          @change="selectCategory($event)"
+          @reset="resetTypeField"
+          @update:search-input="initialFieldSelect('car_type_id', $event)"
+        />
       </div>
       <div class="brend-car col-sm-6 pr-sm-4 mb-3 col-lg-6 pr-lg-4">
-        <label class="filter-param-label">Марка транспорта</label>
+        <label class="filter-param-label">Марка</label>
         <AutocompleteBtn
           :options="brandList"
           :value="brand"
@@ -32,6 +41,7 @@
           @change="selectBrand($event)"
           @focus="checkExistType($event)"
           @reset="resetBrandField"
+          @update:search-input="initialFieldSelect('car_mark_id', $event)"
         />
       </div>
       <div class="model-car col-sm-6 pl-sm-4 mb-3 col-lg-6 pl-lg-4">
@@ -47,6 +57,7 @@
           @change="selectModel($event)"
           @focus="checkExistBrand($event)"
           @reset="resetModelField"
+          @update:search-input="initialFieldSelect('car_model_id', $event)"
         />
       </div>
       <div class="year-begin" v-if="className === 'create-ads'">
@@ -161,7 +172,7 @@
           </template>
         </AcordionSingle>
       </div>
-      <AcordionSingle class="acordion-mileage" v-if="/catalog|calculator|create-ads/.test(this.className)" :isOpen="0" className="simple" title="Пробег, тыс. км">
+      <AcordionSingle class="acordion-mileage" v-if="/catalog|calculator|create-ads/.test(this.className) && Number(states) !== 2" :isOpen="0" className="simple" title="Пробег, тыс. км">
         <template slot="content">
           <label class="filter-param-label" v-if="className !== 'catalog'">Пробег</label>
           <div class="group-mileage row no-gutters">
@@ -170,40 +181,65 @@
           </div>
         </template>
       </AcordionSingle>
-      <AcordionSingle class="acordion-transmission" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Коробка передач">
+      <AcordionSingle class="acordion-transmission" v-if="className === 'catalog' && transmissionList.length" :isOpen="0" className="simple" title="Коробка передач">
         <template slot="content">
-          <CheckBoxGroup :value="transmission" :collection="transmissionList" @change="selectTransmission" />
+          <CheckBoxGroup :value="transmission" :collection="transmissionList" :isOverflow="true" :amountShow="6" @change="selectTransmission" />
         </template>
       </AcordionSingle>
-      <AcordionSingle class="acordion-fuel" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Топливо">
+      <AcordionSingle class="acordion-fuel" v-if="className === 'catalog' && fuelList.length" :isOpen="0" className="simple" title="Топливо">
         <template slot="content">
-          <CheckBoxGroup :value="fuel" :collection="fuelList" @change="selectFuel" />
+          <CheckBoxGroup :value="fuel" :collection="fuelList" :isOverflow="true" :amountShow="6" @change="selectFuel" @initial="initialGroupCheckBox('fuel_id', $event)" />
         </template>
       </AcordionSingle>
-      <AcordionSingle class="acordion-drive-unit" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Тип привода">
+      <AcordionSingle class="acordion-drive-unit" v-if="className === 'catalog' && driveUnitList.length" :isOpen="0" className="simple" title="Тип привода">
         <template slot="content">
-          <CheckBoxGroup :value="driveUnit" :collection="driveUnitList" @change="selectDriveUnit" />
+          <CheckBoxGroup :value="driveUnit" :collection="driveUnitList" :isOverflow="true" :amountShow="6" @change="selectDriveUnit" />
         </template>
       </AcordionSingle>
-      <AcordionSingle class="acordion-customs-cleared" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Растаможенные">
+      <AcordionSingle class="acordion-customs-cleared" v-if="className === 'catalog' && Number(states) !== 2" :isOpen="0" className="simple" title="Растаможенные">
         <template slot="content">
           <ul class="customs-cleared-list">
-            <li class="customs-cleared-item" :key="index" v-for="(item, index) in customsClearedList">
+            <li class="customs-cleared-item">
               <CheckBox
                 class="check-box"
-                :value="index === 0 && customsCleared === true ? true : index === 1 && customsCleared === false ? true : false"
-                :isDisabled="/0|1|2|3/.test(String(states))"
-                :label="item"
+                :value="customsCleared === true ? true : false"
+                :isDisabled="/1|2|3/.test(String(states))"
+                label="Растаможенные"
+                @change="selectСustomsCleared($event === true ? true : null)"
+              />
+            </li>
+            <li class="customs-cleared-item">
+              <CheckBox
+                class="check-box"
+                :value="customsCleared === false ? true : false"
+                :isDisabled="/1|2|3/.test(String(states))"
+                label="Нерастаможенные"
+                @change="selectСustomsCleared($event === true ? false : null)"
               />
             </li>
           </ul>
         </template>
       </AcordionSingle>
-      <AcordionSingle class="acordion-abroad" v-if="className === 'catalog'" :isOpen="0" className="simple" title="Наличие в Украине">
+      <AcordionSingle class="acordion-abroad" v-if="className === 'catalog' && Number(states) !== 2" :isOpen="0" className="simple" title="Наличие в Украине">
         <template slot="content">
           <ul class="abroad-list">
-            <li class="abroad-item" :key="index" v-for="(item, index) in abroadList">
-              <CheckBox class="check-box" :value="index === 0 && abroad === true ? true : index === 1 && abroad === false ? true : false" :isDisabled="/0|1|2|3/.test(String(states))" :label="item" />
+            <li class="abroad-item">
+              <CheckBox
+                class="check-box"
+                :value="abroad === true ? true : false"
+                :isDisabled="/1|2|3/.test(String(states))"
+                label="Авто в Украине"
+                @change="selectAbroad($event === true ? true : null)"
+              />
+            </li>
+            <li class="abroad-item">
+              <CheckBox
+                class="check-box"
+                :value="abroad === false ? true : false"
+                :isDisabled="/1|2|3/.test(String(states))"
+                label="Авто не в Украине"
+                @change="selectAbroad($event === true ? false : null)"
+              />
             </li>
           </ul>
         </template>
@@ -254,7 +290,7 @@
         </li>
         <li>
           <label class="filter-param-label">Период подачи</label>
-          <SelectBtn
+          <AutocompleteBtn
             class="filter-select-field"
             :options="publicationTimeList"
             :value="publicationTime"
@@ -308,7 +344,7 @@
           </div>
         </div>
       </div>
-      <div class="state-number-wrapper mt-3" v-if="className === 'main'">
+      <div class="state-number-wrapper mt-3" v-if="className === 'main' && /0|1/.test(String(states))">
         <CheckBox class="check-box mr-4" :value="isVinCode" label="Проверенный VIN-код" @change="selectVinCode" />
         <CheckBox class="check-box" :value="isStateNumber" :isLabel="true" @change="selectStateNumber">
           <template slot="label">
@@ -340,19 +376,19 @@ import CheckBox from '~/components/base/CheckBox.vue';
 import CheckBoxGroup from '~/components/base/CheckBoxGroup.vue';
 import AcordionSingle from '~/components/base/AcordionSingle.vue';
 // helpers
-import additionalOptionsList from '~/helpers/additionalOptionsList.js';
 import sortList from '~/helpers/sortList.js';
 import publicationTimeList from '~/helpers/publicationTimeList.js';
 // mixins
 import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
 import deleteFilterParamNameInLocalStorage from '~/mixins/deleteFilterParamNameInLocalStorage.js';
 import transformArrayForSelectBtn from '~/mixins/transformArrayForSelectBtn.js';
+import getFilterKeyFromLocalStorage from '~/mixins/getFilterKeyFromLocalStorage.js';
 import isNull from '~/mixins/isNull.js';
 import isEmpty from '~/mixins/isEmpty.js';
 
 export default {
   name: 'MainFilter',
-  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformArrayForSelectBtn, isNull, isEmpty],
+  mixins: [saveFilterParamNameInLocalStorage, deleteFilterParamNameInLocalStorage, transformArrayForSelectBtn, isNull, isEmpty, getFilterKeyFromLocalStorage],
   data() {
     return {
       statesList: ['Все', 'Б/у', 'Новые', this.$i18n.t('под-пригон')],
@@ -371,7 +407,7 @@ export default {
       transmissionList: [],
       fuelList: [],
       driveUnitList: [],
-      additionalOptionsList: additionalOptionsList,
+      additionalOptionsList: [],
       customsClearedList: ['Растаможенные', 'Нерастаможенные'],
       abroadList: ['Авто в Украине', 'Авто не в Украине'],
       damageList: [
@@ -397,6 +433,7 @@ export default {
       createYear: null,
       createYearList: [],
       modification: '',
+      reloadCustom: false,
     };
   },
   computed: {
@@ -436,6 +473,44 @@ export default {
     }),
   },
   methods: {
+    initialGroupCheckBox(key, option) {
+      if (!this.isEmpty(!!this.getFilterKeyFromLocalStorage(key))) {
+        const filterActiveOptions = this.getFilterKeyFromLocalStorage(key);
+        const findSameOption = filterActiveOptions.find((item) => item === option);
+
+        if (!!findSameOption === false) {
+          this.saveFilterParamNameInLocalStorage(key, [...filterActiveOptions, option]);
+          this.$emit('reload-tags');
+        }
+      }
+    },
+
+    initialFieldSelect(key, options) {
+      if (!this.isNull(options) && typeof options !== 'object') {
+        this.saveFilterParamNameInLocalStorage(key, options);
+      }
+    },
+
+    selectСustomsCleared(selectOption) {
+      this.setCustomsCleared(selectOption);
+      this.saveFilterParamNameInLocalStorage('is_cleared', selectOption === true ? 'Растаможенные' : 'Нерастаможенные');
+    },
+
+    resetСustomsCleared() {
+      this.resetCustomsCleared();
+      this.deleteFilterParamNameInLocalStorage(['is_cleared']);
+    },
+
+    selectAbroad(selectOption) {
+      this.setAbroad(selectOption);
+      this.saveFilterParamNameInLocalStorage('is_ukraine', selectOption === true ? 'Авто в Украине' : 'Авто не в Украине');
+    },
+
+    resetAbroad() {
+      this.resetAbroad();
+      this.deleteFilterParamNameInLocalStorage(['is_ukraine']);
+    },
+
     sendFilterData() {
       const filterData = {
         is_cleared: this.isCustomsCleared,
@@ -480,6 +555,12 @@ export default {
 
       this.setMileageFrom(value);
 
+      if (!this.isEmpty(this.mileageFrom) && this.mileageTo < this.mileageFrom) {
+        this.setMileageTo(this.mileageFrom);
+
+        this.saveFilterParamNameInLocalStorage('mileage_to', `Пробег. до ${this.mileageTo}тыс.`);
+      }
+
       this.saveFilterParamNameInLocalStorage('mileage_from', `Пробег. от ${this.mileageFrom}тыс.`);
     },
 
@@ -487,6 +568,12 @@ export default {
       const value = Number(e.target.value);
 
       this.setMileageTo(value);
+
+      if (!this.isEmpty(this.mileageTo) && this.isEmpty(this.mileageFrom)) {
+        this.setMileageFrom(1);
+
+        this.saveFilterParamNameInLocalStorage('mileage_from', `Пробег. от ${this.mileageFrom}тыс.`);
+      }
 
       this.saveFilterParamNameInLocalStorage('mileage_to', `Пробег. до ${this.mileageTo}тыс.`);
     },
@@ -571,7 +658,7 @@ export default {
 
     resetFieldLocation() {
       this.resetLocation();
-      this.deleteFilterParamNameInLocalStorage(['location_id']);
+      this.deleteFilterParamNameInLocalStorage(['region_id']);
 
       if (/calculator|createAds/.test(this.className)) {
         this.resetFilterCity();
@@ -705,7 +792,7 @@ export default {
 
     startSearch() {
       this.$router.push(
-        `catalog?status=${this.states}&car_type_id=${this.type}&car_mark_id=${this.brand}&car_model_id=${this.model}&location=${this.location}&year_from=${this.fromYear}&year_to=${this.toYear}&price_max=${this.maxPrice}&price_min=${this.minPrice}`
+        `catalog?status=${this.states}&car_type_id=${this.type}&car_mark_id=${this.brand}&car_model_id=${this.model}&location=${this.location}&year_from=${this.fromYear}&year_to=${this.toYear}&currency_id=${this.currency}&price_max=${this.maxPrice}&price_min=${this.minPrice}`
       );
     },
 
@@ -735,6 +822,22 @@ export default {
         const { data } = await this.$axios.$get(`filters/marks?type=${param.value}`, { method: 'GET' });
 
         this.setBrandList(this.transformArrayForSelectBtn(data.marks));
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        const { transmissions, driveUnits, fuels } = (await this.$axios.$get(`filters/characteristic?type=${param.value}`)).data;
+
+        this.transmissionList = this.transformArrayForSelectBtn(transmissions);
+        this.fuelList = this.transformArrayForSelectBtn(fuels);
+        this.driveUnitList = this.transformArrayForSelectBtn(driveUnits);
+      } catch (error) {
+        console.error(error);
+      }
+
+      try {
+        this.additionalOptionsList = this.transformArrayForSelectBtn((await this.$axios.$get(`filters/carAnother?type=${this.type}`)).data.carAnother);
       } catch (error) {
         console.error(error);
       }
@@ -859,7 +962,7 @@ export default {
     },
 
     async selectLocation({ text, value }) {
-      this.saveFilterParamNameInLocalStorage('location_id', text);
+      this.saveFilterParamNameInLocalStorage('region_id', text);
       this.setLocation(value);
 
       if (/calculator|create-ads/.test(this.className)) {
@@ -1019,6 +1122,10 @@ export default {
       initialFilterPriceRange: 'filter/initialFilterPriceRange',
       setFilterCity: 'filter/setFilterCity',
       resetFilterCity: 'filter/resetFilterCity',
+      resetAbroad: 'filter/resetAbroad',
+      setAbroad: 'filter/setAbroad',
+      setCustomsCleared: 'filter/setCustomsCleared',
+      resetCustomsCleared: 'filter/resetCustomsCleared',
     }),
   },
   async mounted() {
@@ -1028,7 +1135,11 @@ export default {
 
         this.setCategoryList(this.transformArrayForSelectBtn(data.types));
       })();
+    } catch (error) {
+      console.error(error);
+    }
 
+    try {
       (async () => {
         const { data } = await this.$axios.$get(`filters/prices`, { method: 'GET' });
         const { min, max } = data;
@@ -1036,12 +1147,11 @@ export default {
         if (this.className !== 'catalog') {
           this.setPriceMin(min);
           this.setPriceMax(max);
+          this.setFixedMinPrice(min);
+          this.setFixedMaxPrice(max);
         } else {
           this.initialFilterPriceRange({ minPrice: min, maxPrice: max });
         }
-
-        this.setFixedMinPrice(min);
-        this.setFixedMaxPrice(max);
       })();
     } catch (error) {
       console.log(error);
@@ -1050,26 +1160,17 @@ export default {
     (async () => {
       const { data } = await this.$axios.$get(`filters/currencies`, { method: 'GET' });
 
-      this.currencyList = this.transformArrayForSelectBtn(data.currencies);
-
       this.setDefaultCurrency(data.current_default.id);
 
       if (this.className !== 'catalog') {
         this.setCurrency(data.current_default.id);
+        this.currencyList = this.transformArrayForSelectBtn(data.currencies);
+      } else {
+        this.currencyList = data.currencies.map((item) => ({ text: item.symbol, value: item.id }));
       }
     })();
 
     if (/catalog|calculator/.test(this.className)) {
-      try {
-        const { transmissions, driveUnits, fuels } = (await this.$axios.$get(`filters/characteristic`)).data;
-
-        this.transmissionList = this.transformArrayForSelectBtn(transmissions);
-        this.fuelList = this.transformArrayForSelectBtn(fuels);
-        this.driveUnitList = this.transformArrayForSelectBtn(driveUnits);
-      } catch (error) {
-        console.error(error);
-      }
-
       if (this.className === 'calculator' && !this.isEmpty(this.model)) {
         try {
           const { data } = await this.$axios.$get(`filters/series?type=${this.type}&model=${this.model}&year=${this.collection.year_begin}`);
@@ -1087,6 +1188,22 @@ export default {
           const { data } = await this.$axios.$get(`filters/marks?type=${this.type}`, { method: 'GET' });
 
           this.setBrandList(this.transformArrayForSelectBtn(data.marks));
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          const { transmissions, driveUnits, fuels } = (await this.$axios.$get(`filters/characteristic?type=${this.type}`)).data;
+
+          this.transmissionList = this.transformArrayForSelectBtn(transmissions);
+          this.fuelList = this.transformArrayForSelectBtn(fuels);
+          this.driveUnitList = this.transformArrayForSelectBtn(driveUnits);
+        } catch (error) {
+          console.error(error);
+        }
+
+        try {
+          this.additionalOptionsList = this.transformArrayForSelectBtn((await this.$axios.$get(`filters/carAnother?type=${this.type}`)).data.carAnother);
         } catch (error) {
           console.error(error);
         }
@@ -1118,6 +1235,16 @@ export default {
           } catch (error) {
             console.error(error);
           }
+        }
+      }
+
+      if (this.location) {
+        try {
+          const { data } = await this.$axios.$get(`filters/regions`, { method: 'GET' });
+
+          this.locationsList = this.transformArrayForSelectBtn(data.regions);
+        } catch (error) {
+          console.error(error);
         }
       }
 
@@ -1279,6 +1406,12 @@ export default {
     .acordion-mileage {
       order: 3;
 
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
+
       .group-mileage {
         display: flex;
         justify-content: space-between;
@@ -1314,10 +1447,22 @@ export default {
 
     .acordion-transmission {
       order: 4;
+
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
     }
 
     .acordion-fuel {
       order: 5;
+
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
 
       .fuel-list {
         margin-top: 12px;
@@ -1335,6 +1480,12 @@ export default {
     .acordion-drive-unit {
       order: 6;
 
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
+
       .fuel-list {
         margin-top: 12px;
 
@@ -1351,6 +1502,12 @@ export default {
     .acordion-customs-cleared {
       order: 7;
 
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
+
       .customs-cleared-list {
         margin-top: 12px;
 
@@ -1366,6 +1523,12 @@ export default {
 
     .acordion-abroad {
       order: 8;
+
+      & ::v-deep .v-expansion-panel-header {
+        .accordion-title {
+          color: #4a4d5c;
+        }
+      }
 
       .abroad-list {
         margin-top: 12px;

@@ -1,5 +1,5 @@
 <template>
-  <n-link :class="`catalog-card ${extends_view ? 'extend-price' : ''}`" :to="`auto/${collection.alias}`">
+  <n-link :class="`catalog-card ${extends_view ? 'extend-price' : ''}`" tag="div" :to="`/auto/${collection.alias}`">
     <div class="preview-wrapper" :style="`background:  ${!!collection.mainImage ? 'url(' + collection.mainImage + ') no-repeat center / cover' : ''}`"></div>
     <div class="general">
       <p class="id">ID {{ collection.unique_id }}</p>
@@ -43,6 +43,9 @@
           {{ collection.currency_default || collection.currencyDefault }} {{ collection.price }}
           <span class="old-price">{{ collection.currencyDefault }} {{ collection.old_price }}</span>
         </p>
+        <n-link class="search-model" :to="`/catalog?status=0&car_type_id=${this.collection.car_type_id}&car_mark_id=${this.collection.car_mark_id}&fuel_id=${this.collection.fuel_id}`"
+          >Смотреть {{ collection.count }} авто</n-link
+        >
         <div class="servises-btn-wrapper" v-if="extends_view">
           <button :class="`libra-btn ${compareList.has(collection.unique_id) ? 'is-compare' : ''}`" v-if="!isMobile" type="button" @click.prevent.stop="$emit('add-comparison', collection.unique_id)">
             <svg class="libra-icon">
@@ -76,8 +79,20 @@
 </template>
 
 <script>
+// mixins
+import saveFilterParamNameInLocalStorage from '~/mixins/saveFilterParamNameInLocalStorage.js';
+
 export default {
   name: 'CatalogCardsPreview',
+  mixins: [saveFilterParamNameInLocalStorage],
+  methods: {
+    setFuelToLocalStorage() {
+      // this.saveFilterParamNameInLocalStorage('fuel_id', [`${this.collection.fuel_id}`]);
+      // this.saveFilterParamNameInLocalStorage('car_type_id', `${this.collection.car_type_id}`);
+      // this.saveFilterParamNameInLocalStorage('car_mark_id', `${this.collection.car_mark_id}`);
+      this.$router.push({ path: `/catalog?status=0&car_type_id=${this.collection.car_type_id}&car_mark_id=${this.collection.car_mark_id}&fuel_id=${this.collection.fuel_id}` });
+    },
+  },
   props: {
     collection: {
       type: [Object, String],
@@ -104,6 +119,7 @@ export default {
 .catalog-card {
   display: flex;
   max-height: 170px;
+  cursor: pointer;
 
   .preview-wrapper {
     max-width: 154px;
@@ -229,6 +245,20 @@ export default {
 
         .old-price {
           display: none;
+        }
+      }
+
+      .search-model {
+        display: none;
+        margin-top: 12px;
+
+        font-size: 15px;
+        font-weight: 500;
+        line-height: 17px;
+        color: #4a4d5c;
+
+        &:hover {
+          color: #1768ac;
         }
       }
 
