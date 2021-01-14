@@ -1,11 +1,11 @@
 <template>
   <div class="additional">
     <div class="additional-general row no-gutters">
-      <v-col class="select-wrapper col-12 pr-0 col-sm-6 pr-sm-4" :order="$vuetify.breakpoint.xs ? 1 : ''">
+      <v-col class="select-wrapper col-12 mt-0 pr-0 col-sm-6 pr-sm-4" :order="$vuetify.breakpoint.xs ? 1 : ''">
         <label class="select-label">Коробка передач</label>
         <SelectBtn class="select" :options="transmissionList" :value="additionalParams.transmission" label="Выбрать" :payload="true" @change="selecTtransmission($event)" />
       </v-col>
-      <v-col class="select-wrapper col-12 col-sm-6 pl-0 pl-sm-4" :order="$vuetify.breakpoint.xs ? 5 : ''">
+      <v-col class="select-wrapper col-12 mt-3 mt-sm-0 col-sm-6 pl-0 pl-sm-4" :order="$vuetify.breakpoint.xs ? 5 : ''">
         <label class="select-label">Объем двигателя</label>
         <AutocompleteBtn class="select" :options="engineCapacityList" :value="additionalParams.engineCapacity" label="Выбрать" :payload="true" @change="selectEngineCapacity($event)" />
       </v-col>
@@ -182,7 +182,7 @@ export default {
   async fetch() {
     await (async () => {
       try {
-        const { transmissions, fuels, driveUnits, doors, engineCapacities, colors } = (await this.$services.createAds.getAdditionalCharacteristic()).data;
+        const { transmissions, fuels, driveUnits, doors, engineCapacities, colors } = (await this.$services.createAds.getAdditionalCharacteristic(this.transportType)).data;
 
         this.transmissionList = this.transformArrayForSelectBtn(transmissions);
         this.engineCapacityList = this.transformArrayForSelectBtn(engineCapacities);
