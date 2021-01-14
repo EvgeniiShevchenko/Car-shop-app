@@ -11,11 +11,13 @@ services:
       "npm run start"
 
   nginx:
-    image: nginx:1.13
+    image: nginx:latest
     container_name: carsell-nginx
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx:/etc/nginx/conf.d
+      - ./letsencrypt:/etc/letsencrypt
     depends_on:
       - nuxt
