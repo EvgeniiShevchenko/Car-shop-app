@@ -1,16 +1,16 @@
 <template>
   <v-app class="layout">
-    <Header :width="width" />
-    <bread-crumbs :style="`max-width: ${width}`" />
-    <main class="main container d-flex mt-3 pb-0" :style="`max-width: ${width}`">
-      <div class="outer-wrap">
-        <div class="d-flex content" :style="`max-width: ${width}`">
-          <profile-navigation class="profile_nav" :userInfo="userInfo" />
-          <nuxt class="content" :style="`max-width: ${width}`" />
-        </div>
-      </div>
-    </main>
+    <Header :width="width" @login="login" />
+    <BodyLayout>
+      <nuxt class="content" :style="`max-width: ${width}`" />
+    </BodyLayout>
     <Footer :width="width" />
+    <transition name="fade">
+      <div class="popup-wrapper" v-if="popUpShow">
+        <PopUpSuccess class="popup-inner-wrapper" v-if="!error" :title="message" />
+        <v-alert class="popup-inner-wrapper" v-else type="error"> {{ message }} </v-alert>
+      </div>
+    </transition>
   </v-app>
 </template>
 
@@ -18,21 +18,26 @@
 import { mapActions } from 'vuex';
 // components
 import MainHeaderMenu from '~/components/modules/header/MainHeaderMenu.vue';
-import BreadCrumbs from '~/components/base/BreadCrumbs.vue';
-import ProfileNavigation from '@/components/modules/personal/ProfileNavigation';
-import Header from '@/components/layouts/Header';
+import PopUpSuccess from '~/components/base/PopUpSuccess.vue';
 import Footer from '@/components/layouts/Footer';
+import Header from '@/components/layouts/Header';
+// layouts
+import BodyLayout from '~/components/layouts/BodyLayout.vue';
 // mixins
 import getAuthToken from '~/mixins/getAuthToken.js';
 
 export default {
-  name: 'Personal',
+  name: 'WithoutBreadCrumbs',
+  mixins: [getAuthToken],
   data() {
     return {
-      userInfo: {},
+      collection: [],
+      popUpShow: false,
+      message: '',
+      error: false,
+      authPopUpName: '',
     };
   },
-  mixins: [getAuthToken],
   computed: {
     width() {
       switch (this.$vuetify.breakpoint.name) {
@@ -49,60 +54,65 @@ export default {
       }
     },
   },
-  components: {
-    BreadCrumbs,
-    MainHeaderMenu,
-    ProfileNavigation,
-    Header,
-    Footer,
-  },
   methods: {
-    async getUserInfo() {
-      try {
-        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
-      } catch (error) {
-        // eslint-disable-next-line no-console
-        console.log(error);
-      }
+    login() {
+      this.setActiveModalWindowName('login');
     },
 
-    ...mapActions({ setLogin: 'setLogin' }),
+    showPopUp({ error, message, timer = 1000 }) {
+      this.message = message;
+      this.popUpShow = true;
+      this.error = error;
+
+      setTimeout(() => {
+        this.popUpShow = false;
+        this.error = false;
+      }, timer);
+    },
+
+    ...mapActions({ setLogin: 'setLogin', setActiveModalWindowName: 'setActiveModalWindowName' }),
   },
   mounted() {
-    this.getUserInfo();
-
     if (this.getAuthToken()) {
       this.$axios.setToken(this.getAuthToken(), 'Bearer');
       this.setLogin(true);
     } else {
       this.setLogin(false);
     }
+
+    this.$root.$on('show-popup', this.showPopUp);
+  },
+  components: {
+    MainHeaderMenu,
+    PopUpSuccess,
+    BodyLayout,
+    Footer,
+    Header,
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .layout {
-  .outer-wrap {
-    width: 100%;
-  }
-  .profile_nav {
-    margin-bottom: 70px;
-  }
+  position: relative;
   @include init-font;
   display: flex;
   flex-direction: column;
 
   height: 100vh;
-  @include desktop {
-    .profile_nav {
-      display: none;
-    }
-    .content {
-      padding: 0 !important;
-    }
-    .outer-wrap {
-      width: 100%;
+
+  .popup-wrapper {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+
+    .popup-inner-wrapper {
+      width: max-content;
+      margin: 0 auto;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 100;
     }
   }
 }
@@ -157,7 +167,7 @@ export default {
   .layout {
     .content {
       padding: 0 16px;
-      margin-top: 0 !important;
+      margin-top: 15px !important;
     }
 
     .header .container {

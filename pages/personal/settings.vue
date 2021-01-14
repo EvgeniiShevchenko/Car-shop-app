@@ -72,7 +72,7 @@
         </v-flex>
         <v-flex>
           <span> Статус </span>
-          <v-select v-model="userInfo.type_user" color="#4CAD33" :items="status" item-value="value" item-text="title" outlined dense height="36"> </v-select>
+          <v-select v-model="userInfo.type_user_id" color="#4CAD33" :items="usersTypes" item-value="id" item-text="name" outlined dense height="36"> </v-select>
         </v-flex>
         <v-flex>
           <span> Telegram </span>
@@ -124,6 +124,16 @@ export default {
   layout: 'personal',
   components: { CheckBox, ChangePasswordModal },
   mixins: [getAuthToken],
+  async asyncData({ app, $services }) {
+    try {
+      const userInfo = (await $services.user.getUserData(app.$cookies.get('accessToken'))).data.user;
+      const usersTypes = (await $services.auth.getUserRole()).data.type_user;
+      const avatarUrl = userInfo.image;
+      return { userInfo, avatarUrl, usersTypes };
+    } catch (error) {
+      console.log(error);
+    }
+  },
   data() {
     return {
       valid: true,
@@ -139,6 +149,7 @@ export default {
       isAvatarError: false,
       isDeletedAvatar: false,
       isChangedAvatar: false,
+      usersTypes: [],
       status: [
         {
           title: 'Физическое лицо',
@@ -150,9 +161,6 @@ export default {
         },
       ],
     };
-  },
-  mounted() {
-    this.getUserInfo();
   },
   methods: {
     async submit() {
@@ -167,14 +175,6 @@ export default {
         this.isSucceeded = true;
       } catch (error) {
         this.isSucceeded = false;
-        console.log(error);
-      }
-    },
-    async getUserInfo() {
-      try {
-        this.userInfo = (await this.$services.user.getUserData(this.getAuthToken())).data.user;
-        this.avatarUrl = this.userInfo.image;
-      } catch (error) {
         console.log(error);
       }
     },
