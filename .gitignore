@@ -17,5 +17,3 @@ dist
 # env
 .env
 
-# letsencrypt
-letsencrypt/
