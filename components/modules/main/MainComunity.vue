@@ -76,9 +76,9 @@ import { Component, Vue } from 'vue-property-decorator';
 import VueYoutube from 'vue-youtube';
 
 @Component
-export default class MainComunity extends Vue {
-  components: { VueYoutube };
-  props: {
+class MainComunity extends Vue {
+  components = { VueYoutube };
+  props = {
     communityInfo: {
       type: Object,
       // eslint-disable-next-line vue/require-valid-default-prop
@@ -87,20 +87,18 @@ export default class MainComunity extends Vue {
       },
     },
   };
-  data() {
-    return {
-      socialList: [
+      socialList = [
         { name: 'Facebook AutoSill', type: 'reference', key: 'facebook', color: '', icon: '' },
         { name: 'Telegram AutoSill', type: 'reference', key: 'telegram', color: '', icon: '' },
         { name: 'Twitter AutoSill', type: 'reference', key: 'twitter', color: '', icon: '' },
         { name: 'Instagram AutoSill', type: 'reference', key: 'instagram', color: '', icon: '' },
         { name: 'Поиск авто • Чат-бот', type: 'bot', key: 'facebook-bot', color: '', icon: '' },
         { name: 'Поиск авто • Чат-бот', type: 'bot', key: 'telegram-bot', color: '', icon: '' },
-      ],
-      isPlaying: false,
-    };
-  };
+      ];
+      isPlaying = false;
 };
+
+export default MainComunity;
 </script>
 
 <style lang="scss" scoped>
