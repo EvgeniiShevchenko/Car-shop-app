@@ -71,11 +71,13 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Component, Vue } from 'vue-property-decorator';
 import VueYoutube from 'vue-youtube';
-export default {
-  name: 'MainComunity',
-  components: { VueYoutube },
+
+@Component
+export default class MainComunity extends Vue {
+  components: { VueYoutube };
   props: {
     communityInfo: {
       type: Object,
@@ -84,7 +86,7 @@ export default {
         return {};
       },
     },
-  },
+  };
   data() {
     return {
       socialList: [
@@ -97,7 +99,7 @@ export default {
       ],
       isPlaying: false,
     };
-  },
+  };
 };
 </script>
 
