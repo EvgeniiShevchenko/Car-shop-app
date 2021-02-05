@@ -35,44 +35,75 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import VClamp from 'vue-clamp';
+import Vue from "vue";
+import {Prop, Component} from "vue-property-decorator";
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import CarouselPaginationBar from '~/components/base/CarouselPaginationBar.vue';
 // mixins
 import getCarouselRange from '~/mixins/getCarouselRange.js';
 
-export default {
-  name: 'CatalogCarOrder',
+@Component({
+components: {
+  CarouselSingleLine,
+    CarouselPaginationBar,
+    VClamp
+  }
+})
+class CatalogCarOrder extends Vue {
+  @Prop() collection: object[];
   mixins: [getCarouselRange],
-  data() {
-    return {
-      page: 1,
-      range: 4,
-      carouselConfig: [
-        {
-          breakpoint: 960,
-          settings: {
-            slidesToShow: 2,
-            slidesToScroll: 2,
-          },
-        },
-        {
-          breakpoint: 600,
-          settings: {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-          },
-        },
-      ],
-    };
-  },
-  computed: {
-    amountShownNews() {
-      return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
+  // data() {
+  //   return {
+  //     page: 1,
+  //     range: 4,
+  //     carouselConfig: [
+  //       {
+  //         breakpoint: 960,
+  //         settings: {
+  //           slidesToShow: 2,
+  //           slidesToScroll: 2,
+  //         },
+  //       },
+  //       {
+  //         breakpoint: 600,
+  //         settings: {
+  //           slidesToShow: 1,
+  //           slidesToScroll: 1,
+  //         },
+  //       },
+  //     ],
+  //   };
+  // },
+  page = 1;
+  range = 4;
+  carouselConfig = [
+    {
+      breakpoint: 960,
+      settings: {
+        slidesToShow: 2,
+        slidesToScroll: 2,
+      },
     },
-  },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+      },
+    },
+  ];
+  get amountShownNews(): number{
+     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
+  };
+
+  // computed: {
+  //   amountShownNews() {
+  //     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
+  //   },
+  // },
   methods: {
     goToTheNext() {
       document.querySelector('.catalog-order').__vue__.next();
@@ -91,17 +122,19 @@ export default {
       this.range = this.getCarouselRange();
     });
   },
-  props: {
-    collection: {
-      type: Array,
-    },
-  },
-  components: {
-    CarouselSingleLine,
-    CarouselPaginationBar,
-    VClamp,
-  },
+  // props: {
+  //   collection: {
+  //     type: Array,
+  //   },
+  // },
+  // components: {
+  //   CarouselSingleLine,
+  //   CarouselPaginationBar,
+  //   VClamp,
+  // },
 };
+
+export default CatalogCarOrder;
 </script>
 
 <style lang="scss" scoped>

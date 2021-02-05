@@ -1,10 +1,10 @@
 <template>
   <v-app class="layout">
-    <Header :width="width" @login="login" />
+    <!-- <Header :width="width" @login="login" /> -->
     <BodyLayout>
       <nuxt class="content" :style="`max-width: ${width}`" />
     </BodyLayout>
-    <Footer :width="width" />
+    <!-- <Footer :width="width" /> -->
     <transition name="fade">
       <div class="popup-wrapper" v-if="popUpShow">
         <PopUpSuccess class="popup-inner-wrapper" v-if="!error" :title="message" />

@@ -83,15 +83,6 @@ import VueYoutube from 'vue-youtube';
 })
 class MainComunity extends Vue {
   @Prop({ required: false, type: Object, default: () => ({}) }) communityInfo: object;
-  // props = {
-  //   communityInfo: {
-  //     type: Object,
-  //     // eslint-disable-next-line vue/require-valid-default-prop
-  //     default() {
-  //       return {};
-  //     },
-  //   },
-  // };
   socialList = [
     { name: 'Facebook AutoSill', type: 'reference', key: 'facebook', color: '', icon: '' },
     { name: 'Telegram AutoSill', type: 'reference', key: 'telegram', color: '', icon: '' },
