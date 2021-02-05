@@ -1,15 +1,15 @@
 <template>
   <main class="main container">
     <div class="row no-gutters">
-      <div class="filter-wrapper row">
+      <!-- <div class="filter-wrapper row">
         <MainBaner class="banner-wrapper col-sm-12 col-md-6" />
         <div class="col-sm-12 col-md-6">
           <MainFilter />
         </div>
-      </div>
+      </div> -->
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
       <AdsCardsList class="latest-ads" :collection="mainData.products" />
-      <MainCarCatalog :mainData="mainData" />
+      <!-- <MainCarCatalog :mainData="mainData" /> -->
       <MainNews class="news-wrapper" :mainData="mainData" />
       <MainComunity :communityInfo="mainData.community" />
       <div class="banner-block offset-lg-1 col-md-12 col-lg-10 offset-lg-1"></div>
@@ -32,6 +32,7 @@ export default {
   name: 'Index',
   async asyncData({ $axios }) {
     const { data } = await $axios.$get(`main`);
+    console.log('🚀 ~ file: index.vue ~ line 35 ~ asyncData ~ data', data);
 
     return { mainData: data };
   },
