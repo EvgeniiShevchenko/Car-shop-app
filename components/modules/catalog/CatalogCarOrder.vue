@@ -37,24 +37,24 @@
 
 <script lang="ts">
 import VClamp from 'vue-clamp';
-import Vue from "vue";
-import {Prop, Component} from "vue-property-decorator";
+import Vue from 'vue';
+import { Prop, Component, Mixins } from 'vue-property-decorator';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import CarouselPaginationBar from '~/components/base/CarouselPaginationBar.vue';
 // mixins
-import getCarouselRange from '~/mixins/getCarouselRange.js';
+// import getCarouselRange from '~/mixins/getCarouselRange.js';
+import mixin from '~/mixins/index.ts';
 
 @Component({
-components: {
-  CarouselSingleLine,
+  components: {
+    CarouselSingleLine,
     CarouselPaginationBar,
-    VClamp
-  }
+    VClamp,
+  },
 })
-class CatalogCarOrder extends Vue {
+class CatalogCarOrder extends Mixins(mixin.MyMixin) {
   @Prop() collection: object[];
-  mixins: [getCarouselRange],
   // data() {
   //   return {
   //     page: 1,
@@ -95,33 +95,45 @@ class CatalogCarOrder extends Vue {
       },
     },
   ];
-  get amountShownNews(): number{
-     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
-  };
+  get amountShownNews(): number {
+    return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
+  }
 
   // computed: {
   //   amountShownNews() {
   //     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
   //   },
   // },
-  methods: {
-    goToTheNext() {
-      document.querySelector('.catalog-order').__vue__.next();
+  // methods: {
+  //   goToTheNext() {
+  //     document.querySelector('.catalog-order').__vue__.next();
 
-      this.page = this.page * this.range >= this.collection.length ? this.page : this.page + 1;
-    },
+  //     this.page = this.page * this.range >= this.collection.length ? this.page : this.page + 1;
+  //   },
 
-    goToThePrevious() {
-      document.querySelector('.catalog-order').__vue__.prev();
+  //   goToThePrevious() {
+  //     document.querySelector('.catalog-order').__vue__.prev();
 
-      this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
-    },
-  },
+  //     this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
+  //   },
+  // },
+  goToTheNext() {
+    // document?.querySelector('.catalog-order')?.__vue__.next();
+
+    this.page = this.page * this.range >= this.collection.length ? this.page : this.page + 1;
+  }
+
+  goToThePrevious() {
+    // document?.querySelector('.catalog-order')?.__vue__.prev();
+
+    this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
+  }
+
   mounted() {
     this.$nextTick(() => {
       this.range = this.getCarouselRange();
     });
-  },
+  }
   // props: {
   //   collection: {
   //     type: Array,
@@ -132,7 +144,7 @@ class CatalogCarOrder extends Vue {
   //   CarouselPaginationBar,
   //   VClamp,
   // },
-};
+}
 
 export default CatalogCarOrder;
 </script>
