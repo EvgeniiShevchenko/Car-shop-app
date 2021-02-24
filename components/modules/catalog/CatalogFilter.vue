@@ -25,22 +25,26 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import { Vue, Component } from 'vue-property-decorator';
 import { mapState } from 'vuex';
 // components
 import CheckBox from '~/components/base/CheckBox.vue';
 import SelectBtn from '~/components/base/SelectBtn.vue';
 
-export default {
-  name: 'CatalogFilter',
-  computed: {
-    ...mapState({ isVinCode: (state) => state.filter.filter.isVinCode }),
-  },
+@Component({
   components: {
     CheckBox,
     SelectBtn,
   },
-};
+})
+class CatalogFilter extends Vue {
+  get isVinCode() {
+    return (state: any) => state.filter.filter.isVinCode;
+  }
+}
+
+export default CatalogFilter;
 </script>
 
 <style lang="scss" scoped>

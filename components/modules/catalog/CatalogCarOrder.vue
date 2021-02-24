@@ -36,14 +36,13 @@
 </template>
 
 <script lang="ts">
+import { ComponentCus } from 'vue';
 import VClamp from 'vue-clamp';
-import Vue from 'vue';
 import { Prop, Component, Mixins } from 'vue-property-decorator';
 // components
 import CarouselSingleLine from '~/components/base/CarouselSingleLine.vue';
 import CarouselPaginationBar from '~/components/base/CarouselPaginationBar.vue';
 // mixins
-// import getCarouselRange from '~/mixins/getCarouselRange.js';
 import mixin from '~/mixins/index.ts';
 
 @Component({
@@ -55,28 +54,6 @@ import mixin from '~/mixins/index.ts';
 })
 class CatalogCarOrder extends Mixins(mixin.MyMixin) {
   @Prop() collection: object[];
-  // data() {
-  //   return {
-  //     page: 1,
-  //     range: 4,
-  //     carouselConfig: [
-  //       {
-  //         breakpoint: 960,
-  //         settings: {
-  //           slidesToShow: 2,
-  //           slidesToScroll: 2,
-  //         },
-  //       },
-  //       {
-  //         breakpoint: 600,
-  //         settings: {
-  //           slidesToShow: 1,
-  //           slidesToScroll: 1,
-  //         },
-  //       },
-  //     ],
-  //   };
-  // },
   page = 1;
   range = 4;
   carouselConfig = [
@@ -98,25 +75,6 @@ class CatalogCarOrder extends Mixins(mixin.MyMixin) {
   get amountShownNews(): number {
     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
   }
-
-  // computed: {
-  //   amountShownNews() {
-  //     return this.collection.length % this.range === 0 ? this.page * this.range : this.page * this.range >= this.collection.length ? this.collection.length : this.range;
-  //   },
-  // },
-  // methods: {
-  //   goToTheNext() {
-  //     document.querySelector('.catalog-order').__vue__.next();
-
-  //     this.page = this.page * this.range >= this.collection.length ? this.page : this.page + 1;
-  //   },
-
-  //   goToThePrevious() {
-  //     document.querySelector('.catalog-order').__vue__.prev();
-
-  //     this.page = this.page - 1 !== 0 ? this.page - 1 : 1;
-  //   },
-  // },
   goToTheNext() {
     // document?.querySelector('.catalog-order')?.__vue__.next();
 
@@ -134,16 +92,6 @@ class CatalogCarOrder extends Mixins(mixin.MyMixin) {
       this.range = this.getCarouselRange();
     });
   }
-  // props: {
-  //   collection: {
-  //     type: Array,
-  //   },
-  // },
-  // components: {
-  //   CarouselSingleLine,
-  //   CarouselPaginationBar,
-  //   VClamp,
-  // },
 }
 
 export default CatalogCarOrder;

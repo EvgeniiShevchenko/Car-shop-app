@@ -15,19 +15,20 @@
   </section>
 </template>
 
-<script>
-export default {
-  name: 'CatalogFeedback',
-  data() {
-    return {
-      feedbackList: [
-        ['Отлично', 'recall-smile', 1],
-        ['Нормально', 'recall-neutral', 2],
-        ['Плохо', 'recall-sad', 3],
-      ],
-    };
-  },
-};
+<script lang="ts">
+import Vue from 'vue';
+import { Component } from 'vue-property-decorator';
+
+@Component
+class CatalogFeedback extends Vue {
+  feedbackList = [
+    ['Отлично', 'recall-smile', 1],
+    ['Нормально', 'recall-neutral', 2],
+    ['Плохо', 'recall-sad', 3],
+  ];
+}
+
+export default CatalogFeedback;
 </script>
 
 <style lang="scss" scoped>
