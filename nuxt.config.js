@@ -52,6 +52,13 @@ module.exports = {
     customVariables: ['~/assets/scss/base/vuetify-variables.scss'],
     treeShake: true,
   },
+  typescript: {
+    typeCheck: {
+      eslint: {
+        files: './**/*.{ts,js,vue}',
+      },
+    },
+  },
   build: {
     /*
      ** Run ESLint on save
